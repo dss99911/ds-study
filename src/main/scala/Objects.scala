@@ -5,6 +5,8 @@ class Objects {
   Person.apply("dd")//the above is same with this
 }
 
+class Person(val name: String)
+
 object Person {
   def apply(name: String): Person = {
     new Person(name)

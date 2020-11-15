@@ -1,10 +1,10 @@
 import scala.collection.mutable.ArrayBuffer
 
 object Classes {
-  val p: Person = new Person("Regina", "dd")
+  val p: Person2 = new Person2("Regina", "dd")
 }
 
-class Person(var firstName: String, var lastName: String) {
+class Person2(var firstName: String, var lastName: String) {
   //def and field or any code is processed same way
   println("the constructor begins")
 
@@ -28,7 +28,7 @@ class Pizza (
             ) {
   // one-arg auxiliary constructor
   def this(crustType: CrustType) = {
-    this(SmallCrustSize, crustSize = crustType)
+    this(SmallCrustSize, crustType)
   }
 
   // zero-arg auxiliary constructor

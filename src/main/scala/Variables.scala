@@ -22,6 +22,3 @@ object Variables {
   val p2: Person = Person("Regina")
   Person.apply("dd")//the above is same with this
 }
-
-
-class Person(val name: String)

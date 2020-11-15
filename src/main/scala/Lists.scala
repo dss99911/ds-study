@@ -1,4 +1,3 @@
-import scala.+:
 import scala.collection.mutable.ArrayBuffer
 
 /**
@@ -11,7 +10,7 @@ import scala.collection.mutable.ArrayBuffer
  */
 object Lists {
 
-  val nums = List.range(0, 10)
+  val nums: List[Int] = List.range(0, 10)
   val nums2 = (1 to 10 by 2).toList
   val letters = ('a' to 'f').toList
   val letters2 = ('a' to 'f' by 2).toList
@@ -38,7 +37,6 @@ object Lists {
 
   var nums_inmutable = 1 +: nums //prepend 1. recommended to use 'prepend' on list
   nums_inmutable = nums :+ 1 //append 1. if need to use 'append' recommended to use vector
-  nums_inmutable = nums :++ Array(1,2) //append 1,2
   nums_inmutable = nums ++ Array(1,2) //append 1,2
 
   // add one element
