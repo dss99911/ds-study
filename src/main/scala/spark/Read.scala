@@ -3,7 +3,7 @@ package spark
 import org.apache.spark.sql.{DataFrame, Dataset, SparkSession}
 
 object Read {
-  val spark: SparkSession = SparkSessionCreate.createSparkSession()
+  val spark: SparkSession = SparkSessions.createSparkSession()
   import spark.implicits._
 
   def getParquetDataFrame(): DataFrame = {

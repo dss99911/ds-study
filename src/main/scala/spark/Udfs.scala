@@ -4,7 +4,7 @@ import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.functions.{col, udf}
 
 object Udfs {
-  private val spark: SparkSession = SparkSessionCreate.createSparkSession()
+  private val spark: SparkSession = SparkSessions.createSparkSession()
   val random = udf(() => Math.random())
   spark.udf.register("random", random.asNondeterministic())
   spark.sql("SELECT random()").show()

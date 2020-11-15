@@ -1,6 +1,6 @@
 package spark
 
-import spark.SparkSessionCreate.createSparkSession
+import spark.SparkSessions.createSparkSession
 
 class SqlCreate {
   def createTableFromCode = {

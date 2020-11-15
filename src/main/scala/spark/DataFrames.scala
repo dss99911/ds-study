@@ -4,7 +4,7 @@ import org.apache.spark.sql.{DataFrame, Row, SparkSession}
 import org.apache.spark.sql.functions.{col, lower}
 
 class DataFrames {
-  private val spark: SparkSession = SparkSessionCreate.createSparkSession()
+  private val spark: SparkSession = SparkSessions.createSparkSession()
   import spark.implicits._
   private val df: DataFrame = Read.getParquetDataFrame()
 

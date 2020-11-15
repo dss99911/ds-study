@@ -7,7 +7,7 @@ import org.apache.spark.broadcast
  * and read-only.
  */
 class Broadcast {
-  val spark = SparkSessionCreate.createSparkSession()
+  val spark = SparkSessions.createSparkSession()
   private val data: broadcast.Broadcast[String] = spark.sparkContext.broadcast("1")
 
   data.value
