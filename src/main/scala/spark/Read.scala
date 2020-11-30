@@ -10,6 +10,11 @@ object Read {
     spark.read.parquet("s3://text")
   }
 
+  def getGlobPatternParquetDatFrame(): DataFrame = {
+    //https://hadoop.apache.org/docs/r2.7.2/api/org/apache/hadoop/fs/FileSystem.html#globStatus(org.apache.hadoop.fs.Path)
+    spark.read.parquet("s3://text/*/aa")
+  }
+
   /**
    * get the text. a row is a line
    * @return

@@ -56,4 +56,7 @@ object Lists {
 
   // remove multiple elements using another collection
   nums4 --= Array(5, 6)
+
+  //convert list to varargs. list: _*
+  val folders = Seq((1 to 59).map(n => s"""$n"""): _*)
 }
