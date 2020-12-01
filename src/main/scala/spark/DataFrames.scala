@@ -1,7 +1,7 @@
 package spark
 
 import org.apache.spark.sql.{DataFrame, Row, SparkSession}
-import org.apache.spark.sql.functions.{col, lower}
+import org.apache.spark.sql.functions.{col, desc, lower}
 
 class DataFrames {
   private val spark: SparkSession = SparkSessions.createSparkSession()
@@ -11,11 +11,24 @@ class DataFrames {
   //add new column
   val patternDF = df
     .select("name")
-    .select(col("age") + 1) //able to use expr
+    .select($"age" + 1) //able to use expr
+    .select(col("count").alias("fail_count")) //alias
     .withColumn("pattern", lower($"pattern"))
     .withColumn("dt", $"key")
     .filter(col("age") > 20)
-    .groupBy("age").count()// (age, count)
+    .drop($"age")//drop column
+    .groupBy("age").count()// (age, count), count()'s column name is 'count'
+
+  //order by
+  patternDF
+    //age asc
+    .orderBy("age")
+    .sort("age")
+    //age desc
+    .orderBy(desc("age"))
+    .orderBy($"age".desc)
+    .sort($"age".desc)
+
 
   //make array from date frame
   private val array: Array[Row] = patternDF.collect()
@@ -29,17 +42,6 @@ class DataFrames {
   //show data
   df.show()
 
-
-  def join() = {
-    val s = Read.getParquetDataFrame().as("s")
-    val c = Read.getParquetDataFrame().as("c")
-    s.join(c, col("s.id") === col("c.id"))
-      .select(
-        col("s.id").alias("id"),
-        col("c.code").alias("code"),
-        col("s.text").alias("text")
-      ).where("c.status = 1")
-  }
 
   /**
    * expression

@@ -1,15 +1,15 @@
-import scala.collection.mutable.ArrayBuffer
+import scala.collection.mutable.{ArrayBuffer, ListBuffer}
 
 /**
  * Class	Description
     *ArrayBuffer	: an indexed, mutable sequence
+    *ListBuffer	: mutable (similar with MutableList)
     *List :	a linear (linked list), immutable sequence
     *Vector :	an indexed, immutable sequence
     *Map	: the base Map (key/value pairs) class
     *Set	: the base Set class
  */
 object Lists {
-
   val nums: List[Int] = List.range(0, 10)
   val nums2 = (1 to 10 by 2).toList
   val letters = ('a' to 'f').toList

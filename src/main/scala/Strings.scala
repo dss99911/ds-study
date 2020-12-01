@@ -12,4 +12,9 @@ object Strings {
   val speech2 = """Four score and
                  |seven years ago
                  |our fathers ...""".stripMargin
+
+  //split and join strings.
+  "a,b,c".split(",")
+    .map(x => s"lower(sms_sender) rlike lower('$x')")
+    .mkString(" or ")
 }
