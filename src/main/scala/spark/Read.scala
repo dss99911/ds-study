@@ -15,6 +15,18 @@ object Read {
     spark.read.parquet("s3://text/*/aa")
   }
 
+  def getJdbcDataFrame(): DataFrame = {
+    val DB_URL, DATABASE, TABLE, USERNAME, PASSWORD = ""
+
+    spark.read.format("jdbc")
+      .option("url", DB_URL)
+      .option("dbtable", s"$DATABASE.$TABLE")
+      .option("user", USERNAME)
+      .option("password", PASSWORD)
+      .option("driver", "com.mysql.cj.jdbc.Driver")
+      .load()
+  }
+
   /**
    * get the text. a row is a line
    * @return
