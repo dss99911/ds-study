@@ -1,3 +1,5 @@
+import org.apache.spark.sql
+
 import scala.collection.mutable.{ArrayBuffer, ListBuffer}
 
 /**
@@ -59,4 +61,6 @@ object Lists {
 
   //convert list to varargs. list: _*
   val folders = Seq((1 to 59).map(n => s"""$n"""): _*)
+
+  nums.foldLeft("Start : ")((d, v) => d + v + ", ")//Start : 0 ~ 10
 }

@@ -59,4 +59,9 @@ object Read {
   def getJsonToClassDataSet() = {
     spark.read.json("path").as[Person]
   }
+
+  def getTable() = {
+    //if database is specified
+    spark.table("mms.company")
+  }
 }
