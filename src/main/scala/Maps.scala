@@ -22,6 +22,8 @@ object Maps {
 
   val states = collection.mutable.Map("AK" -> "Alaska")
   states("ddsf") = "dd"//able to set value when use mutable.map
+  private val optional: Option[String] = states.get("ddd")
+  states.contains("dsfasdf")
 
   val aa = ratings ++ Map("ddf" -> 3.0, "ddf" -> 3.0)
 }

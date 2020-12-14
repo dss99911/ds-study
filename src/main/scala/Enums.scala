@@ -2,6 +2,17 @@ object Enums {
 
 }
 
+object EnumObj extends Enumeration
+{
+  type EnumObj = Value
+
+  // Assigning values
+  val first = Value("Thriller")
+  val second = Value("Horror")
+  val third = Value("Comedy")
+  val fourth = Value("Romance")
+}
+
 sealed trait DayOfWeek
 case object Sunday extends DayOfWeek
 case object Monday extends DayOfWeek

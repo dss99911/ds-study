@@ -61,5 +61,12 @@ class DataFrames {
     spark.sql("SELECT * FROM people")
   }
 
+  def makeRaw() = {
+    //https://stackoverflow.com/questions/32000646/extract-column-values-of-dataframe-as-list-in-apache-spark
+    // there are 2 recommended approach. not sure what is better
+    val list = df.select("id").map(r => r.getString(0)).collect
+
+    val list1 = df.select("id").rdd.map(r => r(0)).collect
+  }
 
 }

@@ -1,0 +1,1 @@
+describe db.table_name;

@@ -44,6 +44,26 @@ class Pizza (
     val p2 = new Pizza(ThickCrustType)
     val p4 = new Pizza
   }
+
+  def getClass2() = {
+    classOf[Topping]
+  }
+
+  def classInstanceChecking() = {
+    //https://riptutorial.com/scala/example/9078/instance-type-checking
+    val person = new Person2("", "")
+    person match {
+      case _: Person2 => true
+      case _ => false
+    }
+
+    val a = person.isInstanceOf[Person2]
+
+  }
+  def typeCastring(any: Any) = {
+    //https://www.geeksforgeeks.org/type-casting-in-scala/
+    val person = any.asInstanceOf[Person2]
+  }
 }
 
 
@@ -63,3 +83,5 @@ sealed trait CrustType
 case object RegularCrustType extends CrustType
 case object ThinCrustType extends CrustType
 case object ThickCrustType extends CrustType
+
+

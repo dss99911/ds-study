@@ -19,6 +19,7 @@ object Lists {
   val names = List("joel", "ed", "chris", "maurice")
   val nums3 = Seq(1,2,3)
   val nums4 = ArrayBuffer(1,2,3)
+  val text = ListBuffer[String]()
 
   val list = 1 :: 2 :: 3 :: Nil // list: List[Int] = List(1, 2, 3)
 
@@ -43,6 +44,7 @@ object Lists {
 
   // add one element
   nums4 += 4
+  text += "d"
 
   // add multiple elements
   nums4 += 5 += 6
