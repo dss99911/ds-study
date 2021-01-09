@@ -65,4 +65,11 @@ object Lists {
   val folders = Seq((1 to 59).map(n => s"""$n"""): _*)
 
   nums.foldLeft("Start : ")((d, v) => d + v + ", ")//Start : 0 ~ 10
+
+  //list to string by join
+  nums.mkString(",")
+
+  //java list to scala list
+  import scala.collection.JavaConverters._
+  nums.asJava.asScala
 }

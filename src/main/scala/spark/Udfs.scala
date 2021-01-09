@@ -3,10 +3,23 @@ package spark
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.functions.{col, udf}
 
+/**
+ * https://wikidocs.net/29410
+ */
 object Udfs {
   private val spark: SparkSession = SparkSessions.createSparkSession()
+
+  def some_func(text: String): String = {
+    ""
+  }
+
+  //use directly.
   val random = udf(() => Math.random())
+
+  //use for sql, so, register udf on spark context.
+  //if use distributed cluster, direct way may not work. in that cse use 'register'
   spark.udf.register("random", random.asNondeterministic())
+  spark.udf.register("some_func", some_func _) //for adding function need '_'
   spark.sql("SELECT random()").show()
 
 

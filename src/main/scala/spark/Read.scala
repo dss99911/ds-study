@@ -15,6 +15,10 @@ object Read {
     spark.read.parquet("s3://text/*/aa")
   }
 
+  def getFromMultiplePath(): DataFrame = {
+    spark.read.parquet("s3://a", "s3://a1", "s3://a2")
+  }
+
   def getJdbcDataFrame(): DataFrame = {
     val DB_URL, DATABASE, TABLE, USERNAME, PASSWORD = ""
 
@@ -63,5 +67,17 @@ object Read {
   def getTable() = {
     //if database is specified
     spark.table("mms.company")
+  }
+
+  def getCsv() = {
+    //format ex) 1,abcd,"asdfsd""dd""f" ==> quote in string
+    //format ex) 1,abcd,"as
+    // dfsd""dd""f"  ==> two line
+    spark.read
+      .option("header","true")//set first row as header
+      .option("multiline",true)//if data contain new line
+      .option("quote", "\"")//if using multiline, this is required if text contains "
+      .option("escape", "\"")//if using multiline, this is required if text contains "
+      .csv("s3://hyun/aaa.csv")
   }
 }

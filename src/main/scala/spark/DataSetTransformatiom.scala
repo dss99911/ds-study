@@ -30,4 +30,8 @@ class DataSetTransformatiom {
     // so, If you want to clear directly after it's finished to use. then call 'unpersist()\'
     uppercaseText.unpersist()
   }
+
+  def dsToDf() = {
+    text.toDF()
+  }
 }

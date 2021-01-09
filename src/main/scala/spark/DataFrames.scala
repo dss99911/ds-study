@@ -1,7 +1,7 @@
 package spark
 
 import org.apache.spark.sql.{DataFrame, Row, SparkSession}
-import org.apache.spark.sql.functions.{col, desc, lower}
+import org.apache.spark.sql.functions.{col, desc, lit, lower, typedLit}
 
 class DataFrames {
   private val spark: SparkSession = SparkSessions.createSparkSession()
@@ -15,6 +15,8 @@ class DataFrames {
     .select(col("count").alias("fail_count")) //alias
     .withColumn("pattern", lower($"pattern"))
     .withColumn("dt", $"key")
+    .withColumn("dt", lit("dd"))
+    .withColumn("dt", typedLit(Seq(1, 2, 3)))
     .filter(col("age") > 20)
     .drop($"age")//drop column
     .groupBy("age").count()// (age, count), count()'s column name is 'count'

@@ -9,7 +9,7 @@ object Strings {
                our fathers ..."""
 
   //use margin
-  val speech2 = """Four score and
+  val speech2: String = """Four score and
                  |seven years ago
                  |our fathers ...""".stripMargin
 
