@@ -2,7 +2,7 @@ package spark
 
 import org.apache.spark.sql.SparkSession
 
-class Sql {
+class HiveTable {
   //http://jason-heo.github.io/programming/2017/02/17/parquet-to-hive-table.html
   import org.apache.spark.sql.DataFrame
 
