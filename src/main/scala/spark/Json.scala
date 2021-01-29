@@ -1,6 +1,8 @@
 package spark
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.json.JsonMapper
+import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import org.apache.spark.sql.{Column, DataFrame, SparkSession}
 import org.apache.spark.sql.functions.{col, from_json, lit, schema_of_json}
 import org.apache.spark.sql.types.{DecimalType, LongType, StringType, StructField, StructType}
@@ -15,7 +17,11 @@ class Json {
   private val listDf: DataFrame = list.toDF()
 
   //make json string
-  val mapper = new ObjectMapper
+//  val mapper = new ObjectMapper
+  //if use Scala classes. the below have to be used.
+  val mapper = JsonMapper.builder()
+    .addModule(DefaultScalaModule)
+    .build()
   listDf.map(x => mapper.writeValueAsString(x))
 
   //data from json

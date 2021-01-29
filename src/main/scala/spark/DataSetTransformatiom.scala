@@ -20,8 +20,10 @@ class DataSetTransformatiom {
   /**
    * without `persist()` method, the data is not saved in memory
    * so, if you want to use the same data later, use `persist()`
+   *
+   * without `persist()`, if we call same DataSet multiple times, it runs multiple times as well
    */
-  def pergist() = {
+  def persist() = {
     val uppercaseText = text.map(t => t.toUpperCase())
     uppercaseText.persist()
     uppercaseText.cache()//cache() is same with persist(). but cache() is only in memory. but persist(level) can set where to save.
