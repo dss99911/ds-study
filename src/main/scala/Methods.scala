@@ -5,3 +5,20 @@ object Methods {
 
   }
 }
+
+/**
+ * this is similar with static method of java
+ */
+object SomeClass {
+  def staticMethod() = {
+
+  }
+
+  def call() = {
+    SomeClass.staticMethod()
+  }
+}
+class SomeClass {
+
+}
+
