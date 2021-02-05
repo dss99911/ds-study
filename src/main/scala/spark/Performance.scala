@@ -16,5 +16,22 @@ class Performance {
    */
   Read.getParquetDataFrame().explain
 
+  /**
+   * DAGScheduler
+   *    converts logical execution plan (i.e. RDD lineage of dependencies built using RDD transformations)
+   *    to physical execution plan (using stages)
+   *
+   * To show RDD Lineage (logical execution plan)
+   * res8: String =
+(3) MapPartitionsRDD[11] at rdd at <console>:29 []
+ |  SQLExecutionRDD[10] at rdd at <console>:29 []
+ |  MapPartitionsRDD[9] at rdd at <console>:29 []
+ |  ShuffledRowRDD[8] at rdd at <console>:29 []
+ +-(2) MapPartitionsRDD[7] at rdd at <console>:29 []
+    |  MapPartitionsRDD[6] at rdd at <console>:29 []
+    |  MapPartitionsRDD[5] at rdd at <console>:29 []
+    |  ParallelCollectionRDD[4] at rdd at <console>:29 []
+   */
+  Read.getParquetDataFrame().rdd.toDebugString
 
 }

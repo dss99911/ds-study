@@ -2,6 +2,7 @@ package spark
 
 import org.apache.spark.sql.{DataFrame, Row, SparkSession}
 import org.apache.spark.sql.functions.{col, desc, lit, lower, typedLit}
+import org.apache.spark.sql.types.TimestampType
 
 class DataFrames {
   private val spark: SparkSession = SparkSessions.createSparkSession()
@@ -17,6 +18,7 @@ class DataFrames {
     .withColumn("dt", $"key")
     .withColumn("dt", lit("dd"))
     .withColumn("dt", typedLit(Seq(1, 2, 3)))
+    .withColumn("date", ($"date" / 1000).cast(TimestampType)) // long to Timestamp
     .filter(col("age") > 20)
     .drop($"age")//drop column
     .groupBy("age").count()// (age, count), count()'s column name is 'count'
