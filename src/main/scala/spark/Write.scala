@@ -7,7 +7,7 @@ class Write {
   def writeParquet() = {
     Read.getParquetDataFrame().selectExpr("aid", "iid", "sdr", "msg", "mrt")
       .write
-      .partitionBy("dt")
+      .partitionBy("dt")// overwrite할 경우, 전체에 대해서 overwrite하는게 아니라, 해당 파티션에 대해서만, overwrite함
       .mode("overwrite")
       .parquet(s"s3://key")
   }
@@ -19,5 +19,13 @@ class Write {
           .toDS().rdd
           .coalesce(1)
           .saveAsTextFile("somePath")
+  }
+
+  def writeCsv() = {
+    Read.getParquetDataFrame()
+      .coalesce(1)
+      .write
+      .option("header","true")
+      .csv("path")
   }
 }
