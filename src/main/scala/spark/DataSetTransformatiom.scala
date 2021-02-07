@@ -15,6 +15,14 @@ class DataSetTransformatiom {
 
   val wordCount = text.flatMap(line => line.split(" "))
     .groupByKey(s => identity(s)).count()
+
+  //groupby한 후에, group별로 reduce로 하나로 합친다
+  val wordCount2 = text.flatMap(line => line.split(" "))
+    .map((_, 1))
+    .groupByKey(_._1)
+    .reduceGroups((a, b) => (a._1, a._2 + b._2))
+    .count()
+
   wordCount.collect()//make Dataset to array
 
   /**

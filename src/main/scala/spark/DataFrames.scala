@@ -3,6 +3,7 @@ package spark
 import org.apache.spark.sql.{DataFrame, Row, SparkSession}
 import org.apache.spark.sql.functions.{col, desc, lit, lower, typedLit}
 import org.apache.spark.sql.types.TimestampType
+import spark.Read.Person
 
 class DataFrames {
   private val spark: SparkSession = SparkSessions.createSparkSession()
@@ -63,14 +64,37 @@ class DataFrames {
   def useOnSql() = {
     df.createOrReplaceTempView("people")
     spark.sql("SELECT * FROM people")
+
+    // Register the DataFrame as a global temporary view
+    // temp view is disappeared when session expired
+    // global temp view is disappeared when spark app is terminated
+    df.createGlobalTempView("people")
+    spark.sql("SELECT * FROM global_temp.people").show()
   }
 
-  def makeRaw() = {
+  def convertDataFrameToObject() = {
+    Read.getCsv().as[Person]//convert to object
+      .map(p => p.age)
+      .show()
+  }
+
+  def makeList() = {
     //https://stackoverflow.com/questions/32000646/extract-column-values-of-dataframe-as-list-in-apache-spark
     // there are 2 recommended approach. not sure what is better
     val list = df.select("id").map(r => r.getString(0)).collect
 
     val list1 = df.select("id").rdd.map(r => r(0)).collect
+  }
+
+  def convertDataFrameToMap() = {
+    // No pre-defined encoders for Dataset[Map[K,V]], define explicitly
+    implicit val mapEncoder = org.apache.spark.sql.Encoders.kryo[Map[String, Any]]
+    // Primitive types and case classes can be also defined as
+    // implicit val stringIntMapEncoder: Encoder[Map[String, Any]] = ExpressionEncoder()
+
+    // row.getValuesMap[T] retrieves multiple columns at once into a Map[String, T]
+    Read.getCsv().map(teenager => teenager.getValuesMap[Any](List("name", "age"))).collect()
+    // Array(Map("name" -> "Justin", "age" -> 19))
   }
 
 }

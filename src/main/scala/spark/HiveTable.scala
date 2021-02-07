@@ -35,6 +35,14 @@ class HiveTable {
   val create_stmt = get_create_stmt("my_tab", schema_info)
 
   sc.sql(create_stmt)
+
+  /**
+   * if table is updated from external.
+   * spark sql may cache the table. so, need to update the table
+   */
+  def refreshTable() = {
+    sc.catalog.refreshTable("my_table")
+  }
 }
 
 

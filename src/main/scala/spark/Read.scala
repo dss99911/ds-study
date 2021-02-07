@@ -13,6 +13,16 @@ object Read {
   def getGlobPatternParquetDatFrame(): DataFrame = {
     //https://hadoop.apache.org/docs/r2.7.2/api/org/apache/hadoop/fs/FileSystem.html#globStatus(org.apache.hadoop.fs.Path)
     spark.read.parquet("s3://text/*/aa")
+
+    //load only .parquet file. https://spark.apache.org/docs/latest/sql-data-sources-generic-options.html#path-global-filter
+    spark.read.format("parquet")
+      .option("pathGlobFilter", "*.parquet") // json file should be filtered out
+      .load("examples/src/main/resources/dir1")
+
+    //load files recursively. https://spark.apache.org/docs/latest/sql-data-sources-generic-options.html#recursive-file-lookup
+    spark.read.format("parquet")
+      .option("recursiveFileLookup", "true")
+      .load("examples/src/main/resources/dir1")
   }
 
   def getFromMultiplePath(): DataFrame = {
@@ -80,4 +90,39 @@ object Read {
       .option("escape", "\"")//if using multiline, this is required if text contains "
       .csv("s3://hyun/aaa.csv")
   }
+
+  /**
+   * https://spark.apache.org/docs/latest/sql-data-sources-generic-options.html#ignore-corrupt-files
+   */
+  def ignoreCorruptFile() = {
+    /*
+dir1/
+ ├── dir2/
+ │    └── file2.parquet (schema: <file: string>, content: "file2.parquet")
+ └── file1.parquet (schema: <file, string>, content: "file1.parquet")
+ └── file3.json (schema: <file, string>, content: "{'file':'corrupt.json'}")
+     */
+
+    // enable ignore corrupt files
+    spark.sql("set spark.sql.files.ignoreCorruptFiles=true")
+    // dir1/file3.json is corrupt from parquet's view
+    val testCorruptDF = spark.read.parquet(
+      "examples/src/main/resources/dir1/",
+      "examples/src/main/resources/dir1/dir2/")
+    testCorruptDF.show()
+    // +-------------+
+    // |         file|
+    // +-------------+
+    // |file1.parquet|
+    // |file2.parquet|
+    // +-------------+
+  }
+
+  /**
+   * merge partition when reading
+   */
+  def readPartitionsHasDifferentColumn() = {
+    //https://spark.apache.org/docs/latest/sql-data-sources-parquet.html#schema-merging
+  }
+
 }

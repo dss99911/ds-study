@@ -10,7 +10,7 @@ sh run.sh
 ## Programming Guides:
 - [x] [Quick Start](https://spark.apache.org/docs/latest/quick-start.html): a quick introduction to the Spark API; start here!
 - [x] [RDD Programming Guide](https://spark.apache.org/docs/latest/rdd-programming-guide.html): overview of Spark basics - RDDs (core but old API), accumulators, and broadcast variables
-- [ ] [Spark SQL, Datasets, and DataFrames](https://spark.apache.org/docs/latest/sql-getting-started.html): processing structured data with relational queries (newer API than RDDs)
+- [x] [Spark SQL, Datasets, and DataFrames](https://spark.apache.org/docs/latest/sql-getting-started.html): processing structured data with relational queries (newer API than RDDs)
 
 ## Deployment Guides:
 - [x] [Cluster Model Overview](cluster-model-overview.md) : overview of concepts and components when running on a cluster
@@ -24,10 +24,11 @@ sh run.sh
 - [x] [Understanding Job, Stage, Task](understanding-job-stage-task.md)
 
 ## Other Documents:
-
+- [x] [Spark Kotlin](https://blog.jetbrains.com/kotlin/2020/08/introducing-kotlin-for-apache-spark-preview/)
 - [ ] [Configuration](https://spark.apache.org/docs/latest/configuration.html): customize Spark via its configuration system
 Monitoring: track the behavior of your applications
 - [ ] [Tuning Guide](https://spark.apache.org/docs/latest/tuning.html): best practices to optimize performance and memory use
+    - [ ] [Performance tuning](https://spark.apache.org/docs/latest/sql-performance-tuning.html#join-strategy-hints-for-sql-queries)
 - [X] [Job Scheduling](job-scheduling.md)
 - [ ] Security: Spark security support
 - [ ] Hardware Provisioning: recommendations for cluster hardware
@@ -40,13 +41,13 @@ Monitoring: track the behavior of your applications
 - [ ] Third Party Projects: related third party Spark projects
 
 ## External Resources:
-- [ ] Code Examples: more are also available in the examples subfolder of Spark (Scala, Java, Python, R)
 - [ ] [Mastering Apache Spark 2.0](https://mallikarjuna_g.gitbooks.io/spark/content/)
+- [ ] [위 책 번역본](https://wikidocs.net/24672)
 
 ## Example
-- [ ] [Spark Program](https://spark.apache.org/examples.html)
-- [ ] [Scala](https://github.com/apache/spark/tree/master/examples/src/main/scala/org/apache/spark/examples)
-- [ ] [Python](https://github.com/apache/spark/tree/master/examples/src/main/python)
+- [x] [Spark Program](https://spark.apache.org/examples.html)
+- [x] [Scala](https://github.com/apache/spark/tree/master/examples/src/main/scala/org/apache/spark/examples)
+- [x] [Python](https://github.com/apache/spark/tree/master/examples/src/main/python)
 
 ## Later
 - [ ] [UnitTest](https://spark.apache.org/docs/latest/rdd-programming-guide.html#unit-testing)
