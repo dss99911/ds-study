@@ -1,7 +1,7 @@
 package spark
 
 import org.apache.spark.sql.{DataFrame, Row, SparkSession}
-import org.apache.spark.sql.functions.{col, desc, lit, lower, typedLit}
+import org.apache.spark.sql.functions.{col, desc, explode, lit, lower, typedLit}
 import org.apache.spark.sql.types.TimestampType
 import spark.Read.Person
 
@@ -20,6 +20,10 @@ class DataFrames {
     .withColumn("dt", lit("dd"))
     .withColumn("dt", typedLit(Seq(1, 2, 3)))
     .withColumn("date", ($"date" / 1000).cast(TimestampType)) // long to Timestamp
+  // object를 바깥으로 빼기
+    // https://stackoverflow.com/questions/32906613/flattening-rows-in-spark
+    .withColumn("exp", explode($"array"))
+    .withColumn("exp", explode($"obj.data"))
     .filter(col("age") > 20)
     .drop($"age")//drop column
     .groupBy("age").count()// (age, count), count()'s column name is 'count'
@@ -73,17 +77,31 @@ class DataFrames {
   }
 
   def convertDataFrameToObject() = {
-    Read.getCsv().as[Person]//convert to object
+    Read.getCsv()
+      .as[Person]//convert to object
       .map(p => p.age)
       .show()
   }
 
+
+
   def makeList() = {
+    //this approach use driver program,
     //https://stackoverflow.com/questions/32000646/extract-column-values-of-dataframe-as-list-in-apache-spark
     // there are 2 recommended approach. not sure what is better
     val list = df.select("id").map(r => r.getString(0)).collect
 
     val list1 = df.select("id").rdd.map(r => r(0)).collect
+  }
+
+  def makeListPerGroup = {
+    //the approach above use driver program, the below handle list on distributed processing
+    df.as[Person]
+      .groupByKey(_.name)
+      .mapGroups((name: String, persons: Iterator[Person]) => {
+        //handle the list
+        "???"
+      })
   }
 
   def convertDataFrameToMap() = {

@@ -1,13 +1,9 @@
 import scala.collection.mutable
 
 object HelloWorld extends App {
-  println("Hello, World!")
-
-  EnumObj.values.foreach {
-    case d if (d == EnumObj.first) => println("d")
-    case _ => None
+  for (i <- 10 to 0 by -1) {
+    println(i)
   }
-  println(EnumObj.first)
 }
 
 //can use this way as well

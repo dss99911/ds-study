@@ -13,35 +13,33 @@ class HiveTable {
   import org.apache.spark.sql.DataFrame
 
   //need enableHiveSupport
-  val sc = SparkSessions.createSparkSession()
+  val spark = SparkSessions.createSparkSession()
 
-  val schema_info = sc.read.parquet("/path/to/_common_metadata")
+  def createTableFromFile() = {
+    val filePath = "/path/to/_common_metadata"
+    val tableName = "my_tab"
 
-  /**
-   * hive metastore에 table을 만들고, table과 실제 데이터의 path와 연결시킴.
-   */
-  def get_create_stmt(table_name : String, schema_info : DataFrame) : String = {
+    val schema_info = spark.read.parquet(filePath)
     val col_definition = (for (c <- schema_info.dtypes) yield(c._1 + " " + c._2.replace("Type",""))).mkString(", ")
 
-    var create_stmt = s"""CREATE EXTERNAL TABLE ${table_name}
+    /**
+     * hive metastore에 table을 만들고, table과 실제 데이터의 path와 연결시킴.
+     */
+    var createStmt = s"""CREATE EXTERNAL TABLE ${tableName}
                  (
                     ${col_definition}
-                 ) STORED AS PARQUET LOCATION '/path/to/'"""
+                 ) STORED AS PARQUET LOCATION '$filePath'"""
 
-    create_stmt
+    spark.sql(createStmt)
   }
 
-  // CREATE EXTERNAL TABLE ...
-  val create_stmt = get_create_stmt("my_tab", schema_info)
-
-  sc.sql(create_stmt)
 
   /**
    * if table is updated from external.
    * spark sql may cache the table. so, need to update the table
    */
   def refreshTable() = {
-    sc.catalog.refreshTable("my_table")
+    spark.catalog.refreshTable("my_table")
   }
 }
 

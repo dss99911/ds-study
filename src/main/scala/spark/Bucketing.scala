@@ -5,9 +5,12 @@ import org.apache.spark.sql.SparkSession
 /**
  * https://luminousmen.com/post/the-5-minute-guide-to-using-bucketing-in-pyspark
  * https://jaceklaskowski.gitbooks.io/mastering-spark-sql/content/spark-sql-bucketing.html
+ * https://mathjhshin.github.io/Spark%EC%97%90%EC%84%9C%EC%9D%98-Bucketing/
  *
  * partitioning을 unlimited한 필드에 하게 되면, partition이 너무 많이 발생하게 되고, 이게 오히려, 성능저하를 야기할 수 있다.
- * 그래서, bucketing을 통해, 일정한 크기만큼만 분할한다
+ * 그래서, bucketing을 통해, 일정한 크기만큼만 분할학 위한 목적으로 이해했었지만
+ *
+ * join시 특정 shuffle을 방지하는 목적이라고 함..
  *
  * shuffle 방지 목적
  */
