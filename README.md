@@ -24,11 +24,9 @@ sh run.sh
 - [x] [Understanding Job, Stage, Task](understanding-job-stage-task.md)
 
 ## Other Documents:
+- [x] [Spark Tuning & Monitoring](spark-tuning-monitoring.md)
 - [x] [Spark Kotlin](https://blog.jetbrains.com/kotlin/2020/08/introducing-kotlin-for-apache-spark-preview/)
 - [ ] [Configuration](https://spark.apache.org/docs/latest/configuration.html): customize Spark via its configuration system
-Monitoring: track the behavior of your applications
-- [ ] [Tuning Guide](https://spark.apache.org/docs/latest/tuning.html): best practices to optimize performance and memory use
-    - [ ] [Performance tuning](https://spark.apache.org/docs/latest/sql-performance-tuning.html#join-strategy-hints-for-sql-queries)
 - [X] [Job Scheduling](job-scheduling.md)
 - [ ] Security: Spark security support
 - [ ] Hardware Provisioning: recommendations for cluster hardware
