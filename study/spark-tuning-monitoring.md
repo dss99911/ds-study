@@ -14,6 +14,7 @@
     - Hadoop Monitoring
         - `http://<server-url>:8088`
         - Spark monitoring과 비슷한 정보를 줌. Hadoop cluster정보에 대한 모니터링 정보도 추가로 보여주는듯..
+    - [DAG understanding](dag/dag-understanding.md)
 
 # Performamce
 - [ ] [Tuning Guide](https://spark.apache.org/docs/latest/tuning.html): best practices to optimize performance and memory use
@@ -22,4 +23,7 @@
         - The [fastutil](http://fastutil.di.unimi.it/) library provides convenient collection classes for primitive types
 - [ ] [Performance tuning](https://spark.apache.org/docs/latest/sql-performance-tuning.html#join-strategy-hints-for-sql-queries)
 - [x] [external article. Performance Tutorial](https://blog.scottlogic.com/2018/03/22/apache-spark-performance.html#:~:text=A%20shuffle%20occurs%20when%20data,likely%20on%20a%20different%20executor.)    
-
+- [ ] How many partition is good?
+    - [ ] [How Data Partitioning in Spark helps achieve more parallelism?](https://www.dezyre.com/article/how-data-partitioning-in-spark-helps-achieve-more-parallelism/297#:~:text=Having%20too%20large%20a%20number,or%20no%20data%20at%20all.)
+    - [ ] [Apache Spark Partitioning](https://medium.com/@adrianchang/apache-spark-partitioning-e9faab369d14)
+- [ ] [Adaptive Query Execution: Speeding Up Spark SQL at Runtime](https://databricks.com/blog/2020/05/29/adaptive-query-execution-speeding-up-spark-sql-at-runtime.html)

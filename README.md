@@ -13,21 +13,21 @@ sh run.sh
 - [x] [Spark SQL, Datasets, and DataFrames](https://spark.apache.org/docs/latest/sql-getting-started.html): processing structured data with relational queries (newer API than RDDs)
 
 ## Deployment Guides:
-- [x] [Cluster Model Overview](cluster-model-overview.md) : overview of concepts and components when running on a cluster
+- [x] [Cluster Model Overview](study/cluster-model-overview.md) : overview of concepts and components when running on a cluster
 - [x] [Submitting Application](https://spark.apache.org/docs/latest/submitting-applications.html) : packaging and deploying applications
   - [ ] Amazon EC2: scripts that let you launch a cluster on EC2 in about 5 minutes
   - [ ] Standalone Deploy Mode: simplest way to deploy Spark on a private cluster. launch a standalone cluster quickly without a third-party cluster manager
   - [ ] Apache Mesos: deploy a private cluster using Apache Mesos
   - [ ] Hadoop YARN: deploy Spark on top of Hadoop NextGen (YARN)
   - [ ] Kubernetes: deploy Spark on top of Kubernetes
-- [x] [Understand Cluster Manager, Master, Worker node](understanding-cluster-manager-master-worker-node.md)
-- [x] [Understanding Job, Stage, Task](understanding-job-stage-task.md)
+- [x] [Understand Cluster Manager, Master, Worker node](study/understanding-cluster-manager-master-worker-node.md)
+- [x] [Understanding Job, Stage, Task](study/understanding-job-stage-task.md)
 
 ## Other Documents:
-- [x] [Spark Tuning & Monitoring](spark-tuning-monitoring.md)
+- [x] [Spark Tuning & Monitoring](study/spark-tuning-monitoring.md)
 - [x] [Spark Kotlin](https://blog.jetbrains.com/kotlin/2020/08/introducing-kotlin-for-apache-spark-preview/)
 - [ ] [Configuration](https://spark.apache.org/docs/latest/configuration.html): customize Spark via its configuration system
-- [X] [Job Scheduling](job-scheduling.md)
+- [X] [Job Scheduling](study/job-scheduling.md)
 - [ ] Security: Spark security support
 - [ ] Hardware Provisioning: recommendations for cluster hardware
 - [ ] Integration with other storage systems:

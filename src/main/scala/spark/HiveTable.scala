@@ -15,10 +15,7 @@ class HiveTable {
   //need enableHiveSupport
   val spark = SparkSessions.createSparkSession()
 
-  def createTableFromFile() = {
-    val filePath = "/path/to/_common_metadata"
-    val tableName = "my_tab"
-
+  def createTableFromFile(filePath: String, tableName: String) = {
     val schema_info = spark.read.parquet(filePath)
     val col_definition = (for (c <- schema_info.dtypes) yield(c._1 + " " + c._2.replace("Type",""))).mkString(", ")
 
@@ -32,6 +29,7 @@ class HiveTable {
 
     spark.sql(createStmt)
   }
+  createTableFromFile("/path/to/_common_metadata", "my_table")
 
 
   /**
