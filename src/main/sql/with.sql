@@ -29,3 +29,6 @@ WITH
 SELECT Airline
 FROM totalSalary, airlineAverage
 WHERE totalSalary.total > airlineAverage.avgSalary;
+
+-- WITH RECURSIVE
+-- https://mariadb.com/kb/en/recursive-common-table-expressions-overview/

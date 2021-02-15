@@ -1,5 +1,7 @@
 package spark
 
+import org.apache.spark.sql.SparkSession
+
 /**
  * https://medium.com/@mrpowers/managing-spark-partitions-with-coalesce-and-repartition-4050c57ad5c4
  *
@@ -9,6 +11,9 @@ package spark
  * - Spark tries to set the number of partitions automatically based on your cluster.(so, no need to set partition normal case)
  */
 class Partition {
+  val spark: SparkSession = SparkSessions.createSparkSession()
+  import spark.implicits._
+
   //show partition size
   Read.getParquetDataFrame().rdd.partitions.size
 
@@ -21,5 +26,10 @@ class Partition {
   //coalesce combines existing partitions to avoid a full shuffle. so it may not be 6 partition but can be less
   //coalesce doesn't increate partition count. but move rows between existing partition. so, if set count more than current. it keep current count
   Read.getParquetDataFrame().coalesce(6)
+
+
+  //특정 파티션으로 분할해서 저장하는 경우, repartition도 해주고, partitionBy도 해주면, 성능이 더 향상되는 듯하다.(원인도 모르고, 확실하지도 않음. 하지만, repartition했더니, 2시간 되서, 처리 안되던게, 20분에 끝남)
+  //참고 : https://stackoverflow.com/a/44810607/4352506
+  Read.getParquetDataFrame().repartition($"key").write.partitionBy("key").parquet("/location")
 
 }
