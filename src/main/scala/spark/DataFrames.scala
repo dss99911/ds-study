@@ -1,8 +1,8 @@
 package spark
 
 import org.apache.spark.sql.{DataFrame, Row, SparkSession}
-import org.apache.spark.sql.functions.{col, desc, explode, lit, lower, typedLit}
-import org.apache.spark.sql.types.TimestampType
+import org.apache.spark.sql.functions.{asc_nulls_first, col, desc, explode, expr, from_utc_timestamp, lit, lower, regexp_extract, substring, sum, typedLit, when}
+import org.apache.spark.sql.types.{LongType, TimestampType}
 import spark.Read.Person
 
 class DataFrames {
@@ -14,17 +14,35 @@ class DataFrames {
   val patternDF = df
     .select("name")
     .select($"age" + 1) //able to use expr
+    .select('age) //col() with shortest way
+    .selectExpr("*")//include all original columns
+    .select(expr("age + 1"))
+    .select(sum('count), expr("avg(count)"), expr("count(distinct(age))"))//able to use aggregation function
     .select(col("count").alias("fail_count")) //alias
+    .select(lit(1).as("num"))//able to set liternal with name
     .withColumn("pattern", lower($"pattern"))
+    .withColumn("pattern", substring($"pattern", 0, 4))//first 4 digit
+    .withColumn("pattern", $"pattern".substr($"pattern" - 3, lit(4)))//last 4 digit
+    .withColumn("number", regexp_extract($"number", "(\\w+)", 1))//take only word
     .withColumn("dt", $"key")
     .withColumn("dt", lit("dd"))
     .withColumn("dt", typedLit(Seq(1, 2, 3)))
     .withColumn("date", ($"date" / 1000).cast(TimestampType)) // long to Timestamp
   // object를 바깥으로 빼기
     // https://stackoverflow.com/questions/32906613/flattening-rows-in-spark
-    .withColumn("exp", explode($"array"))
+    .withColumn("exp", explode($"array"))//해당 값들을 row들로 변환한다.
     .withColumn("exp", explode($"obj.data"))
     .filter(col("age") > 20)
+    .filter('age =!= 1)//!=
+    .na.drop("name")//drop null rows if name column is null
+    .na.drop("any")//drop row if any columns are null
+    .na.drop("all", Seq("age", "name"))//drop row if all columns are null
+    .na.fill("this is null") //change null to some value
+    .na.replace("age", Map(10 -> 20, 11 -> 21)) //이건 null과 관련 없이 값 변환
+    .withColumn("date", when($"age" === lit(1), "it's 1").otherwise("no 1"))
+    .withColumn("transactionAt", ($"transactionAt" / 1000).cast(TimestampType))//change long to timestamp
+    .withColumn("transactionAt", $"transactionAt".cast(LongType))//change timestamp to long
+    .withColumn("transactionAt", from_utc_timestamp(($"transactionAt" / 1000).cast(TimestampType), "+05:30"))//change long to timestame with india zone
     .drop($"age")//drop column
     .groupBy("age").count()// (age, count), count()'s column name is 'count'
 
@@ -35,6 +53,8 @@ class DataFrames {
     .sort("age")
     //age desc
     .orderBy(desc("age"))
+    .orderBy(expr("age desc"))
+    .orderBy(asc_nulls_first("age"))
     .orderBy($"age".desc)
     .sort($"age".desc)
 
@@ -115,4 +135,10 @@ class DataFrames {
     // Array(Map("name" -> "Justin", "age" -> 19))
   }
 
+  def unionDF() = {
+    val df2 = df
+    //union should have same columns.
+    //also columns order should be same
+    df.union(df2.select(df.columns.map(col(_)): _*))
+  }
 }

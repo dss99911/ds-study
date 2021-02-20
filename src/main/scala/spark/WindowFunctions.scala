@@ -2,7 +2,8 @@ package spark
 
 import org.apache.spark.sql.{DataFrame, SparkSession}
 import org.apache.spark.sql.expressions.Window
-import org.apache.spark.sql.functions.row_number
+import org.apache.spark.sql.functions.{row_number, window}
+import org.apache.spark.sql.types.TimestampType
 
 class WindowFunctions {
   val spark: SparkSession = SparkSessions.createSparkSession()
@@ -25,7 +26,18 @@ class WindowFunctions {
       .write
       .mode(SaveMode.Overwrite)
       .parquet("s3://hyun/temp/test")
+  }
 
+  def groupByDate() = {
+    val a = Seq(System.currentTimeMillis() / 1000,2,3,4,5)
 
+    a.toDF().withColumn("date", $"value".cast(TimestampType))
+      .groupBy(window($"date", "1 day"))
+      .count()
+
+      .show(truncate = false)
+
+    //    [1970-01-01 00:00:00, 1970-01-02 00:00:00]	4
+    //    [2021-02-17 00:00:00, 2021-02-18 00:00:00]	1
   }
 }

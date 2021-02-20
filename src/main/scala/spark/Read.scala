@@ -1,6 +1,6 @@
 package spark
 
-import org.apache.spark.sql.{DataFrame, Dataset, SparkSession}
+import org.apache.spark.sql.{DataFrame, Dataset, Row, SparkSession}
 
 object Read {
   val spark: SparkSession = SparkSessions.createSparkSession()
@@ -16,6 +16,7 @@ object Read {
 
     //load only .parquet file. https://spark.apache.org/docs/latest/sql-data-sources-generic-options.html#path-global-filter
     spark.read.format("parquet")
+      .schema(StructTypes.sample())//set schema. for prod environment. setting schema is recommended
       .option("pathGlobFilter", "*.parquet") // json file should be filtered out
       .load("examples/src/main/resources/dir1")
 
@@ -53,9 +54,18 @@ object Read {
     spark.sql("select * from some")
   }
 
+  /**
+   * toDF() is not recommended on prod.
+   * because toDF may not work properly related to null value
+   */
   def getListDataFrame() = {
     val list = (1 to 100).map(i => (i, s"val_$i"))
     list.toDF()
+
+    //or
+    val rows = Seq(Row(1), Row(2), Row(3))
+    val rdd = spark.sparkContext.parallelize(rows)
+    spark.createDataFrame(rdd, StructTypes.sample())
   }
 
   def getListDataSet() = {

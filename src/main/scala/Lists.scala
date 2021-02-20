@@ -16,6 +16,7 @@ object Lists {
   val nums2 = (1 to 10 by 2).toList
   val letters = ('a' to 'f').toList
   val letters2 = ('a' to 'f' by 2).toList
+  val names2 = Array("joel", "ed", "chris", "maurice")
   val names = List("joel", "ed", "chris", "maurice")
   val nums3 = Seq(1,2,3)
   val nums4 = ArrayBuffer(1,2,3)

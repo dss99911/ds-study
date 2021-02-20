@@ -16,6 +16,7 @@ class Partition {
 
   //show partition size
   Read.getParquetDataFrame().rdd.partitions.size
+  Read.getParquetDataFrame().rdd.getNumPartitions
 
   //save data on 1 partition
   Read.getParquetDataFrame().coalesce(1)
@@ -24,7 +25,7 @@ class Partition {
   Read.getParquetDataFrame().repartition(Cluster.getCpuCount() * 4)// recommended count of partition is 2~4 https://stackoverflow.com/questions/35800795/number-of-partitions-in-rdd-and-performance-in-spark/35804407#35804407
 
   //coalesce combines existing partitions to avoid a full shuffle. so it may not be 6 partition but can be less
-  //coalesce doesn't increate partition count. but move rows between existing partition. so, if set count more than current. it keep current count
+  //coalesce doesn't increase partition count. but move rows between existing partition. so, if set count more than current. it keep current count
   Read.getParquetDataFrame().coalesce(6)
 
 

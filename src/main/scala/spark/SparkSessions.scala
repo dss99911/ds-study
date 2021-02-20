@@ -12,6 +12,9 @@ object SparkSessions {
     //without this, when overwriting, all partition is deleted and save new partition.
     spark.conf.set("spark.sql.sources.partitionOverwriteMode", "dynamic")
 
+    //default is 200. if it's local mode. it doesn't need many parition.
+    spark.conf.set("spark.sql.shuffle.partitions", "5")
+
     spark
   }
 

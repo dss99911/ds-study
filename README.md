@@ -11,6 +11,9 @@ sh run.sh
 - [x] [Quick Start](https://spark.apache.org/docs/latest/quick-start.html): a quick introduction to the Spark API; start here!
 - [x] [RDD Programming Guide](https://spark.apache.org/docs/latest/rdd-programming-guide.html): overview of Spark basics - RDDs (core but old API), accumulators, and broadcast variables
 - [x] [Spark SQL, Datasets, and DataFrames](https://spark.apache.org/docs/latest/sql-getting-started.html): processing structured data with relational queries (newer API than RDDs)
+- [ ] [Structured Streaming](https://spark.apache.org/docs/latest/structured-streaming-programming-guide.html): processing structured data streams with relation queries (using Datasets and DataFrames, newer API than DStreams)
+  - micro-batch processing model
+  - Continuous Processing model
 
 ## Deployment Guides:
 - [x] [Cluster Model Overview](study/cluster-model-overview.md) : overview of concepts and components when running on a cluster
@@ -51,6 +54,6 @@ sh run.sh
 - [ ] [UnitTest](https://spark.apache.org/docs/latest/rdd-programming-guide.html#unit-testing)
 - [ ] [MLlib](https://spark.apache.org/docs/latest/ml-guide.html): applying machine learning algorithms
 - [ ] [GraphX](https://spark.apache.org/docs/latest/graphx-programming-guide.html): processing graphs
-- [ ] [Structured Streaming](https://spark.apache.org/docs/latest/structured-streaming-programming-guide.html): processing structured data streams with relation queries (using Datasets and DataFrames, newer API than DStreams)
+
 - [ ] Spark Streaming: processing data streams using DStreams (old API)
 - [ ] [Spark Security](https://spark.apache.org/docs/latest/security.html)
