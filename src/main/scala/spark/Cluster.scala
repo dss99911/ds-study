@@ -39,30 +39,6 @@ object Cluster {
   }
 
   /**
-   * androidId별로 accumulation하고 싶을 때,
-   * rdd변환 후,
-   * groupby androidId를 한 다음에
-   * map해서 Iterable을 가지고 처리 후, 결과 transaction을 변환 하면됨.
-   *
-   * 그게 아니면,
-   * job을 androidId별로 호출하고,
-   * 각 androidId별로, repartition(1)을해서, rkr androidId별로 worker node가 하나가 되도록 처리
-   *
-   */
-
-  def processList() = {
-    import spark.implicits._
-    Read.getListDataFrame()
-      .map(r => Tuple2(r.getString(0), r.getString(1)))
-      .rdd
-      .groupBy((tuple: (String, String)) => tuple._1)
-      .flatMap((tuple: (String, Iterable[(String, String)])) => {
-        //do something
-        ""
-      })
-  }
-
-  /**
    * This is not recommended. able to handle multiple job on each worker node
    */
   def processMultipleJob(args: Array[String]): Unit = {

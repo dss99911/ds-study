@@ -13,6 +13,11 @@ import org.apache.spark.sql.SparkSession
  * join시 특정 shuffle을 방지하는 목적이라고 함..
  *
  * shuffle 방지 목적
+ *
+ * 사용 예
+ * - id로 조인하는 경우, id로 partition을 나누면 파티션이 너무 많이 만들어지고, 파티션별로 폴더가 생성된다.
+ * - 이 경우, id로 bucketing하면, sortMergeJoin등에서 shuffle이 일어나지 않는다.
+ *
  */
 class Bucketing {
   private val spark: SparkSession = SparkSessions.createSparkSession()

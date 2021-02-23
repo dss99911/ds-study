@@ -1,0 +1,4 @@
+- default partition is 200
+- beforing starting stage. save shuffle file on disk. so that, if the stage/task is failed. read the disk and try again from the stage
+  - if multiple jobs are called and used already shuffled data. spark skip the source shuffle. so, Spark UI shows skipped on this case.
+- shuffle occurred between stage.

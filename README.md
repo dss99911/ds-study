@@ -31,6 +31,7 @@ sh run.sh
 - [x] [Spark Kotlin](https://blog.jetbrains.com/kotlin/2020/08/introducing-kotlin-for-apache-spark-preview/)
 - [ ] [Configuration](https://spark.apache.org/docs/latest/configuration.html): customize Spark via its configuration system
 - [X] [Job Scheduling](study/job-scheduling.md)
+- [x] [Shuffle](study/shuffle.md)
 - [ ] Security: Spark security support
 - [ ] Hardware Provisioning: recommendations for cluster hardware
 - [ ] Integration with other storage systems:

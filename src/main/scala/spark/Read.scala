@@ -30,12 +30,21 @@ object Read {
     spark.read.parquet("s3://a", "s3://a1", "s3://a2")
   }
 
+  /**
+   * spark-submit할 때, 데이터베이스의 jdbc 드라이버 jar파일을 설정해야함
+   * --driver-class-path postgresql-9.4.1207.jar --jars postgresql-9.4.1207.jar
+   * @return
+   */
   def getJdbcDataFrame(): DataFrame = {
     val DB_URL, DATABASE, TABLE, USERNAME, PASSWORD = ""
 
     spark.read.format("jdbc")
       .option("url", DB_URL)
       .option("dbtable", s"$DATABASE.$TABLE")
+
+      //pushdownQuery, spark의 모든 함수를 지원하지는 못한다. 지원이 안될 경우,
+      // 데이터베이스에서 모든 데이터를 가져와서 spark내에서 처리하므로 비효율적. 이 경우, 테이블 쿼리를 직접 입력
+      .option("dbtable", s"(select distinct(value) from table_name) as table_name")
       .option("user", USERNAME)
       .option("password", PASSWORD)
       .option("driver", "com.mysql.cj.jdbc.Driver")
@@ -98,6 +107,7 @@ object Read {
       .option("multiline",true)//if data contain new line
       .option("quote", "\"")//if using multiline, this is required if text contains "
       .option("escape", "\"")//if using multiline, this is required if text contains "
+      .option("mode", "FAILFAST")//wrong format, then terminate directly. default : PERMISSIVE : null로 설정하고, _corrupt_record라는 컬럼에 기록.
       .csv("s3://hyun/aaa.csv")
   }
 
