@@ -15,6 +15,7 @@ class Performance {
    * +- *(1) Range (0, 10000000, step=1, splits=4)
    */
   Read.getParquetDataFrame().explain
+  Read.getParquetDataFrame().explain(true)
 
   /**
    * DAGScheduler

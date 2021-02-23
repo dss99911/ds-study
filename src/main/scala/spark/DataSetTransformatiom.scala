@@ -20,7 +20,7 @@ class DataSetTransformatiom {
     .selectExpr("_1.a")//타입의 특정 필드를 이런식으로 select도 가능
 
 
-  val wordCunt = text.flatMap(line => line.split(" "))
+  val wordCount = text.flatMap(line => line.split(" "))
     .groupByKey(s => identity(s)).count()
 
   //groupby한 후에, group별로 reduce로 하나로 합친다
