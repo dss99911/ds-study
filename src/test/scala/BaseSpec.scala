@@ -15,6 +15,7 @@ abstract class BaseSpec extends FlatSpec with BeforeAndAfterEach with Matchers {
     spark = SparkSession
       .builder()
       .appName("testing")
+      .config("spark.driver.host", "127.0.0.1")
       .master("local")
       .config("spark.driver.allowMultipleContexts", "false")
       .getOrCreate()
