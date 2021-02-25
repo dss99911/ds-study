@@ -1,6 +1,6 @@
 package spark
 
-import org.apache.spark.sql.functions.{approx_count_distinct, avg, collect_list, collect_set, count, countDistinct, expr, first, grouping, grouping_id, last, max, min, sum, sumDistinct, udf}
+import org.apache.spark.sql.functions.{approx_count_distinct, avg, col, collect_list, collect_set, count, countDistinct, expr, first, grouping, grouping_id, last, max, min, struct, sum, sumDistinct, udf}
 import org.apache.spark.sql.types.IntegerType
 import org.apache.spark.sql.{DataFrame, Row, SparkSession}
 import spark.Read.Person
@@ -35,10 +35,12 @@ class AggregationAndGrouping {
 
   def makeListPerGroup = {
     //agg to list and map. change it to data set
-    (1 to 100).toDF()
-      .withColumn("ten", ($"value"/10).cast(IntegerType))
+    val numDF = (1 to 100).toDF()
+      .withColumn("ten", ($"value" / 10).cast(IntegerType))
+    numDF
       .groupBy("ten")
       .agg(collect_list("value").as("list"))
+      .agg(collect_list(struct(numDF.columns.map(col):_*)).as("all_list"))//make all column as list
       .map(r => r.getAs[List[Int]]("list").sum)
       .show(100)
 

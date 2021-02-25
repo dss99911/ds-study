@@ -64,6 +64,7 @@ object Lists {
 
   //convert list to varargs. list: _*
   val folders = Seq((1 to 59).map(n => s"""$n"""): _*)
+//  nums4 :+ 1: _* // if want to merge list and make varagrs
 
   nums.foldLeft("Start : ")((d, v) => d + v + ", ")//Start : 0 ~ 10
 
