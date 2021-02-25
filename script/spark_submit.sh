@@ -8,6 +8,9 @@ DATA=$2
 
 /usr/lib/spark/bin/spark-submit \
 --properties-file ${PROPERTIES_FILE} \
---class com.MainClass
---driver-java-options "-Dconfig.resource=hyun.conf"
+--class com.MainClass \
+--master "master-url" \
+--deploy-mode "deploy-mode" \
+--conf key=value \
+--driver-java-options "-Dconfig.resource=application-dev.conf" \
 ${EXEC_JAR} "${DT}" "${DATA}"
