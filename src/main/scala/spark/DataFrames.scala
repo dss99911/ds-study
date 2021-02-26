@@ -50,6 +50,9 @@ class DataFrames {
       .withColumn("transactionAt", ($"transactionAt" / 1000).cast(TimestampType)) //change long to timestamp
       .withColumn("transactionAt", $"transactionAt".cast(LongType)) //change timestamp to long
       .withColumn("transactionAt", from_utc_timestamp(($"transactionAt" / 1000).cast(TimestampType), "+05:30")) //change long to timestame with india zone
+      .withColumn("transactionAt", date_format(current_timestamp(),"yyyy MM dd"))
+
+
   }
 
   def whenOther() = {
@@ -145,5 +148,13 @@ class DataFrames {
     //union should have same columns.
     //also columns order should be same
     df.union(df2.select(df.columns.map(col(_)): _*))
+  }
+
+  def camelToUnderline() = {
+    df.columns.foldLeft(df)((d: DataFrame, colName: String) => d.withColumnRenamed(colName, camelToUnderscores(colName)))
+
+    def camelToUnderscores(name: String) = "[A-Z\\d]".r.replaceAllIn(name, {m =>
+      "_" + m.group(0).toLowerCase()
+    })
   }
 }

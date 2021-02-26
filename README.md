@@ -19,12 +19,20 @@ sh run.sh
 - [x] [Cluster Model Overview](study/cluster-model-overview.md) : overview of concepts and components when running on a cluster
 - [x] [Submitting Application](https://spark.apache.org/docs/latest/submitting-applications.html) : packaging and deploying applications
   - [ ] Amazon EC2: scripts that let you launch a cluster on EC2 in about 5 minutes
-  - [ ] Standalone Deploy Mode: simplest way to deploy Spark on a private cluster. launch a standalone cluster quickly without a third-party cluster manager
+  - [ ] [Standalone Deploy Mode](http://spark.apache.org/docs/latest/spark-standalone.html#spark-standalone-mode): simplest way to deploy Spark on a private cluster. launch a standalone cluster quickly without a third-party cluster manager
+    - 가장 가벼움.
+    - Spark외에 다른 어플리케이션 사용 불가
   - [ ] Apache Mesos: deploy a private cluster using Apache Mesos
+    - 무겁다
+    - 내고장성. 탄력적 분산 시스템을 쉽게 구성
+    - 큰 규모의 클러스터에 적합
   - [ ] Hadoop YARN: deploy Spark on top of Hadoop NextGen (YARN)
+    - HDFS를 사용하는 애플리케이션에 적합(HDFS와 강하게 결합 됩.)
+    - 클라우드 환경을 제대로 지원하지 못
   - [ ] Kubernetes: deploy Spark on top of Kubernetes
 - [x] [Understand Cluster Manager, Master, Worker node](study/understanding-cluster-manager-master-worker-node.md)
 - [x] [Understanding Job, Stage, Task](study/understanding-job-stage-task.md)
+- [Setup Cluster](study/setup-cluster.md)
 
 ## Other Documents:
 - [x] [Spark Tuning & Monitoring](study/spark-tuning-monitoring.md)
