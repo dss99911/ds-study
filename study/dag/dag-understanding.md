@@ -1,4 +1,5 @@
 # Understanding DAG
+
 - Job의 파란 블럭에 있는 이름은 작업의 이름을 의미
 - Stage에 나오는 **RDD는 작업하여 나온 객체를 의미
 
@@ -39,7 +40,8 @@
 
 ### Job No.2
 - Stage 2 is skipped. Job no.1과 동일한 작업인데, 잡이 분할 되면서 왜 여기에 다시 언급이 된거지?
-  - window 작업을 위해서, shuffle이 일어나서, 작업이 커져서 잡이 분할 된듯..?
+  - window 작업을 위해서, shuffle이 일어나서, 작업이 커져서 잡이 분할 된듯..? 
+  - skipped는 데이터가 캐시된 상태일 때, 발생한다고 함. RDD가 셔플되면, 셔플된 데이터가 저장되는데, RDD를 다시 호출하면, 저장된 데이터를 그대로 불러오고, 이때, skipped가 뜬다는 것 같음.
 - CustomShuffleReader : 다른 글에선, coalesced등 할 때, 발생하는데, plan에는 해당 정보가 보이는데, DAG Visualization에서는 안보이는 것 같음.. coalesced 외에 다른 케이스도 있나?
   - row_number() window 처리하면서 셔플이 일어난 것 같음
 - Project : select할 때 발생하는 듯..? column추가 되거나 할 때..
@@ -66,10 +68,3 @@
 - Stage 5
 ![img_10.png](img_10.png)
   
-## SQL tab
-- SQL tab shows detailed explanation of the plan
-- show 'Parsed Logical Plan'
-- show 'Analyzed Logical Plan'
-- show 'Optimized Logical Plan'
-- TODO : number of input batches: 4,477라는게 나오는데, input batches는 노드수를 말하는 건가?
-![img_11.png](img_11.png)

@@ -14,7 +14,9 @@
     - Hadoop Monitoring
         - `http://<server-url>:8088`
         - Spark monitoring과 비슷한 정보를 줌. Hadoop cluster정보에 대한 모니터링 정보도 추가로 보여주는듯..
-    - [DAG understanding](dag/dag-understanding.md)
+    - [DAG understanding](dag/dag-understanding.md) : 실제 코드
+    - [DAG understanding2](dag/dag-understanding2.md) : 책에 나오는 간단한 예제(이해하기 쉬움)
+    - [DAG SQL Tab](dag/dag-sql-tab.md)
     - Ganglia
         - 클러스터 모니터링 도구. 클러스터 매니저 및 클러스터를 모니터링함
         - Spark앱이 아닌 클러스터를 모니터링.
