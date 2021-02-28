@@ -22,7 +22,7 @@
         - Spark앱이 아닌 클러스터를 모니터링.
         - `http://<server-url>/ganglia`
 
-# Performamce
+# Performance
 - [ ] [Tuning Guide](https://spark.apache.org/docs/latest/tuning.html): best practices to optimize performance and memory use
    - [Kryo serialization](https://spark.apache.org/docs/latest/tuning.html#data-serialization)
     - prefer arrays of objects, and primitive types, instead of the standard Java or Scala collection classes.
@@ -33,3 +33,53 @@
     - [ ] [How Data Partitioning in Spark helps achieve more parallelism?](https://www.dezyre.com/article/how-data-partitioning-in-spark-helps-achieve-more-parallelism/297#:~:text=Having%20too%20large%20a%20number,or%20no%20data%20at%20all.)
     - [ ] [Apache Spark Partitioning](https://medium.com/@adrianchang/apache-spark-partitioning-e9faab369d14)
 - [ ] [Adaptive Query Execution: Speeding Up Spark SQL at Runtime](https://databricks.com/blog/2020/05/29/adaptive-query-execution-speeding-up-spark-sql-at-runtime.html)
+
+
+# Performance Advice
+- " "또는 "EMPTY" 보다는 null을 쓰는게 좋음. null은 spark가 데이터가 없다는 걸 인지해서, 최적화된 처리 방법을 찾을 수 있음
+
+##Slow Task
+- 다른 테스크는 빨리 처리되는데, 몇몇 테스크만 엄청 오래 걸리는 경우
+- 데이터가 파티션별로 치우쳐있는지 확인한다.
+- partition수를 늘리는 걸 고려
+- 메모리 늘리기
+- 머신자체를 확인하기(ganglia등으로 확인?). 머신 내에 저장소 꽉찬 경우가 있을 수 있음
+- Dataset을 사용할 경우, 가비지 콜렉션이 많은 시간을 차지 하지는 않는지 확인한다.
+
+##Aggregation
+- 파티션 수가 충분한지, 더 늘려야 하지 않는지 체크
+- 데이터가 많은 노드가 있는 경우, 익스큐터의 가용 메모리를 늘리면 좀더 빨라질 수 있음
+- 데이터 불균형은 없는지 확인(aggregation후에도 속도가 느림) -> repartition
+- collect_list/set 등은 가급적 피하기. 드라이버 노드로 데이터를 이동시킨다고함
+- 집계연산은, 공통키와 관련된 많은 데이터를 메모리에 적재 한다고 한다. 각 worker node가 해당 공통키 데이터를 전부 가지고 있어서, 파티셔닝 및 join등을 할 때, shuffle을 해야 할지, 아니면, node내부에서 처리할지 알 수 있는 건가?
+    - 만약 그렇다면, 공통 키의 데이터가 크면(id로 파티션 분할 하는 등), 작업이 엄청 느려질 수도 있을 듯..
+
+##Join
+- Join시 broadcast join이 가능한 사이즈인지 확인(보통 spark가 자동으로 결정하지만, 통계 수집이 되 있는 경우만 가능하므로, 강제로 broadcast를 사용하거나, 통계 수집 명령을 내려야 한다고 함)
+- prejoin partitioning 기법 고려(TODO 뭔지 확인하기. join할 두 테이블을 동일하게 파티셔닝해서, 셔플이 일어나지 않게 하는건가?)
+- 데이터 치우침이 없는지 체크
+
+##Out Of Memory
+- 발생 위치가 드라이버인지 익스큐터인지 확인하기
+- OutOfMemoryError 또는 가비지 컬렉션 관련 메시지 출력됨
+- 명령이 장시간 실행되거나, 실행되지 않음. 반응이 거의 없음
+- 드라이버 JVM 메모리 사용량이 많음
+- collect등 드라이버에 대용량 데이터가 모이는 경우가 있는지 확
+- broadcast하기에 큰 용량을 broadcast한 경우
+- 장시간 실행도는 애플리케이션은 object가 반환이 안되는 경우, 많은 object를 가지고 있어서 발생할 수 있음 (jmap등의 힙 메모리의 히스토그램을 확인하는 도구 사용하여, 가장 많이 생성된 class명 확)
+- 메모리, 익스큐터 증가시키기
+- 적은 양의 데이터를 가지고 호출해보기. 적은 양의 데이터에서도 그러면, 데이터가 많아서 생기는 문제가 아님
+- 파이썬 데이터 변환에 따른 문제임인지 확인  
+- 노트북등 SparkContext를 공유하는 경우, 드라이버 노드로 대용량 데이터를 가져와서 출력하는 것을 막아야 함(그래서, 제플린에서 출력 제한이 있는 듯)
+- 데이터가 치우쳐져있진 않은지 확인
+- RDD, Dataset, UDF가 문제를 야기할 가능성이 큼인
+
+##Out of disk
+- 공간 늘리기
+- 애플리케이션 처리 중 데이터 치우침이 없는지 확인
+- 스파크 설정 변경 (로그 유지 기간 등)
+- 문제가 된 노드의 로그파일,셔플파일등 수동 제거(임시 처리)
+
+##널이 있는 데이터
+- 잘 작동하다가 작동을 안하거나, 일부 데이터가 없다.
+- 어큐뮬레이터로, 특정 데이터 타입의 수를 확인한다.

@@ -34,7 +34,17 @@ class AggregationAndGrouping {
   }
 
   def makeListPerGroup = {
+    //if you want to handle list by groups which is handled by each partition.
+    //this may be best way to handle.
+    //other ways may not be handled by each node per group.
+    df.repartition($"name")
+      .mapPartitions((rows: Iterator[Row]) =>
+        rows.map(_.getAs[String](0))
+      )
+
+
     //agg to list and map. change it to data set
+    //WARNING : collect_list, collect_set bring data to driver node. so, it can make slow
     val numDF = (1 to 100).toDF()
       .withColumn("ten", ($"value" / 10).cast(IntegerType))
     numDF
@@ -58,11 +68,6 @@ class AggregationAndGrouping {
     df.as[Person]
       .groupByKey(_.name)
       .mapGroups(someFunction)//able to use function name directly.
-
-    df.repartition($"name")
-      .mapPartitions((rows: Iterator[Row]) =>
-        rows.map(_.getAs[String](0))
-      )
 
     //agg to list and convert list by udf.
     // - able to keep Dataframe
