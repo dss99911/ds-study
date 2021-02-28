@@ -21,8 +21,8 @@ class Sqls {
 
     /**
      * hive metastore에 table을 만들고, table과 실제 데이터의 path와 연결시킴.
+     * link파일처럼 연결만 시켜주는 역할. 그래서 삭제 해도, 실제 데이터에 영향을 미치지 않음
      */
-    //todo what is external meaning?
     val createStmt =s"""CREATE EXTERNAL TABLE ${tableName}
                  (
                     ${col_definition}
@@ -41,19 +41,19 @@ class Sqls {
     spark.catalog.refreshTable("my_table")
 
     //테이블과 관련된 모든 캐싱항목을 갱신한다고 함.
-    //todo 어떤 캐싱을 말하는 거고, 어떤 케이스인지 잘 모르겠음
+    //todo REFRESH table table_name 테이블과 관련된 모든 캐싱항목을 갱신한다고 함. 테이블 스키마 변경시에만 해당 되는건지? 아니면, 파티션 추가시에도? 그리고, spark에서 스키마 변경시에도 카탈로그에서 알 수 없으므로 refresh가 필요할 것 같은데, 캐싱을 하는 레벨은 카탈로그인 글루에서 하는건지? 아니면 스파크 어플리케이션? 아니면 sql쿼리는 아테나를 통해서 하니 아테나? 하이브는 여기서 무슨 역할을 하는거지?
     spark.sql("REFRESH table table_name")
 
     //수동으로 신규파티션을 만들 경우, 테이블을 수리해야 한다고 함.
     //그런데, spark를 통해서 신규 파티션을 만들 경우에는 필요 없지 않을까?
     //읽는 관점에서는 다른곳에서 spark로 신규 파티션을 만든 경우도 수동으로 신규파티션을 만든 걸로 이해해야하나?
-    //todo 다른 곳에서 spark로 신규 파티션을 만든 경우, 파티션이 자동 갱신되는지 확인 필요
-    // 외부 테이블의 경우, drop table을 해도, 해당 table은 삭제되지 않고, 다만 해당 데이터를 table명으로 참조를 못한다고..
+    //todo MSCK REPAIR TABLE table_name (위와 비슷한 질문임) 수동으로 신규파티션을 만들경우 필요하다고 하는데, 스키마는 글루에서 관리되고 있고, 그러면, spark로 신규 파티션을 추가한 경우에는, 글루에서 신규 파티션이 추가됐는지 모르므로, 신규 파티션 추가될 때마다, 글루에서 알 수 있게 하기 위해 호출해주는 것인지? 글루는 하이브와 어떤 관계인지?
     spark.sql("MSCK REPAIR TABLE table_name")
   }
 
   /**
    * todo check the difference between 'stored' 'using' phrase
+   *  Athena를 통해 create table할 때, using과 stored가 있는데, stored는 external using은 실제 데이터를 가진 테이블을 만드는 건지?
    * @return
    */
   def usingPhrase() = {

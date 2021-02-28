@@ -45,7 +45,7 @@ class AggregationAndGrouping {
       .show(100)
 
     //the approach above use driver program, the below handle list on distributed processing
-    //todo we have to consider partition as well. group by object's field may not be efficient. because it may cause full shuffle
+    //we have to consider partition as well. group by object's field may not be efficient. because it may cause full shuffle
     def someFunction(name: String, persons: Iterator[Person]) = {
       "???"
     }

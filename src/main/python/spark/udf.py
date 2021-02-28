@@ -51,5 +51,5 @@ diffRatioSchema = StructType([ \
 
 getSentenceDiffRatioUDF = udf(lambda x,y: getSentenceDiffRatio(x,y), diffRatioSchema)
 
-spark = SparkSession.builder.appName("acs_tx_extractor").getOrCreate() # todo is this working?
+spark = SparkSession.builder.appName("acs_tx_extractor").getOrCreate()
 spark.udf.register('getSentenceDiffRatioUDF',getSentenceDiffRatio,diffRatioSchema)

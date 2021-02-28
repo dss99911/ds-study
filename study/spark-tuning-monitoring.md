@@ -15,6 +15,10 @@
         - `http://<server-url>:8088`
         - Spark monitoring과 비슷한 정보를 줌. Hadoop cluster정보에 대한 모니터링 정보도 추가로 보여주는듯..
     - [DAG understanding](dag/dag-understanding.md)
+    - Ganglia
+        - 클러스터 모니터링 도구. 클러스터 매니저 및 클러스터를 모니터링함
+        - Spark앱이 아닌 클러스터를 모니터링.
+        - `http://<server-url>/ganglia`
 
 # Performamce
 - [ ] [Tuning Guide](https://spark.apache.org/docs/latest/tuning.html): best practices to optimize performance and memory use

@@ -65,3 +65,11 @@
 ![img_5.png](img_5.png)
 - Stage 5
 ![img_10.png](img_10.png)
+  
+## SQL tab
+- SQL tab shows detailed explanation of the plan
+- show 'Parsed Logical Plan'
+- show 'Analyzed Logical Plan'
+- show 'Optimized Logical Plan'
+- TODO : number of input batches: 4,477라는게 나오는데, input batches는 노드수를 말하는 건가?
+![img_11.png](img_11.png)
