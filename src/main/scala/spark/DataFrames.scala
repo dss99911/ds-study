@@ -53,6 +53,7 @@ class DataFrames {
 
   def dedup() = {
     val s = Read.getParquetDataFrame()
+    //만약 partition이 어느정도 나눠져 있다면(aid-prefix로 나눠져 있는 등), 셔플 없이, dedup이 빠르게 처리됨.
     s.dropDuplicates(Seq("aid", "mrt", "msg"))
   }
 

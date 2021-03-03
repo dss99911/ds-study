@@ -87,7 +87,22 @@ class Sqls {
 
   def showTableInfo() = {
     spark.sql("DESCRIBE TABLE some_table")
+    spark.sql("DESC TABLE some_table")
     spark.sql("SHOW PARTITIONS some_table")//shows partition info
+
+    spark.sql("DESCRIBE EXTENDED table_name")
+    /*
+Type	EXTERNAL
+Provider	hive
+Statistics	43357165203 bytes, 126496099 rows
+Location	s3://linked_path
+Serde Library	org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe
+InputFormat	org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat
+OutputFormat	org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat
+Storage Properties	[serialization.format=1]
+Partition Provider	Catalog
+
+     */
   }
 
   /**
@@ -114,6 +129,7 @@ class Sqls {
         |select *, (select max(count) from flights) as maximum from flights
         |""".stripMargin)
   }
+
 }
 
 

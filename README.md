@@ -59,6 +59,9 @@ sh run.sh
 - [x] [Scala](https://github.com/apache/spark/tree/master/examples/src/main/scala/org/apache/spark/examples)
 - [x] [Python](https://github.com/apache/spark/tree/master/examples/src/main/python)
 
+## Books
+- [x] Spark The Definitive Guide
+
 ## Later
 - [ ] [UnitTest](https://spark.apache.org/docs/latest/rdd-programming-guide.html#unit-testing)
 - [ ] [MLlib](https://spark.apache.org/docs/latest/ml-guide.html): applying machine learning algorithms

@@ -61,7 +61,7 @@ class Rdds {
   df.rdd.mapPartitionsWithIndex((i: Int, rows: Iterator[Row]) => Seq(s"parition number : $i, rows $rows").toIterator)
 
 
-  //사용자 정의 파티셔닝
+  //사용자 정의 파티셔닝 : 객체는 파티션 분할을 어떻게 해야 될지, 애매하다. 파티션을 어떻게 구분해야 되는지 직접 정의하는 것
   df.rdd.keyBy(_.getInt(0)).partitionBy(new HashPartitioner(10))
   class CustomPartitioner extends Partitioner {
     override def numPartitions: Int = 3
