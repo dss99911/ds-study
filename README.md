@@ -65,7 +65,9 @@ sh run.sh
 ## Later
 - [ ] [UnitTest](https://spark.apache.org/docs/latest/rdd-programming-guide.html#unit-testing)
 - [ ] [MLlib](https://spark.apache.org/docs/latest/ml-guide.html): applying machine learning algorithms
+    - [ ] Spark NLP
 - [ ] [GraphX](https://spark.apache.org/docs/latest/graphx-programming-guide.html): processing graphs
+
 
 - [ ] Spark Streaming: processing data streams using DStreams (old API)
 - [ ] [Spark Security](https://spark.apache.org/docs/latest/security.html)
