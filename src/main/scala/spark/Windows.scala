@@ -2,7 +2,7 @@ package spark
 
 import org.apache.spark.sql.{DataFrame, SparkSession}
 import org.apache.spark.sql.expressions.Window
-import org.apache.spark.sql.functions.{dense_rank, rank, row_number, window}
+import org.apache.spark.sql.functions.{dense_rank, nth_value, rank, row_number, window}
 import org.apache.spark.sql.types.TimestampType
 
 /**
@@ -35,6 +35,7 @@ class Windows {
     row_number()//frame내에서 순서(공통된 값이 있어도, 정렬된 순서에 따라 숫자가 정해짐
     rank()//공동1등이 있으면, 둘다 1이 되고, 그 다음은 3임.
     dense_rank()//공통1등이 있으면, 둘다 1이 되고, 그 다음은 2임.
+    nth_value($"col_name", 5)//window에서 몇번째 row
   }
 
   def getFirstRowOfGroup() = {

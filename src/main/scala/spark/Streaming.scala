@@ -1,12 +1,15 @@
 package spark
 
+import org.apache.spark.sql.functions.window
 import org.apache.spark.sql.{ForeachWriter, SparkSession}
-import org.apache.spark.sql.streaming.OutputMode
+import org.apache.spark.sql.streaming.{OutputMode, Trigger}
+
+import java.util.concurrent.TimeUnit
 
 /**
  * Source : 입력 스트림
  * Sink : 출력 스트
- * Trigger : 데이터를 싱크로 출력하는 시점
+ * Trigger : 데이터를 싱크로 출력하는 시점 제어
  */
 class Streaming {
 
@@ -129,6 +132,23 @@ class Streaming {
       .start()
 
     activityQuery.awaitTermination()
+  }
+
+  def useTrigger(spark: SparkSession) = {
+    //ProcessingTime : write periodically
+    readFromJson(spark).writeStream.trigger(Trigger.ProcessingTime("5 seconds"))
+    readFromJson(spark).writeStream.trigger(Trigger.ProcessingTime(1, TimeUnit.DAYS))
+
+    //todo 배치와 차이점을 잘 모르겠음. 처리된 모든 입력파일과 연산과정의 상태 정보를 알 수 있다고 하는데?
+    readFromJson(spark).writeStream.trigger(Trigger.Once())
+  }
+
+  def dropDuplicate(spark: SparkSession) = {
+    readFromJson(spark)
+      .withWatermark("event_time", "5 hours")//without watermark. all data is kept on memory when using groupBy
+      .dropDuplicates("user", "event_time")
+      .groupBy("user")
+      .count()
   }
 
   def size() = {

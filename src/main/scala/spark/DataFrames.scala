@@ -102,6 +102,11 @@ class DataFrames {
     //union should have same columns.
     //also columns order should be same
     df.union(df2.select(df.columns.map(col(_)): _*))
+
+    //no need same order. just name should be same
+    df.unionByName(df2)
+    //no need same order. if other dataframe contains columns which not exist on other dataframe. the columns' value is null
+    df.unionByName(df2, true)
   }
 
   def camelToUnderline() = {
@@ -110,5 +115,10 @@ class DataFrames {
     def camelToUnderscores(name: String) = "[A-Z\\d]".r.replaceAllIn(name, {m =>
       "_" + m.group(0).toLowerCase()
     })
+  }
+
+  def findFunctions() = {
+    //check functions on the package of the below
+    org.apache.spark.sql.functions
   }
 }

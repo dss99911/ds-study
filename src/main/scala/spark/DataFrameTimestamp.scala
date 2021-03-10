@@ -12,7 +12,7 @@ class DataFrameTimestamp {
   private val df: DataFrame = Read.getParquetDataFrame()
 
   df
-    .withColumn("date", ($"date" / 1000).cast(TimestampType)) // long to Timestamp
+    .withColumn("date", ($"date" / 1000).cast(TimestampType)) // ms long to Timestamp
     .withColumn("date", when($"age" === lit(1), "it's 1").otherwise("no 1"))
     .withColumn("transactionAt", ($"transactionAt" / 1000).cast(TimestampType)) //change long to timestamp
     .withColumn("transactionAt", $"transactionAt".cast(LongType)) //change timestamp to long

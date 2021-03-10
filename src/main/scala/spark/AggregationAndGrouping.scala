@@ -1,6 +1,6 @@
 package spark
 
-import org.apache.spark.sql.functions.{approx_count_distinct, avg, col, collect_list, collect_set, count, countDistinct, expr, first, grouping, grouping_id, last, max, min, struct, sum, sumDistinct, udf}
+import org.apache.spark.sql.functions.{approx_count_distinct, avg, col, collect_list, collect_set, count, countDistinct, expr, first, grouping, grouping_id, last, max, min, struct, sum, sumDistinct, udf, when}
 import org.apache.spark.sql.types.IntegerType
 import org.apache.spark.sql.{DataFrame, Row, SparkSession}
 import spark.Read.Person
@@ -30,6 +30,7 @@ class AggregationAndGrouping {
     df.agg(collect_set("value").as("set"))
     df.agg(count("value").as("count"), expr("count(value)").as("count2"))
     df.agg("value" -> "avg", "value" -> "count")//column -> agg method name
+    df.agg(sum(when($"result" === "SUCCESS", 1).otherwise(0)).as("success_count"))//sumif
 
   }
 
@@ -144,10 +145,27 @@ null	SELECT COUNT(*) FROM table
    */
 
   /**
-   * rows를 columns로 변환
+   * https://databricks.com/blog/2016/02/09/reshaping-data-with-pivot-in-apache-spark.html
+   * 특정 컬럼의 값들을 컬럼으로 변환
+   *
+   * 예1
+   * userId, date, country, quantity, price 인 테이블을
+   * date, USA_sum(quantity), KOREA_sum(quantity), USA_sum(price), KOREA_sum(price) 인 테이블로 변환(각 날짜별, 나라들의 가격 및 양의 합계)
+   * groupBy(date).pivot(country).sum() //다른 각 컬럼들의 합계.
+   *
+   * 예2
+   * userId, movie, rating 테이플을
+   * userId, movie들 컬럼(컬럼의 값은 rating) 인 테이블로 변환(유저별, 각 movie의 rating을 보여줌)
+   * groupBy(userId), pivot(movie), first(rating)
+   * 예3
+   * 트랜젝션 테이블에서, 각유저의 트랜젝션 카테고리별 aggregation 데이터를 볼때
+   * groupBy(userId).pivot(category).agg(agg1,agg2,agg3)
    */
   def pivot() = {
-    df.groupBy("date").pivot("country").sum()
+    df
+      .groupBy("date")
+      .pivot("country")
+      .sum()
     //날짜별, 나라별, 합계 테이블을 만든다
   }
 
