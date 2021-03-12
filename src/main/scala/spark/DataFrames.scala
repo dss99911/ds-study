@@ -109,12 +109,22 @@ class DataFrames {
     df.unionByName(df2, true)
   }
 
-  def camelToUnderline() = {
-    df.columns.foldLeft(df)((d: DataFrame, colName: String) => d.withColumnRenamed(colName, camelToUnderscores(colName)))
+  def underscoreToCamelDataFrame(df: DataFrame): DataFrame = {
+    def underscoreToCamel(s: String): String = {
+      val split = s.split("_")
+      val tail = split.tail.map { x => x.head.toUpper + x.tail }
+      split.head + tail.mkString
+    }
 
-    def camelToUnderscores(name: String) = "[A-Z\\d]".r.replaceAllIn(name, {m =>
+    df.columns.foldLeft(df)((df: DataFrame, colName: String) => df.withColumnRenamed(colName, underscoreToCamel(colName)))
+  }
+
+  def camelToUnderscoresDataFrame(df: DataFrame): DataFrame = {
+    def camelToUnderscores(name: String) = "[A-Z\\d]".r.replaceAllIn(name, { m =>
       "_" + m.group(0).toLowerCase()
     })
+
+    df.columns.foldLeft(df)((df: DataFrame, colName: String) => df.withColumnRenamed(colName, camelToUnderscores(colName)))
   }
 
   def findFunctions() = {
