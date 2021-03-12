@@ -71,3 +71,6 @@ sh run.sh
 
 - [ ] Spark Streaming: processing data streams using DStreams (old API)
 - [ ] [Spark Security](https://spark.apache.org/docs/latest/security.html)
+
+## Troubleshooting
+- [Inteelij Error](intellij-error.md)
