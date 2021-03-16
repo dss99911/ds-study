@@ -49,6 +49,9 @@ sh run.sh
 - [ ] Building Spark: build Spark using the Maven system
 - [ ] Contributing to Spark
 - [ ] Third Party Projects: related third party Spark projects
+- [ ] Zeppelin add maven package
+  - `export SPARK_SUBMIT_OPTIONS="--packages com.databricks:spark-csv_2.10:1.2.0"`
+  - https://zeppelin.apache.org/docs/latest/interpreter/spark.html#1-export-spark_home
 
 ## External Resources:
 - [ ] [Mastering Apache Spark 2.0](https://mallikarjuna_g.gitbooks.io/spark/content/)
