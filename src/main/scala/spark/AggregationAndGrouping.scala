@@ -29,6 +29,7 @@ class AggregationAndGrouping {
     df.agg(collect_list("value").as("list"))
     df.agg(collect_set("value").as("set"))
     df.agg(count("value").as("count"), expr("count(value)").as("count2"))
+    df.agg(count("*").as("count"))
     df.agg("value" -> "avg", "value" -> "count")//column -> agg method name
     df.agg(sum(when($"result" === "SUCCESS", 1).otherwise(0)).as("success_count"))//sumif
 
