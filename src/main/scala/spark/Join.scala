@@ -10,6 +10,7 @@ class Join {
   def join() = {
     //joinType default is inner, check comment on joinType on join method
     //'left', 'right'
+    //'outer' : 왼쪽이나 오른쪽에 값이 없으면, null
     //'left_semi' : 오른쪽 df은 값이 존재하는지 조건 비교만하는 용도로만 쓰고, 조건이 성립하는 경우 왼쪽 df의 값만 가져온다. (교집합인데, 오른쪽 컬럼은 포함 안함)
     //'left_anti' : 왼쪽에만 존재하는 차집합. 오른쪽 컬럼은 당연히 포함안됨
     //'cross' : 교차 조인 n개와 m개의 경우, n*m개가 만들어
