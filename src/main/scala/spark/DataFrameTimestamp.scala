@@ -1,7 +1,7 @@
 package spark
 
 import org.apache.spark.sql.{DataFrame, SparkSession}
-import org.apache.spark.sql.functions.{current_date, current_timestamp, date_add, date_format, date_sub, datediff, from_utc_timestamp, lit, months_between, to_date, to_timestamp, when}
+import org.apache.spark.sql.functions.{current_date, current_timestamp, date_add, date_format, date_sub, datediff, from_utc_timestamp, lit, months_between, to_date, to_timestamp, when, window}
 import org.apache.spark.sql.types.{LongType, TimestampType}
 
 class DataFrameTimestamp {
@@ -36,4 +36,8 @@ class DataFrameTimestamp {
     //compare
     .filter('date > lit("2020-11-23"))
     .filter('date > "2020-11-23")
+    //groupby
+    .groupBy(window($"date", "1 day"))
+  //    [1970-01-01 00:00:00, 1970-01-02 00:00:00]	4
+  //    [2021-02-17 00:00:00, 2021-02-18 00:00:00]	1
 }
