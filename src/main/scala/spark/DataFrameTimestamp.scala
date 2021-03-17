@@ -35,5 +35,5 @@ class DataFrameTimestamp {
     .select(months_between('date1, 'date2))
     //compare
     .filter('date > lit("2020-11-23"))
-    .filter('date > "'2020-11-23'")
+    .filter('date > "2020-11-23")
 }
