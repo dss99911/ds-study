@@ -18,6 +18,8 @@ class DataFrameTimestamp {
     .withColumn("transactionAt", from_utc_timestamp(($"transactionAt" / 1000).cast(TimestampType), "+05:30")) //change long to timestame with india zone
     //timestamp to long
     .withColumn("transactionAt", $"transactionAt".cast(LongType)) //change timestamp to long
+    //milliseconds timestamp to seconds timestamp
+    .withColumn("transactionAt", current_timestamp().cast(LongType).cast(TimestampType)) //change timestamp to long make it seconds
     //formatting to string
     .withColumn("transactionAt", date_format(current_timestamp(),"yyyy MM dd"))
     //string to timestamp
