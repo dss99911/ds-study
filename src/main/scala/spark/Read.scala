@@ -99,6 +99,7 @@ object Read {
   }
 
   def getCsv() = {
+
     //format ex) 1,abcd,"asdfsd""dd""f" ==> quote in string
     //format ex) 1,abcd,"as
     // dfsd""dd""f"  ==> two line
@@ -107,6 +108,7 @@ object Read {
       .option("multiline",true)//if data contain new line
       .option("quote", "\"")//if using multiline, this is required if text contains "
       .option("escape", "\"")//if using multiline, this is required if text contains "
+      .option("inferSchema", "true")//이걸 추론하기 위해서, 데이터를 읽고, 그로인해, csv파일 용량이 크면, action이 수행 되기 전에, dataframe을 만드는 것도 시간이 오래 걸릴 수 있음.
       .option("mode", "FAILFAST")//wrong format, then terminate directly. default : PERMISSIVE : null로 설정하고, _corrupt_record라는 컬럼에 기록.
       .csv("s3://hyun/aaa.csv")
   }

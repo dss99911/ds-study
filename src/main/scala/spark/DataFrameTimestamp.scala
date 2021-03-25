@@ -14,8 +14,8 @@ class DataFrameTimestamp {
   df
     //long to timestamp
     .withColumn("date", ($"date" / 1000).cast(TimestampType)) // ms long to Timestamp
-    //long to timestamp(change timezone)
-    .withColumn("transactionAt", from_utc_timestamp(($"transactionAt" / 1000).cast(TimestampType), "+05:30")) //change long to timestame with india zone
+    //change timezone
+    .withColumn("transactionAt", from_utc_timestamp($"transactionAt", "+05:30"))
     //timestamp to long
     .withColumn("transactionAt", $"transactionAt".cast(LongType)) //change timestamp to long
     //milliseconds timestamp to seconds timestamp
