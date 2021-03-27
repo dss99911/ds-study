@@ -15,6 +15,9 @@ libraryDependencies ++= Seq(
 
   //https://docs.scala-lang.org/getting-started/intellij-track/testing-scala-in-intellij-with-scalatest.html#conclusion
   "org.scalatest" %% "scalatest" % "3.0.8" % Test,
+
+  /*TODO delta libraries are not working for fat jar. fix it!*/
+  "io.delta" %% "delta-core" % "0.8.0",
 )
 
 //for Jackson

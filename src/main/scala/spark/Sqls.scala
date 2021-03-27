@@ -22,6 +22,8 @@ class Sqls {
     /**
      * hive metastore에 table을 만들고, table과 실제 데이터의 path와 연결시킴.
      * link파일처럼 연결만 시켜주는 역할. 그래서 삭제 해도, 실제 데이터에 영향을 미치지 않음
+     *
+     * Locationd을 입력하면, unmanaged table이라고하고, 입력안하면, managed table이라고 함.
      */
     val createStmt =s"""CREATE EXTERNAL TABLE ${tableName}
                  (
@@ -53,7 +55,11 @@ class Sqls {
 
   /**
    * todo check the difference between 'stored' 'using' phrase
-   *  Athena를 통해 create table할 때, using과 stored가 있는데, stored는 external using은 실제 데이터를 가진 테이블을 만드는 건지?
+   *  Athena를 통해 create table할 때, using과 stored가 있는데, stored는 external, using은 실제 데이터를 가진 테이블을 만드는 건지?
+   *  아래와같이 설명되어 있는데, 무슨말인지 모르겠음.
+   *  using -> using data source (https://docs.databricks.com/spark/latest/spark-sql/language-manual/sql-ref-syntax-ddl-create-table-datasource.html)
+   *  stored as -> using hive format (https://docs.databricks.com/spark/latest/spark-sql/language-manual/sql-ref-syntax-ddl-create-table-hiveformat.html)
+   *
    * @return
    */
   def usingPhrase() = {

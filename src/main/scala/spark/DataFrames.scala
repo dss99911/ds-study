@@ -19,6 +19,7 @@ class DataFrames {
     .select('age) //col() with shortest way
     .selectExpr("*") //include all original columns
     .select(col("count").alias("fail_count")) //alias
+    .select($"count" as "other_count")
     .select(lit(1).as("num")) //able to set liternal with name
     .withColumn("dt", $"key")
     .withColumn("dt", lit("dd"))
@@ -93,7 +94,8 @@ class DataFrames {
     // implicit val stringIntMapEncoder: Encoder[Map[String, Any]] = ExpressionEncoder()
 
     // row.getValuesMap[T] retrieves multiple columns at once into a Map[String, T]
-    Read.getCsv().map(teenager => teenager.getValuesMap[Any](List("name", "age"))).collect()
+    val frame = Read.getCsv()
+    frame.map(teenager => teenager.getValuesMap[Any](frame.columns)).collect()
     // Array(Map("name" -> "Justin", "age" -> 19))
   }
 

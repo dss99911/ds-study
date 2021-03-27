@@ -19,7 +19,9 @@ class Streaming {
    */
   def readFromSocket(spark: SparkSession) = {
     spark.readStream.format("socket")
-      .option("host", "localhost").option("port", 9999).load()
+      .option("host", "localhost")
+      .option("port", 9999)
+      .load()
   }
   def readFromJson(spark: SparkSession) = {
     import spark.implicits._

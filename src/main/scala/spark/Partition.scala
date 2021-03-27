@@ -19,6 +19,8 @@ class Partition {
   Read.getParquetDataFrame().rdd.getNumPartitions
 
   //save data on 1 partition
+  //파티션 갯수에 따라, 저장되는 파일 갯수가 다름
+  //한 파일당 용량이 너무 크면 안좋음
   Read.getParquetDataFrame().coalesce(1)
 
   //The repartition algorithm does a full shuffle of the data and creates equal sized partitions of data.
