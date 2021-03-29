@@ -96,7 +96,7 @@
 - 파티션 수를 줄일 때는 repartition대신 coalesce를 사용해서, 셔플을 방하기
 
 
-## Performance Tuning for data and sql
+## Performance Tuning for Athena Sql
 
 ### Partition
 partitioned table 조회 시 partition 조건을 넣어주세요!
@@ -168,6 +168,9 @@ Example :
 ```sql
 SELECT count(*) FROM lineitem WHERE regexp_like(l_comment, 'wake|regular|express|sleep|hello')
 ```
+
+## Performance tuning for Parquet
+- https://parquet.apache.org/documentation/latest/
 
 ### Compress and Split Files
 Use splittable format like Apache Parquet or Apache ORC.
