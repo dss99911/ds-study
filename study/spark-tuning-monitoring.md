@@ -93,4 +93,105 @@
 ##직접적인 성능 향상 방법
 - 병렬성을 높이기(spark.default.parallelism, spark.shuffle.partitions의 값을 클러스터 코어 수에 따라 설정(CPU코어당 2~3개 테스크 할))
 - 필터링을 최대한 먼저 하기
-- 파티션 수를 줄일 때는 repartition대신 coalesce를 사용해서, 셔플을 방하기 
+- 파티션 수를 줄일 때는 repartition대신 coalesce를 사용해서, 셔플을 방하기
+
+
+## Performance Tuning for data and sql
+
+### Partition
+partitioned table 조회 시 partition 조건을 넣어주세요!
+partitioned된 데이터의 경우 partition 조건을 통해 더 적은 리소스만 활용해 더 빠르게 결과를 받아볼 수 있다.
+
+### Approximate Functions
+100% 정확한 Unique Count가 필요한 케이스가 아니라면(추세를 보는 것으로 충분한 경우) distinct() 대신 approx_distinct()를 활용해 Approximate Unique Count를 활용할 수 있다.
+이 방식은 hash값을 활용해 전체 string값을 읽는 것보다 훨씬 적은 메모리를 활용해 훨씬 빠르게 계산할 수 있도록 해준다. 표준오차율은 2.3%.
+
+Example :
+```sql
+SELECT approx_distinct(l_comment) FROM lineitem;
+```
+
+### SELECT
+asterisk(*)를 사용한 전체 선택은 지양하고 필요한 컬럼을 지정하여 SELECT
+
+Parquet file 특성 상 컬럼별로 지정하여 원하는 컬럼만 read 하므로 불필요한 연산을 크게 줄일 수 있다.
+
+### JOIN
+Issue : Left에 작은 테이블, Right에 큰 테이블을 두면 Presto는 Right의 큰 테이블을 Worker node에 올리고 Join을 수행한다. (Presto는 join reordering을 지원하지 않음)
+
+Best Practice : Left에 큰 테이블, Right에 작은 테이블을 두면 더 작은 메모리를 사용하여 더 빠르게 쿼리할 수 있다.
+
+Example
+Dataset: 74 GB total data, uncompressed, text format, ~602M rows
+
+Query	Run time
+```sql
+SELECT count(*) FROM lineitem, part WHERE lineitem.l_partkey = part.p_partkey	//22.81 seconds
+SELECT count(*) FROM part, lineitem WHERE lineitem.l_partkey = part.p_partkey	//10.71 seconds
+```
+
+### JOIN (Big Tables)
+Issue : Presto는 Index 없이 fast full table scan 방식. Big table간 join은 아주 느리다. 따라서 AWS 가이드는 이런 류의 작업에 Athena 사용을 권장하지 않는다.
+
+Best Practice : Big Table은 ETL을 통해 pre-join된 형태로 활용하는 것이 좋다.
+
+### ORDER BY
+Issue : Presto는 모든 row의 데이터를 한 worker로 보낸 후 정렬하므로 많은 양의 메모리를 사용하며, 오랜 시간 동안 수행하다가 Fail이 나기도 함.
+
+Best Practice :
+1. LIMIT 절과 함께 ORDER BY를 사용. 개별 worker에서 sorting 및 limiting을 가능하게 해줌.
+2. ORDER BY절에 String 대신 Number로 컬럼을 지정. ORDER BY order_id 대신 ORDER BY 1
+
+Example:
+Dataset: 7.25 GB table, uncompressed, text format, ~60M rows
+
+Query	Run time
+```sql
+SELECT * FROM lineitem ORDER BY l_shipdate //528 seconds
+SELECT * FROM lineitem ORDER BY l_shipdate LIMIT 10000	//11.15 seconds
+```
+
+
+### GROUP BY
+Issue : GROUPING할 데이터를 저장한 worker node로 데이터를 보내서 해당 memory의 GROUP BY값과 비교하며 Grouping한다.
+Best Practice : GROUP BY절의 컬럼배치순서를 높은 cardinality부터 낮은 cardinality 순(unique count가 큰 순부터 낮은 순으로)으로 배치한다. 같은 의미의 값인 경우 가능하면 string 컬럼보다 number 컬럼을 활용해 GROUP BY한다.
+
+Example :
+
+```sql
+SELECT state, gender, count(*) FROM census GROUP BY state, gender;
+```
+
+### LIKE
+Issue : string 컬럼에 여러개의 like검색을 써야하는 경우 regular expression을 사용하는 것이 더 좋다.
+Example :
+```sql
+SELECT count(*) FROM lineitem WHERE regexp_like(l_comment, 'wake|regular|express|sleep|hello')
+```
+
+### Compress and Split Files
+Use splittable format like Apache Parquet or Apache ORC.
+
+BZip2, Gzip로 split해서 쓰기를 권장하며 LZO, Snappy는 권장하지 않는다. (압축효율 대비 컴퓨팅 속도를 감안)
+
+### Optimize File Size
+optimal S3 file size is between 200MB-1GB (다른데서는 512mb to 1024mb라고 함)
+
+file size가 아주 작은 경우(128MB 이하), executor engine이 S3 file을 열고, object metadata에 접근하고, directory를 리스팅하고, data transfer를 세팅하고, file header를 읽고, compression dictionary를 읽는 등의 행동을 해야하는 오버헤드로 인해 효율이 떨어지게 된다.
+
+file size가 아주 크고 splittable하지 않은 경우, query processor는 한 파일을 다 읽을때까지 대기해야 하고 이는 athena의 강력한 parallelism 기능을 활용할 수 없게 한다.
+
+Example
+
+Query	Number of files	Run time
+```sql
+SELECT count(*) FROM lineitem	7GB, 5000 files	8.4 seconds
+SELECT count(*) FROM lineitem	7GB, 1 file	2.31 seconds
+```
+
+### Join Big Tables in the ETL Layer
+Athena는 index 없이 full table scan을 사용한다. 따라서 작은 규모의 데이터를 join할 때는 아무 문제 없지만 큰 데이터를 조인할 때는 ETL을 활용해 pre-join된 형태로 활용하는 것이 좋다.
+
+### Optimize Columnar Data Store Generation
+The stripe size or block size parameter : ORC stripe size, Parquet block size는 block당 최대 row수를 의미한다. ORC는 64MB, Parquet는 128MB를 default로 가진다. 효과적인 sequential I/O를 고려하여 column block size를 정의할 것.
+
