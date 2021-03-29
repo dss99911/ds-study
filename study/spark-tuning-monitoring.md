@@ -96,7 +96,7 @@
 - 파티션 수를 줄일 때는 repartition대신 coalesce를 사용해서, 셔플을 방하기
 
 
-## Performance Tuning for Athena Sql
+## Performance Tuning for Athena(presto) Sql
 
 ### Partition
 partitioned table 조회 시 partition 조건을 넣어주세요!
