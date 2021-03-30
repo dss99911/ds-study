@@ -58,4 +58,9 @@ class Stat {
     df.select(skewness("dd"), kurtosis("dd"))
   }
 
+  def approxQuantile() = {
+      df.stat.approxQuantile("value", Array(0.25, 0.5, 0.75), 0.1)
+//    Seq(3,1,5).toDF() => 1, 3, 5 해당 값의 중위값, 25% 의 값. 등을 구하는 것, relativeError는 오차 허용 값.
+    //만약 quantile의 값에 해당 하는 row를 찾고 싶다면, 찾은 quantile 의 값으로 필터링해서, 다시 query하면 됨
+  }
 }
