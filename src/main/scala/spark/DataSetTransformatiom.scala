@@ -32,4 +32,8 @@ class DataSetTransformatiom {
 
   wordCount.collect()//make Dataset to array
 
+  //make dataset to DataFrame. need `import spark.implicits._`
+  //If use kryo, then, field is not changed to column. but it's changed to binary.
+  wordCount.toDF()
+
 }

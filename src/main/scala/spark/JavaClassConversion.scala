@@ -30,6 +30,8 @@ class JavaClassConversion {
       .readValue(r, classOf[JavaClass]))
 
   //convert java class to row
+  // schema_of_json is not recommended. as schema can be different.
+  // so, it's better to define same class on scala
     .map(r => new ObjectMapper().writeValueAsString(r))
     .toDF("json")
   frame

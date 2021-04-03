@@ -34,6 +34,12 @@ object Options {
     "Alaska",
     "99705"
   )
+
+  //if use java.lang.Double. and if it's null.
+  val d: java.lang.Double = null
+  val a = Option(d) // => Option of java.lang.Double. -> None
+  new C(Option(d)) // => Option of scala.Double -> 0.0 (automatically changed to 0
+  class C(val b: Option[Double])
 }
 
 class Address (

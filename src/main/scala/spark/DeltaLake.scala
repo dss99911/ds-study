@@ -34,6 +34,9 @@ import org.apache.spark.sql.functions.{desc, expr}
  *    - todo compact file은 작은 파일이 이미 많이 생겼을 때 하는 거 아닐까?, 아래의 두개만 잘 해도 되는 건 아닌지..?
  * - Control the shuffle partitions for writes
  * - Repartition output data before write
+ *
+ * 이슈
+ * - spark submit할 때 --packages io.delta:delta-core_2.12:0.8.0 를 호출 해줘야함.
  */
 class DeltaLake {
   val spark = SparkSession.builder.appName("BaseTransactionizer")
