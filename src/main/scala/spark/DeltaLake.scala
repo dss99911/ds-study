@@ -25,8 +25,9 @@ import org.apache.spark.sql.functions.{desc, expr}
  * - parquet으로 저장됨
  *
  * 기타
- * - convert delta table to parquet table
- * - convert parquet table to delta table
+ * - convert delta table to parquet table (https://docs.delta.io/latest/delta-utility.html#convert-a-parquet-table-to-a-delta-table)
+ * - convert parquet table to delta table (https://docs.delta.io/latest/delta-utility.html#convert-a-delta-table-to-a-parquet-table)
+ * - migration (https://docs.delta.io/latest/porting.html)
  *
  * 성능 튜닝 (https://docs.delta.io/latest/delta-update.html#performance-tuning)
  * - update, delete, upsert시의 condition에, parition key를 넣어주면, partition prune을 통해, 해당파티션에서만 체크함.
@@ -34,6 +35,7 @@ import org.apache.spark.sql.functions.{desc, expr}
  *    - todo compact file은 작은 파일이 이미 많이 생겼을 때 하는 거 아닐까?, 아래의 두개만 잘 해도 되는 건 아닌지..?
  * - Control the shuffle partitions for writes
  * - Repartition output data before write
+ * - 성능 튜닝 전/후로, 속도가 개선됐는지 체크해봐야 함.
  *
  * 이슈
  * - spark submit할 때 --packages io.delta:delta-core_2.12:0.8.0 를 호출 해줘야함.
@@ -136,6 +138,17 @@ class DeltaLake {
   def generateManifestFile() = {
     val deltaTable = DeltaTable.forPath("<path-to-delta-table>")
       deltaTable.generate("symlink_format_manifest")
+
+    /**
+     * Menifest 파일은 데이터 파일(parquet)의 path 목록을 담고있다. 그러므로 INSERT, UPDATE, DELETE가 발생할 때마다 위의 명령으로 Menifest 파일을 업데이트 시켜주어야 한다.
+
+      그러나 아래의 옵션을 먹여 놓으면 자동으로 Menifest를 자동으로 업데이트 해준다.
+
+Incremental하게 업데이트하므로 write overhead는 적지만, 반대로 다른 파티션이 stale하다면 자동 업데이트를 켜도 고쳐주지 않는다.
+그래서 databricks는 자동 업데이트를 켠 후 곧바로, 명시적으로 GENERATE 명령을 해주는 것을 권고한다.
+     */
+    spark.sql("ALTER TABLE delta.`s3://delta-file-path` SET TBLPROPERTIES(delta.compatibility.symlinkFormatManifest.enabled=true)")
+    DeltaTable.forPath("s3://delta-file-path").generate("symlink_format_manifest")
   }
 
   /**
