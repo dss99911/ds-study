@@ -1,5 +1,6 @@
 #!/bin/sh
 
+# this is default conf file path.
 export PROPERTIES_FILE="/etc/spark/conf/spark-defaults.conf"
 export EXEC_JAR="s3://some.jar"
 

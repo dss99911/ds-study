@@ -25,4 +25,11 @@ class DataFrameConvert {
       )
   }
 
+  def whenValueNull() = {
+    df.map { r =>
+      val a = Option(r.getAs[String]("some"))
+      a
+    }
+  }
+
 }

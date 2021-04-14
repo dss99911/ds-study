@@ -13,6 +13,7 @@ class DataFrameFilter {
   df
     .filter(col("age") > 20)
     .filter('age =!= 1) //!=
+    .filter('a.eqNullSafe('b)) // 둘다 널인 경우, === 는 false임
     .na.drop(Seq("name")) //drop null rows if name column is null
     .na.drop("any") //drop row if any columns are null
     .na.drop("all", Seq("age", "name")) //drop row if all columns are null

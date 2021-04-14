@@ -1,7 +1,9 @@
 import org.scalatest._
-import org.apache.spark.sql.{SparkSession, SQLImplicits, SQLContext}
+import org.apache.spark.sql.{SQLContext, SQLImplicits, SparkSession}
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should
 
-abstract class BaseSpec extends FlatSpec with BeforeAndAfterEach with Matchers {
+abstract class BaseSpec extends AnyFlatSpec with BeforeAndAfterEach with should.Matchers {
   var spark: SparkSession = _
 
   object testImplicits extends SQLImplicits with Serializable {

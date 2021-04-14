@@ -33,6 +33,7 @@ sh run.sh
 - [x] [Understand Cluster Manager, Master, Worker node](study/understanding-cluster-manager-master-worker-node.md)
 - [x] [Understanding Job, Stage, Task](study/understanding-job-stage-task.md)
 - [Setup Cluster](study/setup-cluster.md)
+- [Zeppelin Guide](study/zeppelin.md)
 
 ## Other Documents:
 - [x] [Spark Tuning & Monitoring](study/spark-tuning-monitoring.md)

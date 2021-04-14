@@ -1,6 +1,6 @@
-import org.scalatest.FunSuite
+import org.scalatest.funsuite.AnyFunSuite
 
-class ForTestTest extends FunSuite {
+class ForTestTest extends AnyFunSuite {
   test("CubeCalculator.cube") {
     assert(1 == 1)
   }
