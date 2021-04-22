@@ -32,10 +32,20 @@ import org.apache.spark.sql.functions.{desc, expr}
  * 성능 튜닝 (https://docs.delta.io/latest/delta-update.html#performance-tuning)
  * - update, delete, upsert시의 condition에, parition key를 넣어주면, partition prune을 통해, 해당파티션에서만 체크함.
  * - compact files : 데이터 업데이트 할 때마다(특히 머지시.), 작은 파일들이 많이 생성된다고함. 그래서, 큰 파일로 만들어주는 repartition 이 필요함.
- *    - todo compact file은 작은 파일이 이미 많이 생겼을 때 하는 거 아닐까?, 아래의 두개만 잘 해도 되는 건 아닌지..?
+ *    - todo compact file은 작은 파일이 이미 많이 생겼을 때 하는 거 아닐까?, 아래의 두개만 잘 해도 되는 건 아닌지..? 위에 두개를 먼저 언급한 이유는 위에게 더 중요하다는 것 같음
  * - Control the shuffle partitions for writes
  * - Repartition output data before write
+ *  - 사용해본 결과 : merge할 때 small 파일 문제는 없어지긴 하는데, 무조건 하나의 파일로 merge를 해서 파일이 무한정 커지는 문제가 있네요
  * - 성능 튜닝 전/후로, 속도가 개선됐는지 체크해봐야 함.
+ * - vaccume하는 과정과 compact files 오래 걸린다고 함.
+ * - 사용안하는 히스토리 삭제하기
+ *    - https://docs.delta.io/latest/delta-utility.html#remove-files-no-longer-referenced-by-a-delta-table
+ *    - data와 log파일이 있음
+ *    - vacuum은 data파일을 삭제하는 것.
+ *    - log파일은 자동으로 삭제돤다고 함.
+ *    - data파일을 지속적으로 유지하고 싶지 않다면, vacuum을 해주기(기본적으로 7일 보관하는데, 1일만 보관하는 식으로 처리 가능)
+ *      -delta파일을 읽는 곳에서 과거의 데이터를 읽고 있는 경우, 과거 데이터를 삭제하면, 읽는 쪽에서 에러 발생할 수 있음.
+ *      -그래서, 보관 기간을 0으로 설정하는 건 적절하지 않고, 최대 오래 걸리는 작업보다 길게 히스토리를 유지해야 함.
  *
  * 이슈
  * - spark submit할 때 --packages io.delta:delta-core_2.12:0.8.0 를 호출 해줘야함.
