@@ -42,36 +42,38 @@ class Json {
     .withColumn("data", col("parsed_data.successData.data"))
     .withColumn("name", col("parsed_data.successData.name"))
     .withColumn("place", col("parsed_data.successData.place"))
-}
 
-object Schema {
-  val jsonSchema =
-    StructType(
-      Array(
-        StructField("date", LongType),
-        StructField("errorMessage", StringType),
-        StructField("successData",
-          StructType(
-            Array(
-              StructField("place", StringType),
-              StructField("map",
-                StructType(
-                  Array(
-                    StructField("data",
-                      StructType(
-                        Array(
-                          StructField("number", DecimalType(12, 2)),
-                          StructField("name", StringType),
+  object Schema {
+    val jsonSchema =
+      StructType(
+        Array(
+          StructField("date", LongType),
+          StructField("errorMessage", StringType),
+          StructField("successData",
+            StructType(
+              Array(
+                StructField("place", StringType),
+                StructField("map",
+                  StructType(
+                    Array(
+                      StructField("data",
+                        StructType(
+                          Array(
+                            StructField("number", DecimalType(12, 2)),
+                            StructField("name", StringType),
+                          )
                         )
                       )
                     )
                   )
-                )
-              ),
-              StructField("reason", StringType)
+                ),
+                StructField("reason", StringType)
+              )
             )
           )
         )
       )
-    )
+  }
+
 }
+

@@ -16,7 +16,8 @@ object Read {
 
     //load only .parquet file. https://spark.apache.org/docs/latest/sql-data-sources-generic-options.html#path-global-filter
     spark.read.format("parquet")
-      .schema(StructTypes.sample())//set schema. for prod environment. setting schema is recommended
+      .schema(Schema.sample())//set schema. for prod environment. setting schema is recommended
+      .schema(Schema.sampleDDL())//set schema. for prod environment. setting schema is recommended
       .option("pathGlobFilter", "*.parquet") // json file should be filtered out
       .load("examples/src/main/resources/dir1")
 
@@ -74,7 +75,7 @@ object Read {
     //or
     val rows = Seq(Row(1), Row(2), Row(3))
     val rdd = spark.sparkContext.parallelize(rows)
-    spark.createDataFrame(rdd, StructTypes.sample())
+    spark.createDataFrame(rdd, Schema.sample())
   }
 
   def getListDataSet() = {

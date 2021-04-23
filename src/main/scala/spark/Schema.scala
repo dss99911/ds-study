@@ -2,7 +2,7 @@ package spark
 
 import org.apache.spark.sql.types.{LongType, Metadata, StringType, StructField, StructType}
 
-object StructTypes {
+object Schema {
   def sample() = {
     StructType(Array(
       StructField("aa", StringType, true),
@@ -10,5 +10,12 @@ object StructTypes {
     ))
   }
 
+  def sampleDDL()= {
+    "a INT, b STRING, c DOUBLE"
+  }
+
+  def getSchemaDDLString() = {
+    Read.getCsv().schema.toDDL
+  }
 
 }
