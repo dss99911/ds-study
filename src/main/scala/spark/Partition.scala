@@ -21,6 +21,9 @@ class Partition {
   //save data on 1 partition
   //파티션 갯수에 따라, 저장되는 파일 갯수가 다름
   //한 파일당 용량이 너무 크면 안좋음
+  //coalesce를 filter 후에 적용해도, filter 하기전에 하나의 파티션으로 모든 데이터를 모으게되는 사례가 있음,
+  // repartition은 filtering한 결과를 하나의 파티션으로 모은다고 함.
+  // filtering에서 제거되는 데이터가 많다면, repartition이 더 효과적일 수 있음
   Read.getParquetDataFrame().coalesce(1)
 
   //The repartition algorithm does a full shuffle of the data and creates equal sized partitions of data.
