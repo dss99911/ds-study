@@ -10,3 +10,13 @@
 
 ## log 보기
 `/var/log/zeppelin` 에 `zeppelin-interpreter-spark-hyun.kim-zeppelin-ip-10-50-7-46.log` 와 같이 유저 이름과 함께 로그가 남음.
+
+## Scheduling
+- 특정 노트를 스케줄링 하기
+https://zeppelin.apache.org/docs/0.8.0/usage/other_features/cron_scheduler.html
+- 서버가 안정적이어야 쓰기 좋을 것 같고,
+- 스케줄링 필요하면, 젠킨스에서 쓰는게 나을듯.
+
+## Interpreter Binding Mode
+https://zeppelin.apache.org/docs/0.9.0-preview1/usage/interpreter/interpreter_binding_mode.html
+- per user로 설정하면, 유저별로, 다른 노트에 있는 변수, 함수도 참조 가능함.

@@ -1,6 +1,13 @@
 import org.apache.spark.sql
 import org.apache.spark.sql.functions.col
 
+object Functions {
+  def varArgs(text: String*) = {
+
+  }
+}
+
+
 object ExtensionFunction {
   implicit class Extension(text: String) {
     def sampleText(): String = {
