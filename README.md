@@ -1,5 +1,22 @@
 # Run on local
-sh run.sh
+```shell
+sh script/run.sh
+sh script/runPyspark.sh
+```
+
+
+# Document
+- [cluster-model-overview.md](cluster-model-overview.md)
+- [job-scheduling.md](job-scheduling.md)
+- [notebook-tip.md](notebook-tip.md)
+- [pyspark.md](pyspark.md)
+- [setup-cluster.md](setup-cluster.md)
+- [shuffle.md](shuffle.md)
+- [spark-tuning-monitoring.md](spark-tuning-monitoring.md)
+- [understanding-cluster-manager-master-worker-node.md](understanding-cluster-manager-master-worker-node.md)
+- [understanding-job-stage-task.md](understanding-job-stage-task.md)
+- [zeppelin.md](zeppelin.md)
+
 
 # Spark Study
 
@@ -54,6 +71,7 @@ sh run.sh
 - [ ] Zeppelin add maven package
   - `export SPARK_SUBMIT_OPTIONS="--packages com.databricks:spark-csv_2.10:1.2.0"`
   - https://zeppelin.apache.org/docs/latest/interpreter/spark.html#1-export-spark_home
+- [ ] [Spark with Excel](https://github.com/crealytics/spark-excel)
 
 ## External Resources:
 - [ ] [Mastering Apache Spark 2.0](https://mallikarjuna_g.gitbooks.io/spark/content/)
