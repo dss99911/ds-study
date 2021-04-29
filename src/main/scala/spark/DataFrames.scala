@@ -25,7 +25,11 @@ class DataFrames {
     .withColumn("dt", lit("dd"))
     .drop($"age") //drop column
 
-  //order by
+  //Sort, order
+  //주의사항
+  // - 정렬 후에 repartition하면, 정렬이 파티션별로 섞이게됨.
+  // - repartition후에 정렬을 하면, partition갯수가 바뀔 수 있음
+  // - 파일을 하나만 만들면서, 정렬도 하고 싶다면, coalesce(1)를 하기
   patternDF
     //age asc
     .orderBy("age")

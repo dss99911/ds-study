@@ -9,6 +9,11 @@ import org.apache.spark.sql.SparkSession
  *    so, repartitioning is better for the case,
  * - decide coalesce or repartition as both as each difference. check the url
  * - Spark tries to set the number of partitions automatically based on your cluster.(so, no need to set partition normal case)
+ *
+ * 정렬 주의사항
+  - 정렬 후에 repartition하면, 정렬이 파티션별로 섞이게됨.
+  - repartition후에 정렬을 하면, partition갯수가 바뀔 수 있음
+  - 파일을 하나만 만들면서, 정렬도 하고 싶다면, coalesce(1)를 하기
  */
 class Partition {
   val spark: SparkSession = SparkSessions.createSparkSession()
@@ -22,6 +27,7 @@ class Partition {
   //파티션 갯수에 따라, 저장되는 파일 갯수가 다름
   //한 파일당 용량이 너무 크면 안좋음
   //coalesce를 filter 후에 적용해도, filter 하기전에 하나의 파티션으로 모든 데이터를 모으게되는 사례가 있음,
+  // cache를 해도 된다면, coalesce하기 전에 cache()를 하면 해결 될 수도 있음. cache할 경우, count등을 해서, cache를 저장하게 하기
   // repartition은 filtering한 결과를 하나의 파티션으로 모은다고 함.
   // filtering에서 제거되는 데이터가 많다면, repartition이 더 효과적일 수 있음
   Read.getParquetDataFrame().coalesce(1)

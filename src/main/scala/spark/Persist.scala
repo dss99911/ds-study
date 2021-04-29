@@ -17,6 +17,8 @@ import org.apache.spark.storage.StorageLevel
  * so, if you want to use the same data later, use `persist()`
  *
  * without `persist()`, if we call same DataSet multiple times, it runs multiple times as well
+ *
+ * 캐시를 사용하기 위해서, persist() 를 통해 리턴된 dataframe을 꼭 사용할 필요는 없다고함. persist()를 호출하는 dataframe을 사용해도됨.
  */
 class Persist {
   val (spark, text) = Read.getTextDataSet()
