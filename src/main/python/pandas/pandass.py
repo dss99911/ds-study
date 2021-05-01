@@ -4,6 +4,8 @@ import numpy as np
 import pandas as pd
 from datetime import date, datetime
 
+from pandas import DataFrame
+
 df = pd.DataFrame({
     'a': [1, 2, 3],
     'b': [2., 3., 4.],
@@ -12,7 +14,7 @@ df = pd.DataFrame({
     'e': [datetime(2000, 1, 1, 12, 0), datetime(2000, 1, 2, 12, 0), datetime(2000, 1, 3, 12, 0)]
 })
 df_number = pd.date_range("20130101", periods=6)
-df_number = pd.DataFrame(np.random.randn(6, 4), index=df_create_dates, columns=list("ABCD"))
+df_number = pd.DataFrame(np.random.randn(6, 4), index=pd.date_range("20130101", periods=6), columns=list("ABCD"))
 # %%
 # Self Create
 
@@ -41,6 +43,7 @@ df_create_dataframe_2 = pd.DataFrame(
 
 df_from_parquet = pd.read_parquet("path")
 df_from_csv = pd.read_csv("path")
+df_from_excel: DataFrame = pd.read_excel("path", index_col=0)
 
 # %%
 # Dataframe functions, fields
@@ -87,11 +90,17 @@ df.at[0, "a"] = 0
 df.iat[0, 1] = 0
 df.loc[:, "D"] = np.array([5] * len(df))
 df_number[df_number > 0] = -df_number # change sign of number
+
 # %%
 # Filtering
 df_filter_gt = df[df["a"] > 1]
 df_filter_isin = df[df["c"].isin(["string1", "string2"])]
 # df_filter_field = df[df > 1] # field side filtering (doesn't remove rows. just show NaN)
+
+#%%
+# Merge
+df.append(df)# appnd dataframe
+
 
 # %%
 # TODO study from https://pandas.pydata.org/docs/user_guide/10min.html#missing-data
