@@ -5,7 +5,6 @@ import org.apache.spark.sql.{Row, SparkSession}
 import org.apache.spark.sql.functions.{col, collect_list, from_json, schema_of_json, struct}
 
 import java.text.SimpleDateFormat
-import java.util
 import scala.collection.mutable
 
 /**
@@ -42,7 +41,7 @@ class JavaClassConversion {
 
   //convert list struct to java class
   import scala.collection.JavaConverters._
-  implicit val listEncoder = org.apache.spark.sql.Encoders.kryo[util.List[JavaClass]]
+  implicit val listEncoder = org.apache.spark.sql.Encoders.kryo[java.util.List[JavaClass]]
   val frame2 = (1 to 100)
     .toDF("value")
     .withColumn("ten", $"value" % 10)

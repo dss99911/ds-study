@@ -1,9 +1,11 @@
 package spark
 
-import org.apache.spark.sql.functions.{corr, covar_pop, covar_samp, kurtosis, skewness, stddev, stddev_pop, stddev_samp, var_pop, var_samp, variance}
+import org.apache.spark.sql.SparkSession
+import org.apache.spark.sql.functions._
 
-class Stat {
-  val df = Read.getCsv()
+class Statistics {
+  val df = Read.getListDataFrame()
+
   /**
    * 두 컬럼 사이의 영향도 비교
    * 공분산(covariance)
@@ -36,6 +38,26 @@ class Stat {
      */
   }
 
+  def summary(spark: SparkSession) = {
+    Read.createDataFrameByRow(spark)
+      .summary().show()
+    /*
++-------+------------------+------------------+-------+
+|summary|                aa|                bb|     bb|
++-------+------------------+------------------+-------+
+|  count|                 3|                 3|      3|
+|   mean|2.3333333333333335|3.3333333333333335|   null|
+| stddev|1.5275252316519468|1.5275252316519468|   null|
+|    min|                 1|                 2|string1|
+|    25%|                 1|                 2|   null|
+|    50%|                 2|                 3|   null|
+|    75%|                 4|                 5|   null|
+|    max|                 4|                 5|string3|
++-------+------------------+------------------+-------+
+
+     */
+  }
+
   /**
    * There is two type of standard deviation.
    * - 표본표준편차(sample standard deviation)
@@ -45,7 +67,7 @@ class Stat {
   def standardDeviation() = {
     df.select(var_pop("dd"), var_samp("dd"))
       .select(stddev_pop("dd"), stddev_samp("dd"))
-      .select(stddev("dd"), variance("dd"))//use sample standard deviation
+      .select(stddev("dd"), variance("dd")) //use sample standard deviation
   }
 
   /**
@@ -59,8 +81,23 @@ class Stat {
   }
 
   def approxQuantile() = {
-      df.stat.approxQuantile("value", Array(0.25, 0.5, 0.75), 0.1)
-//    Seq(3,1,5).toDF() => 1, 3, 5 해당 값의 중위값, 25% 의 값. 등을 구하는 것, relativeError는 오차 허용 값.
+    df.stat.approxQuantile("value", Array(0.25, 0.5, 0.75), 0.1)
+    //    Seq(3,1,5).toDF() => 1, 3, 5 해당 값의 중위값, 25% 의 값. 등을 구하는 것, relativeError는 오차 허용 값.
     //만약 quantile의 값에 해당 하는 row를 찾고 싶다면, 찾은 quantile 의 값으로 필터링해서, 다시 query하면 됨
+  }
+
+  def crosstab() = {
+    //convert 'name' as row, 'item' as column
+    df.stat.crosstab("name", "item").show()
+
+    /**
+     * +---------+----+-----+------+------+-------+
+     * |name_item|milk|bread|apples|butter|oranges|
+     * +---------+----+-----+------+------+-------+
+     * |      Bob|   6|    7|     7|     6|      7|
+     * |     Mike|   7|    6|     7|     7|      6|
+     * |    Alice|   7|    7|     6|     7|      7|
+     * +---------+----+-----+------+------+-------+
+     */
   }
 }

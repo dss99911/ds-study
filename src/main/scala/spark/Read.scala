@@ -1,5 +1,6 @@
 package spark
 
+import org.apache.spark.sql.types.{IntegerType, StringType, StructField, StructType}
 import org.apache.spark.sql.{DataFrame, Dataset, Row, SparkSession}
 
 object Read {
@@ -76,6 +77,18 @@ object Read {
     val rows = Seq(Row(1), Row(2), Row(3))
     val rdd = spark.sparkContext.parallelize(rows)
     spark.createDataFrame(rdd, Schema.sample())
+  }
+
+  def createDataFrameByRow(spark: SparkSession) = {
+    val rdd = spark.sparkContext.parallelize(Seq(Row(1, 2, "string1" ),
+      Row(2, 3, "string2" ),
+      Row(4, 5, "string3" )))
+    val struct = StructType(Array(
+      StructField("aa", IntegerType, true),
+      StructField("bb", IntegerType, false),
+      StructField("bb", StringType, false)
+    ))
+    spark.createDataFrame(rdd, struct)
   }
 
   def getListDataSet() = {

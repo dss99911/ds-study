@@ -1,6 +1,6 @@
 package spark
 
-import org.apache.spark.sql.functions.{instr, length, lit, lower, regexp_extract, regexp_replace, substring}
+import org.apache.spark.sql.functions.{concat, concat_ws, instr, length, lit, lower, regexp_extract, regexp_replace, substring}
 import org.apache.spark.sql.{DataFrame, SparkSession}
 
 class DataFrameString {
