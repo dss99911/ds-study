@@ -1,5 +1,10 @@
-## Schema autocomplete
+# Zeppelin
+
+## Ztools
 - [Ztools](https://blog.jetbrains.com/idea/2020/10/ztools-for-apache-zeppelin/)
+- Schema autocomplete
+- Variable Explorer
+-  
 
 ## Publish Paragraph result
 - https://zeppelin.apache.org/docs/0.6.1/manual/publish.html
@@ -21,3 +26,6 @@ https://zeppelin.apache.org/docs/0.8.0/usage/other_features/cron_scheduler.html
 https://zeppelin.apache.org/docs/0.9.0-preview1/usage/interpreter/interpreter_binding_mode.html
 - per user로 설정하면, 유저별로, 다른 노트에 있는 변수, 함수도 참조 가능함.
 - per user로 설정하면, 노트 내에서 interpret 재시작시, 유저별로, interpreter재시작되서, 다른 사용자에게 영향이 없음.(하지만, 노트에서 재시작해야함. interpreter세팅에서 재시작 하면, 전체 재시작)
+
+## Version control of Zeppelin
+https://zeppelin.apache.org/docs/0.8.0/setup/storage/storage.html#notebook-storage-in-github
