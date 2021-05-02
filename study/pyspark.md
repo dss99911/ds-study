@@ -6,6 +6,8 @@
 conda create -n pyspark_env
 conda activate -n pyspark_env
 pip install pyspark
+
+# setopt nonomatch # if use zsh
 pip install pyspark[sql] # install extra dependencies
 ```
 

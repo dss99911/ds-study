@@ -147,7 +147,10 @@ null	SELECT COUNT(*) FROM table
 
   /**
    * https://databricks.com/blog/2016/02/09/reshaping-data-with-pivot-in-apache-spark.html
-   * 특정 컬럼의 값들을 컬럼으로 변환
+   * 특정 컬럼의 값들을 행과 열로 변환하고, 해당 행과 열에 대한 특정 값을 보여준다.
+   * - groupBy()를 하는 컬럼의 값이 행이 되고,
+   * - pivot()를 하는 컬럼의 값이 열이 된다.
+   * - 마지막에 어떤 값을 보여줄지 정의한다 (ex: sum()). 값이 여러개면, 열에 pivot_v1, pivot_v2 같은 식으로 열에 여러개의 컬럼이 표시된다.
    *
    * 예1
    * userId, date, country, quantity, price 인 테이블을

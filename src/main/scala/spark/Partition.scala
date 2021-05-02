@@ -26,10 +26,16 @@ class Partition {
   //save data on 1 partition
   //파티션 갯수에 따라, 저장되는 파일 갯수가 다름
   //한 파일당 용량이 너무 크면 안좋음
-  //coalesce를 filter 후에 적용해도, filter 하기전에 하나의 파티션으로 모든 데이터를 모으게되는 사례가 있음,
-  // cache를 해도 된다면, coalesce하기 전에 cache()를 하면 해결 될 수도 있음. cache할 경우, count등을 해서, cache를 저장하게 하기
-  // repartition은 filtering한 결과를 하나의 파티션으로 모은다고 함.
-  // filtering에서 제거되는 데이터가 많다면, repartition이 더 효과적일 수 있음
+  //Coalesce를 하는 방식
+  // - coalesce가 셔플을 하지 않게 하는 방식이, 애초에 upstream에서부터 파티션 갯수를 고정해서 셔플을 방지하는 것
+  // - coalesce를 filter 후에 적용해도, filter 하기전에 하나의 파티션으로 데이터를 모아서 처리하여, filter가 많은 데이터를 제외 시킬 경우, 하나의 파티션에서 작업이 진행되기 때문에 속도가 느림
+  // - coalesce가 아닌 repartition을 하게되면, upstream에서는 파티션 갯수가 자유로워, 병렬 처리 후, filtering한 결과를 하나의 파티션으로 모음
+  // - filtering에서 제거되는 데이터가 많다면, repartition이 더 효과적일 수 있음
+  //정렬이되어 있는 하나의 파일 만들기
+  // - 위에서 설명했듯, repartition을 통해 성능개선이 될 수 있는데, repartition을 하게 되면, 정렬되어 있는 데이터도, 섞이게 됨.
+  // - repartition후에 다시 정렬하게 될 경우, 파티션이 여러개로 늘어남.
+  // - 그래서, cache를 해도 된다면, filter후에, cache()를하고, coalesce(1)를 통해 파티션을 하나로 고정 후, sort를 통해 정렬을 하면, 파일이 하나인 정렬된 데이터를 만들 수 있음
+  // - cache후에 , count등의 액션을 호출해서, coalesce를 호출하기 전에, 캐시에서 데이터를 가져올 수 있게 하기.
   Read.getParquetDataFrame().coalesce(1)
 
   //The repartition algorithm does a full shuffle of the data and creates equal sized partitions of data.

@@ -1,5 +1,3 @@
-# Init
-# https://pandas.pydata.org/docs/user_guide/10min.html#min
 from datetime import date, datetime
 
 import numpy as np
@@ -14,11 +12,7 @@ df = pd.DataFrame({
 })
 df_number = pd.DataFrame(np.random.randn(6, 4), index=pd.date_range("20130101", periods=6), columns=list("ABCD"))
 
-
 # %%
+# Numpy
 
-dates = pd.date_range("20130101", periods=6)
-df = pd.DataFrame(np.random.randn(6, 4), index=dates, columns=list("ABCD"))
-df1 = df.reindex(index=dates[0:4], columns=list(df.columns) + ["E"])
-
-# TODO study from https://pandas.pydata.org/docs/user_guide/10min.html#reshaping
+df_numpy = df.to_numpy()

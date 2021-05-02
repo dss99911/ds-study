@@ -1,5 +1,3 @@
-# Init
-# https://pandas.pydata.org/docs/user_guide/10min.html#min
 from datetime import date, datetime
 
 import numpy as np
@@ -13,12 +11,8 @@ df = pd.DataFrame({
     'e': [datetime(2000, 1, 1, 12, 0), datetime(2000, 1, 2, 12, 0), datetime(2000, 1, 3, 12, 0)]
 })
 df_number = pd.DataFrame(np.random.randn(6, 4), index=pd.date_range("20130101", periods=6), columns=list("ABCD"))
+df_left = pd.DataFrame({"key": ["foo", "foo"], "lval": [1, 2]})
+df_right = pd.DataFrame({"key": ["foo", "foo"], "rval": [4, 5]})
 
-
-# %%
-
-dates = pd.date_range("20130101", periods=6)
-df = pd.DataFrame(np.random.randn(6, 4), index=dates, columns=list("ABCD"))
-df1 = df.reindex(index=dates[0:4], columns=list(df.columns) + ["E"])
-
-# TODO study from https://pandas.pydata.org/docs/user_guide/10min.html#reshaping
+# %% Merge
+df_merge = pd.merge(df_left, df_right, on="key")

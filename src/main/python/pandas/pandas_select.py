@@ -1,5 +1,3 @@
-# Init
-# https://pandas.pydata.org/docs/user_guide/10min.html#min
 from datetime import date, datetime
 
 import numpy as np
@@ -14,11 +12,12 @@ df = pd.DataFrame({
 })
 df_number = pd.DataFrame(np.random.randn(6, 4), index=pd.date_range("20130101", periods=6), columns=list("ABCD"))
 
-
 # %%
+# Select
+df_select_column = df["a"]  # get index and column 'a'
+df_select_columns = df[["a", "b"]]  # get index and column 'a'
+df_select_multiple_column_by_column_index = df[0:3]
 
-dates = pd.date_range("20130101", periods=6)
-df = pd.DataFrame(np.random.randn(6, 4), index=dates, columns=list("ABCD"))
-df1 = df.reindex(index=dates[0:4], columns=list(df.columns) + ["E"])
-
-# TODO study from https://pandas.pydata.org/docs/user_guide/10min.html#reshaping
+df_select_by_filter_columns = df.filter(items=['a', 'b']) # same with df[["a", "b"]]
+df_select_by_filter_regex = df.filter(regex='[a-c]') # axis=1 is column
+df_select_by_filter_regex2 = df.filter('a') # axis=1 is column

@@ -1,5 +1,3 @@
-# Init
-# https://pandas.pydata.org/docs/user_guide/10min.html#min
 from datetime import date, datetime
 
 import numpy as np
@@ -14,11 +12,14 @@ df = pd.DataFrame({
 })
 df_number = pd.DataFrame(np.random.randn(6, 4), index=pd.date_range("20130101", periods=6), columns=list("ABCD"))
 
-
 # %%
+# Sort
 
-dates = pd.date_range("20130101", periods=6)
-df = pd.DataFrame(np.random.randn(6, 4), index=dates, columns=list("ABCD"))
-df1 = df.reindex(index=dates[0:4], columns=list(df.columns) + ["E"])
+# Sort columns
+df_sort_by_index = df.sort_index(axis=1, ascending=False)
 
-# TODO study from https://pandas.pydata.org/docs/user_guide/10min.html#reshaping
+# Sort rows
+df_sort_by_index = df.sort_index(axis=0, ascending=False)
+
+# Sort by 'b' column's value
+df_sort_by_value = df.sort_values(by="b")
