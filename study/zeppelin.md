@@ -1,5 +1,10 @@
 # Zeppelin
 
+## Install
+- https://zeppelin.apache.org/docs/0.9.0/quickstart/install.html
+- apache/zeppelin dockerhub 이미지는 [Zeppelin interpreter](https://zeppelin.apache.org/docs/0.9.0/quickstart/docker.html)를 위한 것으로, Zeppelin UI설치를 위한 것은 아닌 것 같음. (anonymous로 작동하긴 하지만, shiro authentication file을 적용하면 에러남)
+- binary로 설치하거나, 설정해야 할게 많으므로, AWS EMR cluster에 있는 zeppelin을 사용하거나 하면 좋을 듯.
+
 ## Ztools
 - [Ztools](https://blog.jetbrains.com/idea/2020/10/ztools-for-apache-zeppelin/)
 - Schema autocomplete
