@@ -29,3 +29,20 @@ https://zeppelin.apache.org/docs/0.9.0-preview1/usage/interpreter/interpreter_bi
 
 ## Version control of Zeppelin
 https://zeppelin.apache.org/docs/0.8.0/setup/storage/storage.html#notebook-storage-in-github
+
+## Authentication
+refer to [this](https://zeppelin.apache.org/docs/latest/setup/security/shiro_authentication.html#overview)
+
+- **Shiro-based** authentication for testing and informal use
+- **LDAP and Active Directory** authentication for production use
+
+### Find Shiro.ini file
+```
+find / -name shiro.ini.template
+```
+
+### copy shiro.ini file
+```shell
+cp /opt/zeppelin/conf/shiro.ini.template /opt/zeppelin/conf/shiro.ini
+```
+
