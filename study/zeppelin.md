@@ -51,3 +51,30 @@ find / -name shiro.ini.template
 cp /opt/zeppelin/conf/shiro.ini.template /opt/zeppelin/conf/shiro.ini
 ```
 
+### change users on [users] tab on shiro.ini
+
+### restart zeppelin
+- it's different depends on environment
+
+AWS EMR
+```shell
+sudo service zeppelin stop
+sudo service zeppelin start
+```
+
+## Git Repo
+https://zeppelin.apache.org/docs/0.8.0/setup/storage/storage.html
+- S3 에 저장 가능.
+
+## Sql
+input 값을 받을 수 있음. 
+- single value : `${maxAge=30}`
+- list value : ${marital=single,single|divorced|married}
+```sql
+select age, count(1) value 
+from bank 
+where age < ${maxAge=30} 
+group by age 
+order by age
+```
+

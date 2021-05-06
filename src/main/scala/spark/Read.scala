@@ -127,6 +127,18 @@ object Read {
       .csv("s3://hyun/aaa.csv")
   }
 
+  def getUrl() = {
+    import org.apache.commons.io.IOUtils
+    import java.net.URL
+    import java.nio.charset.Charset
+    val bankText = spark.sparkContext.parallelize(
+      IOUtils.toString(
+        new URL("https://s3.amazonaws.com/apache-zeppelin/tutorial/bank/bank.csv"),
+        Charset.forName("utf8")).split("\n"))
+
+    bankText.toDF("value")
+  }
+
   /**
    * https://spark.apache.org/docs/latest/sql-data-sources-generic-options.html#ignore-corrupt-files
    */
