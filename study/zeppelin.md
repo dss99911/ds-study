@@ -64,7 +64,8 @@ sudo service zeppelin start
 
 ## Git Repo
 https://zeppelin.apache.org/docs/0.8.0/setup/storage/storage.html
-- S3 에 저장 가능.
+- S3 에 저장 가능.(version control 기능 사용 불가)
+- loca git, remote git 사용 가능
 
 ## Sql
 input 값을 받을 수 있음. 
