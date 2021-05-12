@@ -26,6 +26,7 @@
 https://zeppelin.apache.org/docs/0.8.0/usage/other_features/cron_scheduler.html
 - 서버가 안정적이어야 쓰기 좋을 것 같고,
 - 스케줄링 필요하면, 젠킨스에서 쓰는게 나을듯.
+- 하지만, 간단하게 쓰고 싶다면, 괜찮을듯.
 
 ## Interpreter Binding Mode
 https://zeppelin.apache.org/docs/0.9.0-preview1/usage/interpreter/interpreter_binding_mode.html
