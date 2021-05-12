@@ -1,5 +1,7 @@
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import upper
+from pyspark.sql.functions import col, asc,desc
+
 spark = SparkSession.builder.getOrCreate()
 
 df = spark.createDataFrame([
@@ -11,3 +13,7 @@ df = spark.createDataFrame([
 df.select(df.c).show()
 df.withColumn('upper_c', upper(df.c)).show()
 df.filter(df.a == 1).show()
+
+
+# Sort
+df.sort(col("count").desc())

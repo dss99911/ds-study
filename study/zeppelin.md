@@ -15,7 +15,7 @@
 - https://zeppelin.apache.org/docs/0.6.1/manual/publish.html
 - use something like the below on markdown paragraph.
 ```html
-<iframe src="/#/notebook/2G4YMMBWU/paragraph/paragraph_1617676140706_-858949505?asIframe" width="100%"></iframe>ㅓㅐ
+<iframe src="/#/notebook/2G4YMMBWU/paragraph/paragraph_1617676140706_-858949505?asIframe" width="100%"></iframe>
 ```
 
 ## log 보기
