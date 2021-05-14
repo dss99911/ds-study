@@ -25,6 +25,7 @@ df_filter_by_index2 = df[0:1] # row[0]
 df_filter_by_index3 = df[:2] # row[0,1]
 df_filter_by_row_value = df[df['a'] > 1]
 df_filter_by_row_value2 = df[df.apply(lambda r: r['a'] > 1, axis='columns')] # axis=1 is column
+df_distinct = df.drop_duplicates()
 
 #%% Filter nan
 # https://pandas.pydata.org/docs/user_guide/10min.html#missing-data

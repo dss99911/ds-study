@@ -21,3 +21,7 @@ df_select_multiple_column_by_column_index = df[0:3]
 df_select_by_filter_columns = df.filter(items=['a', 'b']) # same with df[["a", "b"]]
 df_select_by_filter_regex = df.filter(regex='[a-c]') # axis=1 is column
 df_select_by_filter_regex2 = df.filter('a') # axis=1 is column
+
+# %%
+# New column
+df['new_column'] = df['c'].str.lower()
