@@ -80,3 +80,10 @@ group by age
 order by age
 ```
 
+## Issues
+### UI hang
+- 제플린 접속시, 노트북 정보들이 안보이고, 아무런 반응을 안함.
+    - 제플린 화면에서 job 탭을 클릭하면 s3로부터 과거의 job history와 관련된 모든 노트북을 가져오는데, 
+      이게 양이 너무 많다보니 행이 걸리는 것으로 보입니다. 
+      일단 job manager 기능을 비활성화하였습니다
+    - intellij big data tools에서 job정보를 지속적으로 갱신하거나 해서, 문제가 발새하는 것으로 추정.
