@@ -38,7 +38,8 @@ object Read {
    * @return
    */
   def getJdbcDataFrame(): DataFrame = {
-    val DB_URL, DATABASE, TABLE, USERNAME, PASSWORD = ""
+    val DB_URL = "jdbc:mysql://your-mysql-server-url.com"
+    val DATABASE, TABLE, USERNAME, PASSWORD = ""
 
     spark.read.format("jdbc")
       .option("url", DB_URL)
