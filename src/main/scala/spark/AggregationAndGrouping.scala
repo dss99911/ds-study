@@ -47,6 +47,8 @@ class AggregationAndGrouping {
 
     //agg to list and map. change it to data set
     //WARNING : collect_list, collect_set bring data to driver node. so, it can make slow
+    // collect_list를 mapPartitions으로 변환 했음에도 불구하고, 성능 개선이 되지 않은 경우가 있음.
+    // collect_list를 할 때, shuffle이 일어날테고, 그게 속도저하의 문제인듯..
     val numDF = (1 to 100).toDF()
       .withColumn("ten", ($"value" / 10).cast(IntegerType))
     numDF
