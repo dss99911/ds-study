@@ -2,7 +2,7 @@ package spark
 
 import org.apache.spark.sql.{DataFrame, SparkSession}
 import org.apache.spark.sql.expressions.Window
-import org.apache.spark.sql.functions.{dense_rank, nth_value, rank, row_number, window}
+import org.apache.spark.sql.functions.{dense_rank, max, nth_value, rank, row_number, to_date, window}
 import org.apache.spark.sql.types.TimestampType
 
 /**
@@ -48,6 +48,23 @@ class Windows {
       .write
       .mode(SaveMode.Overwrite)
       .parquet("s3://hyun/temp/test")
+  }
+
+  def aggregateColumnByGroup() = {
+    val w = Window.partitionBy("name").orderBy($"date".desc)
+    Seq(
+      ("a", "2021-05-20"),
+      ("a", "2021-05-21"),
+      ("a", "2021-05-22"),
+      ("a", "2021-05-23"),
+      ("b", "2021-04-20"),
+      ("b", "2021-04-21"),
+      ("b", "2021-04-22"),
+      ("b", "2021-04-23")
+    ).toDF("name", "date")
+      .withColumn("date", to_date($"date"))
+      .withColumn("last_time", max($"date").over(w))
+      .show()
   }
 
   def groupByDateRange() = {

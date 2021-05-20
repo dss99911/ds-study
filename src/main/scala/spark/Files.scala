@@ -10,6 +10,7 @@ object Files {
     val srcFs = FileSystem.get(srcPath.toUri(), spark.sparkContext.hadoopConfiguration)
     val dstPath = new Path(destinationPath)
     val dstFs = FileSystem.get(dstPath.toUri(), spark.sparkContext.hadoopConfiguration)
+    dstFs.delete(dstPath, true)
     FileUtil.copy(srcFs, srcPath, dstFs, dstPath, false, false, spark.sparkContext.hadoopConfiguration)
   }
 
