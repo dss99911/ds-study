@@ -26,3 +26,7 @@ s_value_counts = df_digit.value_counts()
 
 df_groupby_sum = df.groupby("A").sum() # 합산이 불가한 "B"컬럼은 제외하고 합산한다.
 df.groupby(["A", "B"]).sum()
+
+#%% Rolling
+# 해당 row 및 앞 4개 row의 평균
+df.rolling(5).mean()
