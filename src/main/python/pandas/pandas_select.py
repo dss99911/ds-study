@@ -25,3 +25,7 @@ df_select_by_filter_regex2 = df.filter('a') # axis=1 is column
 # %%
 # New column
 df['new_column'] = df['c'].str.lower()
+
+# %%
+# delete column
+del df['a']
