@@ -36,3 +36,5 @@ s_max_min_by_column = df_number.apply(lambda x: x.max() - x.min())  # 각 column
 
 # %% When Otherwise
 df['a_sign'] = np.where(df['a'] > 1, 'plus', 'minus')
+replace_fct = {1: "A", 2: 'B', 3: 'C'}
+df['a'] = df['a'].map(replace_fct)

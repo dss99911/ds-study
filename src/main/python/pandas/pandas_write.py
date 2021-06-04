@@ -21,3 +21,12 @@ def write_to_excel(df, path):
     # Exporting pandas dataframe to xlsx file
     df.to_excel(path, engine='xlsxwriter')
 write_to_excel(df, ".data.xlsx")
+
+#%%
+def to_markdown(df):
+    """
+    pip install -U tabulate
+    show markdown
+    """
+    print(df.to_markdown())
+to_markdown(df)

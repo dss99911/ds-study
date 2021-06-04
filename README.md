@@ -88,7 +88,7 @@ sh script/runPyspark.sh
 - [ ] [Spark Security](https://spark.apache.org/docs/latest/security.html)
 
 # Zeppelin
-- [Doc](study-zeppelin)
+- [Doc](study-notebook)
 
 # Machine Learning
 - [Doc](study-machinelearning)

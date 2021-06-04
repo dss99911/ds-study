@@ -29,3 +29,9 @@ df['new_column'] = df['c'].str.lower()
 # %%
 # delete column
 del df['a']
+
+# %% Rename column
+
+df_changed_columns = df.copy()
+# change whole columns
+df_changed_columns.columns = ["A", "B", "C", "D", "E"]
