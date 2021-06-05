@@ -1,8 +1,9 @@
 # Matplot
 
-## TODO
+## Study
 - [x] [Usage Guide](https://matplotlib.org/stable/tutorials/introductory/usage.html#sphx-glr-tutorials-introductory-usage-py)
-- [ ] [Tutorial](https://matplotlib.org/stable/tutorials/introductory/pyplot.html#sphx-glr-tutorials-introductory-pyplot-py)
+- [x] [Pyplot Tutorial](https://matplotlib.org/stable/tutorials/introductory/pyplot.html#sphx-glr-tutorials-introductory-pyplot-py)
+- [ ] [Sample](https://matplotlib.org/stable/tutorials/introductory/sample_plots.html#sphx-glr-tutorials-introductory-sample-plots-py)
 
 ## Figure
 - UI를 그리기 위한 전체를 참조하는 root 객체 인듯.
