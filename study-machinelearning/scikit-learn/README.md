@@ -11,3 +11,4 @@
     - Create Feature Vector
       - [ ] [Bag-of-words model](https://en.wikipedia.org/wiki/Bag-of-words_model)
       - [ ] [CountVectorizer](https://scikit-learn.org/stable/modules/generated/sklearn.feature_extraction.text.CountVectorizer.html)
+  - [ ] [BERT](https://www.analyticsvidhya.com/blog/2019/09/demystifying-bert-groundbreaking-nlp-framework/)
