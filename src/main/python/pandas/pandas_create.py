@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 
 #%% Series
+from pyspark.sql import DataFrame
 
 series_create_list = pd.Series([1, 3, 5, np.nan, 6, 8])
 series_create_list_with_column = pd.Series({'a': 1, 'b': 5, 'c': 2, 'd': 3})
@@ -36,3 +37,12 @@ df_create_dataframe_index_column = pd.DataFrame(np_dataframe_random, index=date_
 data = [['tom', 10], ['nick', 15], ['juli', 14]]
 df_create_dataframe_by_rows = pd.DataFrame(data)
 df_create_dataframe_by_rows_with_column_name = pd.DataFrame(data, columns = ['Name', 'Age'])
+
+#%% create from several np columns
+column1 = np.array([2, 3, 4])
+column2 = np.array([2, 3, 4])
+c = pd.DataFrame(np.array([column1,column2]).T, columns = ['a', 'b'])
+
+#%% create from pandas
+df: DataFrame = None
+pandas_df = df.toPandas()
