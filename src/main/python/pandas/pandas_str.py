@@ -21,3 +21,10 @@ df['new_column'] = s_lower
 
 # regex
 df["column"].str.extract(r'(^.{5})')
+
+#%% equal
+
+equals = df['new_column'] == df['new_column']
+
+#%% isin
+isin = np.isin(df['new_column'], ["a", "b"])

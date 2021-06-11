@@ -1,6 +1,6 @@
 package spark
 
-import org.apache.spark.sql.functions.{expr, lit, when}
+import org.apache.spark.sql.functions.{expr, lit, sha2, when}
 import org.apache.spark.sql.{DataFrame, SparkSession}
 
 class DataFrameConvert {
@@ -30,6 +30,10 @@ class DataFrameConvert {
       val a = Option(r.getAs[String]("some"))
       a
     }
+  }
+  def hash() = {
+    df.withColumn("hash", sha2($"a" + $"b" + $"c" + $"date".cast("string"), 256))
+
   }
 
 }

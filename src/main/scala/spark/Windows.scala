@@ -2,7 +2,7 @@ package spark
 
 import org.apache.spark.sql.{DataFrame, SparkSession}
 import org.apache.spark.sql.expressions.Window
-import org.apache.spark.sql.functions.{dense_rank, max, nth_value, rank, row_number, to_date, window}
+import org.apache.spark.sql.functions.{dense_rank, max, nth_value, rank, row_number, sum, to_date, window}
 import org.apache.spark.sql.types.TimestampType
 
 /**
@@ -78,5 +78,16 @@ class Windows {
 
     //    [1970-01-01 00:00:00, 1970-01-02 00:00:00]	4
     //    [2021-02-17 00:00:00, 2021-02-18 00:00:00]	1
+  }
+
+  def totalSumCumSum() = {
+//    val w_group = Window.partitionBy("group").orderBy($"count".desc)
+    val w_from_first_to_current = Window.partitionBy("group").orderBy($"count".desc)
+      .rowsBetween(Window.unboundedPreceding, Window.currentRow)
+
+    df
+      //todo check bug reason :if use same partitionBy column on different window. only last window is reflected.
+//      .withColumn("total_count_over_group", sum($"count").over(w_group))
+      .withColumn("cum_count_over_group", sum($"count").over(w_from_first_to_current))
   }
 }
