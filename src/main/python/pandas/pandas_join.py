@@ -20,4 +20,8 @@ df_right = pd.DataFrame({"key": ["foo", "foo"], "rval": [4, 5]})
 df_merge = pd.merge(df_left, df_right, on="key")
 
 #%% Concate
-df_concat = pd.concat([df, df]) # if same key exists, keep one only.
+df1 = df
+df2 = df
+
+#upsert
+pd.concat([df1[~df1.index.isin(df2.index)], df2])
