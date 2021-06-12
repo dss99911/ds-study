@@ -1,3 +1,5 @@
+# https://pandas.pydata.org/pandas-docs/stable/user_guide/merging.html
+
 from datetime import date, datetime
 
 import numpy as np
@@ -16,3 +18,6 @@ df_right = pd.DataFrame({"key": ["foo", "foo"], "rval": [4, 5]})
 
 # %% Merge
 df_merge = pd.merge(df_left, df_right, on="key")
+
+#%% Concate
+df_concat = pd.concat([df, df]) # if same key exists, keep one only.
