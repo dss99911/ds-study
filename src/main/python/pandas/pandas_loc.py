@@ -31,6 +31,8 @@ df_iat = df.iat[1, 1]
 
 df_reindex = df_number.reindex(index=dates[0:2], columns=list(df_number.columns) + ["E"])
 
+#find in index
+index_exists = 'g' in df.index
 # %%
 # Location Setting
 df["f"] = ["one", "one", "two"] # set a column

@@ -7,3 +7,8 @@
 
 Deep Learning
 - Tensor Flow
+
+
+# Others
+- Vertex AI(Google's AI platform)
+    - easy to use machin learning with BigQuery 

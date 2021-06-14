@@ -17,6 +17,9 @@ x_add_2 += 1
 #%% filter
 y_filter_condition = y[(y > 0) & (y < 1)]
 
+#%% where, when~otherwise
+x_where = np.where(x > 0.1, x, 0)
+
 #%% sort
 y.sort() # y is sorted.
 
