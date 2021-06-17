@@ -80,6 +80,11 @@ class Windows {
     //    [2021-02-17 00:00:00, 2021-02-18 00:00:00]	1
   }
 
+  def cumulate() = {
+    //value로 오름차순해서, 누적 합계를 보여준다.
+    df.withColumn("cum_sum", sum("value").over(Window.orderBy("value")))
+  }
+
   def totalSumCumSum() = {
 //    val w_group = Window.partitionBy("group").orderBy($"count".desc)
     val w_from_first_to_current = Window.partitionBy("group").orderBy($"count".desc)

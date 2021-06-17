@@ -1,7 +1,7 @@
 package spark
 
 import org.apache.spark.sql.DataFrame
-import org.apache.spark.sql.functions.{broadcast, col, expr}
+import org.apache.spark.sql.functions.{broadcast, col, count, expr}
 
 /**
  * join전에 dataframe을 적절히 분할하면 셔플이 계획되어 있더라도, 동일한 워커노드에 두 DataFrom의 데이터가 있다면, 셔플을 피할 수 도 있다고
@@ -30,5 +30,14 @@ class Join {
         col("s.text").alias("text"),
         s.col("id").alias("sid")
       ).where("c.status = 1")
+
+    //crossjoin 양쪽의 row를 n*m 교차해서 join함. 사용안하는 것을 권장.
+    //사용 예: DataFrame에 column을 하나 추가하고 싶은데, column을 구하기 위해 동일 DataFrame에서 호출할 경우.
+    // cache설정을 안하면, 해당 DataFrame의 처리가 두번 일어날 수 있다.
+    // 이 경우, cache를 설정해줘도 되지만 crossJoin을 설정해줘도 괜찮을 듯한다.
+    // cache가 클 경우, cache를 유지하는게 좋은지 알 수 없고. crossJoin하면, 알아서, 적절하게 처리해주지 않을까?
+    s.crossJoin(s.agg(count("*")))
+      .withColumn("proportion", col("some_value") / col("count"))
+      .drop("count")
   }
 }

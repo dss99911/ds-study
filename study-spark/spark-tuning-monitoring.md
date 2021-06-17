@@ -171,6 +171,9 @@ SELECT count(*) FROM lineitem WHERE regexp_like(l_comment, 'wake|regular|express
 
 ## Performance tuning for Parquet
 - https://parquet.apache.org/documentation/latest/
+- 각 parquet파일당 적정 파일 크기?
+- parquet, ORC format의 경우 data section별로 metadata를 보관한다. 따라서 filter(where) 조건을 잘 주면 data read를 skip할 수도 있다 -> 파티션과 별개로, 한 파일 내에서도, 데이터가 색션별로 나뉘어서, 각 색션별 각각의 컬럼의 데이터의 범위를 저장하고 있다는 얘기인지? 그래서, 파티션 키가 아니라고 하더라도, sorting을 해놓으면, sorting해놓은 값으로 필터링하게 되는 경우, 더 빠르게 필터링이 가능할 것으로 추측됨
+
 
 ### Compress and Split Files
 Use splittable format like Apache Parquet or Apache ORC.

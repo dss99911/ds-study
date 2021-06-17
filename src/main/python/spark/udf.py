@@ -1,7 +1,7 @@
 # %%
 from pyspark.sql.functions import udf
 from pyspark.sql.functions import col, asc, desc
-from pyspark.sql.types import FloatType, StructType, StringType, StructField
+from pyspark.sql.types import FloatType, StructType, StringType, StructField, DoubleType
 
 from src.main.python.spark.DataFrameRead import create_by_row
 
@@ -67,3 +67,17 @@ getSentenceDiffRatioUDF = udf(lambda x, y: getSentenceDiffRatio(x, y), diffRatio
 
 spark = SparkSession.builder.appName("acs_tx_extractor").getOrCreate()
 spark.udf.register('getSentenceDiffRatioUDF', getSentenceDiffRatio, diffRatioSchema)
+
+#%% pandas udf : pandas의 기능을 쓰고 싶을 때 쓰는듯.
+from pyspark.sql.functions import pandas_udf
+import pandas as pd
+import numpy as np
+
+def func(pdf: pd.DataFrame) -> pd.Series:
+    out = pdf.apply(lambda x: np.dot(x["target_vector"].toArray(), x["right_vector"].toArray()), axis=1)
+    return out
+
+my_udf = pandas_udf(func, returnType=DoubleType())
+
+out = spark.read.parquet("some")\
+    .select(my_udf("two_vectors").alias("cosine_similarity"))
