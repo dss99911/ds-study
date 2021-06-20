@@ -1,6 +1,6 @@
 package spark
 
-import org.apache.spark.sql.SparkSession
+import org.apache.spark.sql.{Row, SparkSession}
 import org.apache.spark.sql.functions._
 
 class Statistics {
@@ -99,5 +99,84 @@ class Statistics {
      * |    Alice|   7|    7|     6|     7|      7|
      * +---------+----+-----+------+------+-------+
      */
+  }
+
+  def correlationMatrix(spark: SparkSession) = {
+    import spark.implicits._
+    import org.apache.spark.ml.linalg.{Matrix, Vectors}
+    import org.apache.spark.ml.stat.Correlation
+    import org.apache.spark.sql.Row
+
+    //4개의 컬럼이 있는 것으로 간주한다.
+    //각 컬럼들 간의 상관계수를 구해서, matrix로 보여준다.
+    //todo sparse와 dense의 차이를 모르겠음. 단순히 컬럼 순서라고 하면, sparse를 dense로 바꿔도 값이 같아야 하는데, 같이 다름.
+    //|1.0                   0.055641488407465814  NaN  0.4004714203168137
+    //0.055641488407465814  1.0                   NaN  0.9135958615342522
+    //NaN                   NaN                   1.0  NaN
+    //0.4004714203168137    0.9135958615342522    NaN  1.0                 |
+    val data = Seq(
+      Vectors.sparse(4, Seq((0, 1.0), (3, -2.0))),
+//      Vectors.dense(0, 1, 3, -2.0),
+      Vectors.dense(4.0, 5.0, 0.0, 3.0),
+      Vectors.dense(6.0, 7.0, 0.0, 8.0),
+      Vectors.sparse(4, Seq((0, 9.0), (3, 1.0)))
+    )
+
+    val df = data.map(Tuple1.apply).toDF("features")
+    val Row(coeff1: Matrix) = Correlation.corr(df, "features").head
+    println(s"Pearson correlation matrix:\n $coeff1")
+
+    val Row(coeff2: Matrix) = Correlation.corr(df, "features", "spearman").head
+    println(s"Spearman correlation matrix:\n $coeff2")
+  }
+
+  /**
+   * 관찰된 빈도가 기대되는 빈도와 의미있게 다른지의 여부를 검정하기 위해 사용되는 검정방법이다. 자료가 빈도로 주어졌을 때, 특히 명목척도 자료의 분석에 이용
+   */
+  def chiSquareTest(spark: SparkSession) = {
+    import spark.implicits._
+    import org.apache.spark.ml.linalg.{Vector, Vectors}
+    import org.apache.spark.ml.stat.ChiSquareTest
+
+    val data = Seq(
+      (0.0, Vectors.dense(0.5, 10.0)),
+      (0.0, Vectors.dense(1.5, 20.0)),
+      (1.0, Vectors.dense(1.5, 30.0)),
+      (0.0, Vectors.dense(3.5, 30.0)),
+      (0.0, Vectors.dense(3.5, 40.0)),
+      (1.0, Vectors.dense(3.5, 40.0))
+    )
+
+    val df = data.toDF("label", "features")
+    val chi = ChiSquareTest.test(df, "features", "label").head
+    println(s"pValues = ${chi.getAs[Vector](0)}")
+    println(s"degreesOfFreedom ${chi.getSeq[Int](1).mkString("[", ",", "]")}")
+    println(s"statistics ${chi.getAs[Vector](2)}")
+  }
+
+  def summaryVector(spark: SparkSession) = {
+    import spark.implicits._
+    import org.apache.spark.ml.linalg.{Vector, Vectors}
+    import org.apache.spark.ml.stat.Summarizer._
+
+    val data = Seq(
+      (Vectors.dense(2.0, 3.0, 5.0), 1.0),
+      (Vectors.dense(4.0, 6.0, 7.0), 2.0)
+    )
+
+    val df = data.toDF("features", "weight")
+
+    val (meanVal, varianceVal) = df.select(metrics("mean", "variance")
+      .summary($"features", $"weight").as("summary"))
+      .select("summary.mean", "summary.variance")
+      .as[(Vector, Vector)]
+      .first()
+
+    println(s"with weight: mean = ${meanVal}, variance = ${varianceVal}")
+
+    val (meanVal2, varianceVal2) = df.select(mean($"features"), variance($"features"))
+      .as[(Vector, Vector)].first()
+
+    println(s"without weight: mean = ${meanVal2}, sum = ${varianceVal2}")
   }
 }

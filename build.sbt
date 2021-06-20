@@ -9,6 +9,7 @@ mainClass in (Compile, packageBin) := Some("spark.MainApp")
 libraryDependencies ++= Seq(
   "org.apache.spark" %% "spark-core" % "3.1.1" % "provided",
   "org.apache.spark" %% "spark-sql" % "3.1.1" % "provided",
+  "org.apache.spark" %% "spark-mllib" % "3.1.1" % "provided",
   "org.scalaj" %% "scalaj-http" % "2.4.2",
   "com.typesafe" % "config" % "1.4.1",
   "com.fasterxml.jackson.core" % "jackson-databind" % "2.11.3",

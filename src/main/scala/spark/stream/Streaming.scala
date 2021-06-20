@@ -1,8 +1,8 @@
-package spark
+package spark.stream
 
-import org.apache.spark.sql.functions.window
-import org.apache.spark.sql.{ForeachWriter, SparkSession}
 import org.apache.spark.sql.streaming.{OutputMode, Trigger}
+import org.apache.spark.sql.{ForeachWriter, SparkSession}
+import spark.SparkSessions
 
 import java.util.concurrent.TimeUnit
 
@@ -24,7 +24,6 @@ class Streaming {
       .load()
   }
   def readFromJson(spark: SparkSession) = {
-    import spark.implicits._
     spark.conf.set("spark.sql.shuffle.partitions", 5)//for local testing
 
     val static = spark.read.json("data/activity-data/")

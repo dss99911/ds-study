@@ -1,4 +1,4 @@
-package spark
+package spark.stream
 
 import org.apache.spark.sql.SparkSession
 
