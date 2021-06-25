@@ -18,6 +18,7 @@ class DataFrameConvert {
     .na.replace("age", Map(10 -> 20, 11 -> 21)) //이건 null과 관련 없이 값 변환
 
   def whenOther() = {
+
     df
       .withColumn("date", when($"age" === lit(1), "it's 1")
         .when($"age" === lit(1), "it's 1")

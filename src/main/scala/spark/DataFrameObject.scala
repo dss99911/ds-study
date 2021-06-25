@@ -1,7 +1,7 @@
 package spark
 
 import org.apache.spark.sql.expressions.UserDefinedFunction
-import org.apache.spark.sql.functions.{explode, typedLit, udf}
+import org.apache.spark.sql.functions.{concat_ws, explode, typedLit, udf}
 import org.apache.spark.sql.{DataFrame, Row, SparkSession}
 
 class DataFrameObject {
@@ -16,6 +16,7 @@ class DataFrameObject {
     // https://stackoverflow.com/questions/32906613/flattening-rows-in-spark
     .withColumn("exp", explode($"array")) //해당 값들을 row들로 변환한다.
     .withColumn("exp", explode($"obj.data"))
+    .withColumn("concats", concat_ws(",", $"array"))//array를 concat하여 스트링을 만듬
     .withColumn("dt", typedLit(Seq(1, 2, 3)))
 
 

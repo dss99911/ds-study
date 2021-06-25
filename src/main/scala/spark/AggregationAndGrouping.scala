@@ -32,6 +32,7 @@ class AggregationAndGrouping {
     df.agg(count("*").as("count"))
     df.agg("value" -> "avg", "value" -> "count")//column -> agg method name
     df.agg(sum(when($"result" === "SUCCESS", 1).otherwise(0)).as("success_count"))//sumif
+    df.agg(count(when($"result" === "SUCCESS", true)).as("success_count"))//countif, if not add 'otherise', then it returns null if it's not matched
 
   }
 

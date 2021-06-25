@@ -1,0 +1,2 @@
+- serving및 realtime serving시 학습을 위해서, 어떤 것을 사용해야 하늕 확인하기.
+- streaming은 실시간에 시간 지연이 좀 있다고 함.
