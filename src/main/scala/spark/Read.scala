@@ -172,6 +172,9 @@ dir1/
    */
   def readPartitionsHasDifferentColumn() = {
     //https://spark.apache.org/docs/latest/sql-data-sources-parquet.html#schema-merging
+    spark.read
+      .option("mergeSchema", "true")
+      .parquet("path")
   }
 
 }
