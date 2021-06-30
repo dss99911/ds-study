@@ -30,3 +30,9 @@ def to_markdown(df):
     """
     print(df.to_markdown())
 to_markdown(df)
+
+#%%
+def to_csv(df):
+    df.to_csv("path")
+    # append
+    df.to_csv("path", mode='a', header=False)
