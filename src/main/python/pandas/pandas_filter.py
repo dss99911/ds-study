@@ -18,6 +18,7 @@ df_has_nan.loc[dates[0] : dates[1], "E"] = 1
 
 
 df_filter_gt = df[df["a"] > 1]
+df_filter_gt2 = df[(df["a"] > 1) & (df["b"] >1)]
 df_filter_isin = df[df["c"].isin(["string1", "string2"])]
 # df_filter_field = df[df > 1] # field side filtering (doesn't remove rows. just show NaN)
 df_filter_by_index = df.filter(like='0', axis='index') # axis=0 is row

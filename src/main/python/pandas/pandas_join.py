@@ -24,4 +24,6 @@ df1 = df
 df2 = df
 
 #upsert
-pd.concat([df1[~df1.index.isin(df2.index)], df2])
+df_concat = pd.concat([df1[~df1.index.isin(df2.index)], df2])
+#just concat rows
+df_plus = pd.concat([df, df])
