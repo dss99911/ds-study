@@ -2,7 +2,7 @@ package spark
 
 import org.apache.spark.sql.{DataFrame, SparkSession}
 import org.apache.spark.sql.expressions.Window
-import org.apache.spark.sql.functions.{dense_rank, max, nth_value, rank, row_number, sum, to_date, window}
+import org.apache.spark.sql.functions.{dense_rank, max, nth_value, percent_rank, rank, row_number, sum, to_date, window}
 import org.apache.spark.sql.types.TimestampType
 
 /**
@@ -36,6 +36,7 @@ class Windows {
     rank()//공동1등이 있으면, 둘다 1이 되고, 그 다음은 3임.
     dense_rank()//공통1등이 있으면, 둘다 1이 되고, 그 다음은 2임.
     nth_value($"col_name", 5)//window에서 몇번째 row
+    percent_rank() // percentile 형식으로 rank를 매김. 0, 0.5, 1 이런식으로. percentile로 seg를 구분할 때 사용.
   }
 
   def getFirstRowOfGroup() = {
