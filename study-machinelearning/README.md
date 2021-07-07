@@ -12,3 +12,9 @@ Deep Learning
 # Others
 - Vertex AI(Google's AI platform)
     - easy to use machin learning with BigQuery 
+  
+
+# Style Transfer
+- https://towardsdatascience.com/style-transfer-with-gans-on-hd-images-88e8efcf3716
+- gan
+- https://medium.com/tensorflow/neural-style-transfer-creating-art-with-deep-learning-using-tf-keras-and-eager-execution-7d541ac31398

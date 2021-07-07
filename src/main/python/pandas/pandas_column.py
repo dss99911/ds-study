@@ -17,3 +17,9 @@ s = pd.Series([1, 3, 5, np.nan, 6, 8], index=dates).shift(2)
 #%%
 #특정 이름의 컬럼이 존재하는지.
 exists_a = 'a' in df.columns
+
+#이름 변경
+df_new = df.rename(columns={'a': 'new_a'}, index={'b': 'new_b'})
+
+#인덱스 설정
+df_index = df.set_index("a")

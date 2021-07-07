@@ -32,7 +32,12 @@ df_cumsum = df_number.apply(np.cumsum)  # cumulative sum. new-row(n) = new-row(n
 s_filter_by_row = df.apply(lambda r: r['a'] > 1, axis='columns')  # 각 index 별, a column을 체크한다.
 s_max_min_by_column = df_number.apply(lambda x: x.max() - x.min())  # 각 column별, min, max
 
+#날짜 텍스트를 날짜로 변환
+df_datetime_text = pd.read_csv('data/SP500_NOV2019_Hist.csv')
+df_datetime = pd.to_datetime(df_datetime_text['Date'])
 
+# 전체 데이터 타입변환
+df_float = df.astype(float)
 
 # %% When Otherwise
 df['a_sign'] = np.where(df['a'] > 1, 'plus', 'minus')
