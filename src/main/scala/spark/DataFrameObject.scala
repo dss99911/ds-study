@@ -1,7 +1,7 @@
 package spark
 
 import org.apache.spark.sql.expressions.UserDefinedFunction
-import org.apache.spark.sql.functions.{concat_ws, explode, typedLit, udf}
+import org.apache.spark.sql.functions.{concat_ws, element_at, explode, typedLit, udf}
 import org.apache.spark.sql.{DataFrame, Row, SparkSession}
 
 class DataFrameObject {
@@ -18,6 +18,8 @@ class DataFrameObject {
     .withColumn("exp", explode($"obj.data"))
     .withColumn("concats", concat_ws(",", $"array"))//array를 concat하여 스트링을 만듬
     .withColumn("dt", typedLit(Seq(1, 2, 3)))
+    .withColumn("item", element_at($"array_column", 1))//get item of an index. index starts with 1. udf에서 Array로 리턴했을 때 Array 값이 됨.
+    .withColumn("item", $"sequence._1")//Sequence값인 경우, sequence의 필드명을 넣으면됨 _1, _2
 
 
   //object를 컬럼에 넣기

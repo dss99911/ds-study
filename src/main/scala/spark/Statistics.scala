@@ -106,6 +106,7 @@ class Statistics {
     //convert 'name' as row, 'item' as column
     //name과 item이 겹치는(cross) 횟수가 얼마나 되는지를 name과 item을 행렬에 넣고, count를 표시.
     //name과 item으로 groupby해도 count를 알 수 있지만 이 경우에 name, item, count 컬럼으로 표시됨.
+    //두 컬럼간의 상관관계를 한눈에 보기 좋다.
     df.stat.crosstab("name", "item").show()
 
     /**
