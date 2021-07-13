@@ -1,6 +1,8 @@
+import scala.util.Properties
+
 class System {
   //show scala version
-  util.Properties.versionString
+  Properties.versionString
 
   //show current path
   System.getProperty("user.dir")

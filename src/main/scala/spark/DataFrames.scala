@@ -76,12 +76,6 @@ class DataFrames {
     spark.sql("SELECT * FROM global_temp.people").show()
   }
 
-  def convertDataFrameToObject() = {
-    Read.getCsv()
-      .as[Person] //convert to object
-      .map(p => p.age)
-      .show()
-  }
 
 
   def makeList() = {
