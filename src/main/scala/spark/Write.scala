@@ -1,5 +1,6 @@
 package spark
 
+import org.apache.spark.sql.SaveMode
 import spark.Read.spark
 
 class Write {
@@ -9,6 +10,7 @@ class Write {
       .write
       .partitionBy("dt")// overwrite할 경우, 전체에 대해서 overwrite하는게 아니라, 해당 파티션에 대해서만, overwrite함
       .mode("overwrite")
+      .mode(SaveMode.Overwrite)
       .parquet(s"s3://key")
   }
 

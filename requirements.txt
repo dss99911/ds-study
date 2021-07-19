@@ -26,3 +26,4 @@ six==1.15.0
 slackclient==2.9.3
 tabulate==0.8.9
 threadpoolctl==2.1.0
+pyspark-stubs=3.0.3

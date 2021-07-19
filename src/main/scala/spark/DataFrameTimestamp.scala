@@ -1,7 +1,7 @@
 package spark
 
 import org.apache.spark.sql.{DataFrame, SparkSession}
-import org.apache.spark.sql.functions.{add_months, current_date, current_timestamp, date_add, date_format, date_sub, datediff, from_utc_timestamp, lit, months_between, to_date, to_timestamp, when, window}
+import org.apache.spark.sql.functions.{add_months, current_date, current_timestamp, date_add, date_format, date_sub, datediff, expr, from_utc_timestamp, lit, months_between, to_date, to_timestamp, when, window}
 import org.apache.spark.sql.types.{LongType, TimestampType}
 
 class DataFrameTimestamp {
@@ -32,6 +32,7 @@ class DataFrameTimestamp {
     .withColumn("now", current_timestamp())
     //plus, minus the date
     .select(date_sub('now, 5), date_add('now, 5))
+    .select($"now" + expr("INTERVAL 330 minutes"))//plus minutes
     .select(add_months('now, 5))
     //diff
     .select(datediff('date1, 'date2))
