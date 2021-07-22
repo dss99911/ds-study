@@ -32,7 +32,7 @@ class Join {
       ).where("c.status = 1")
 
     //crossjoin 양쪽의 row를 n*m 교차해서 join함. 사용안하는 것을 권장.
-    //사용 예: DataFrame에 column을 하나 추가하고 싶은데, column을 구하기 위해 동일 DataFrame에서 호출할 경우.
+    //사용 예: row가 하나인 DataFrame에 column을 하나 추가하고 싶은데, column을 구하기 위해 동일 DataFrame에서 호출할 경우.
     // cache설정을 안하면, 해당 DataFrame의 처리가 두번 일어날 수 있다.
     // 이 경우, cache를 설정해줘도 되지만 crossJoin을 설정해줘도 괜찮을 듯한다.
     // cache가 클 경우, cache를 유지하는게 좋은지 알 수 없고. crossJoin하면, 알아서, 적절하게 처리해주지 않을까?
