@@ -25,7 +25,9 @@ class Windows {
           .partitionBy("pattern_id", "error_message")
           .orderBy("pattern_id", "error_message")
 
-          //디폴트가 파티션 분할된 전체인지는 잘 모르겠지만, 생략해도 됨
+          //default
+          //  - orderBy가 있으면, 처음부터 현재 row까지
+          //  - orderBy가 없으면, 처음부터 끝까지
           // 현재 row를 기준으로 +,- 범위 설정
           .rowsBetween(Window.unboundedPreceding, Window.currentRow)
       )

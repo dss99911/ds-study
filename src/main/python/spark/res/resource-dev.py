@@ -1,0 +1,1 @@
+PATH_SOME_DATA = "data.csv"
