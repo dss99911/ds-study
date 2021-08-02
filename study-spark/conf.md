@@ -13,6 +13,8 @@ search file named `spark-defaults.conf`
 - https://spark.apache.org/docs/latest/api/python/user_guide/python_packaging.html
 - https://databricks.com/blog/2020/12/22/how-to-manage-python-dependencies-in-pyspark.html
 - use conf `spark.submit.pyFiles` or `spark.archives`
+- archives방식은 시도해봤지만, 무슨 이유에선가 안됨
+- site-packages 를 zip으로 압축하여, pyFiles에 추가하는 방식으로 처리. spark-defaults.conf에 추가하면 별도로 추가할 필요가 없음. 하지만 별도의 python file을 추가할 경우. --py-files {a-path},{b-path} 와 같은 식으로, 둘다 추가해줘야 함. conf파일에 등록되어 있어도 --py-files를 추가하면, overwrite됨. 
 
 ### Using Virtualenv
 - 동일한 python interpreter가 executor에 있어야 한다고 함.
