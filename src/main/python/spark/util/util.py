@@ -14,8 +14,15 @@ from pyspark.sql import SparkSession
 import res.resource_dev as res_dev
 import res.resource_live as res_live
 
+
 def res():
     return res_live if(sys.argv[1] == "live") else res_dev
+
+
+def get_argv(index):
+    index = index+2 # 0 is for file, 1 is for dev or live
+    return sys.argv[index] if(index < len(sys.argv)) else None
+
 
 def create_spark_session(name, use_delta=True):
     builder = SparkSession.builder \

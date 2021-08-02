@@ -1,6 +1,7 @@
 package spark
 
 import org.apache.spark.sql.SparkSession
+import spark.ml.MachinLearning
 
 /**
  * Note that applications should define a main() method instead of extending scala.App. Subclasses of scala.App may not work correctly.
@@ -14,7 +15,7 @@ object MainApp {
       .appName("Simple Application")
       .getOrCreate()
 
-    new Statistics().summary(spark)
+    MachinLearning.sampleA(spark)
 
   }
 
