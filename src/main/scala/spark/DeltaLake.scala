@@ -30,7 +30,7 @@ import org.apache.spark.sql.functions.{desc, expr}
  * - migration (https://docs.delta.io/latest/porting.html)
  *
  * 성능 튜닝 (https://docs.delta.io/latest/delta-update.html#performance-tuning)
- * - update, delete, upsert시의 condition에, parition key를 넣어주면, partition prune을 통해, 해당파티션에서만 체크함.
+ * - update, delete, upsert시의 condition에, parition key를 넣어주면, partition prune(가지치다는 의미)을 통해, 해당파티션에서만 체크함.
  * - compact files : 데이터 업데이트 할 때마다(특히 머지시.), 작은 파일들이 많이 생성된다고함. 그래서, 큰 파일로 만들어주는 repartition 이 필요함.
  *    - todo compact file은 작은 파일이 이미 많이 생겼을 때 하는 거 아닐까?, 아래의 두개만 잘 해도 되는 건 아닌지..? 위에 두개를 먼저 언급한 이유는 위에게 더 중요하다는 것 같음
  * - Control the shuffle partitions for writes

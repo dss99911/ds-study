@@ -37,4 +37,8 @@ df["a"] = df["a"].astype(float)
 # %% When Otherwise
 df['a_sign'] = np.where(df['a'] > 1, 'plus', 'minus')
 replace_fct = {1: "A", 2: 'B', 3: 'C'}
-df['a'] = df['a'].map(replace_fct)
+df['a_char'] = df['a'].map(replace_fct)
+
+# if null
+df["a"] = df["a"].replace(np.NaN, df["a"].mean())
+df["a"] = df["a"].fillna("U")

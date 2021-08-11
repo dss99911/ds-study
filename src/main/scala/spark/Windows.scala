@@ -2,7 +2,7 @@ package spark
 
 import org.apache.spark.sql.expressions.Window
 import org.apache.spark.sql.{DataFrame, SparkSession}
-import org.apache.spark.sql.functions.{dense_rank, max, nth_value, percent_rank, rank, row_number, sum, to_date, window}
+import org.apache.spark.sql.functions.{cume_dist, dense_rank, lag, last, lead, max, nth_value, percent_rank, rank, row_number, sum, to_date, window}
 import org.apache.spark.sql.types.TimestampType
 
 /**
@@ -97,5 +97,56 @@ class Windows {
       //todo check bug reason :if use same partitionBy column on different window. only last window is reflected.
 //      .withColumn("total_count_over_group", sum($"count").over(w_group))
       .withColumn("cum_count_over_group", sum($"count").over(w_from_first_to_current))
+  }
+
+  /**
+   * 전체를 1로 봤을 때, 현재의 row가 몇번 째에 있는지를 나타냄
+   * todo percent_rank 와 차이점은?
+   * +---+------+------------------+
+    | id|bucket|         cume_dist|
+    +---+------+------------------+
+    |  0|     0|0.3333333333333333|
+    |  3|     0|0.6666666666666666|
+    |  6|     0|               1.0|
+    |  1|     1|0.3333333333333333|
+    |  4|     1|0.6666666666666666|
+    |  7|     1|               1.0|
+    |  2|     2|0.3333333333333333|
+    |  5|     2|0.6666666666666666|
+    |  8|     2|               1.0|
+    +---+------+------------------+
+   */
+  def cume_dists(df: DataFrame) = {
+    val windowSpec = Window.partitionBy('bucket).orderBy('id)
+    df.withColumn("cume_dist", cume_dist over windowSpec).show
+  }
+
+  /**
+   * 이전 row 값 조회.
+   * lag는 뒤쳐지다는 의미. 다음 row들을 조회하는데, 뒤쳐진 이전 row들의 값을 보여줌.
+   */
+  def lags(df: DataFrame) = {
+    val windowSpec = Window.partitionBy('bucket).orderBy('id)
+    df.withColumn("lag", lag('id, 1) over windowSpec).show
+  }
+
+  /**
+   * window상에 마지막 값을 가져오는데, null을 제외할지 설정할 수 있음
+   * 가령, 현재 row의 이전 row들 중에서 null이 아닌 마지막 값을 가져오고 싶으면, lag와 결합해서 쓰면 됨
+   */
+  def lasts(df: DataFrame) = {
+    val windowSpec = Window.partitionBy('bucket).orderBy('id)
+    df.withColumn("last", last('id, true) over windowSpec).show
+  }
+
+  /**
+   * 이후 row 값 조회.
+   * 먼저 리드해서, 다음 값을 보여줌.
+   * default로 첫번째 row에서 현재row까지가 확인 범위인데,
+   * 확인 범위 밖에 있는 값을 보여주네?? lead만의 별도의 로직이 있는듯..
+   */
+  def leads(df: DataFrame) = {
+    val windowSpec = Window.partitionBy('bucket).orderBy('id)
+    df.withColumn("lead", lead('id, 1) over windowSpec).show
   }
 }
