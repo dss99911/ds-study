@@ -18,8 +18,19 @@ s = pd.Series([1, 3, 5, np.nan, 6, 8], index=dates).shift(2)
 #특정 이름의 컬럼이 존재하는지.
 exists_a = 'a' in df.columns
 
-#이름 변경
+#컬럼명 변경하여 새 df생성
 df_new = df.rename(columns={'a': 'new_a'}, index={'b': 'new_b'})
+#현재의 df의 컬러명 변경
+def rename_column(df, suffix=None):
+    df.columns = [f"{col}_{suffix}" for col in df.columns.values]
+df_rename = df.copy()
+rename_column(df_rename, "new")
 
-#인덱스 설정
-df_index = df.set_index("a")
+#컬럼 추가
+df.loc[:, "test"] = np.abs(df.loc[:, "a"])
+df["test2"] = np.abs(df["a"])
+
+#조건있는 컬럼 추가. 조건에 해당 안되면 nan으로 추가됨.
+df["test3"] = df["test2"][df["test2"] == 2]
+df.loc[df["test2"] == 2, "test4"] = df["test2"]
+

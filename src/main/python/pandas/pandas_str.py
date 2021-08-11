@@ -17,10 +17,12 @@ s = pd.Series([1, 3, 5, np.nan, 6, 8], index=dates).shift(2)
 # %%
 
 s_lower = df['c'].str.lower()
+s_slice = df['c'].str.slice(-4)
+s_len = df['c'].str.len()
 df['new_column'] = s_lower
 
 # regex
-df["column"].str.extract(r'(^.{5})')
+df["c"].str.extract(r'(^.{5})')
 
 #%% equal
 

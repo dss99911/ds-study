@@ -13,10 +13,13 @@ df = pd.DataFrame({
 dates = pd.date_range("20130101", periods=6)
 df_number = pd.DataFrame(np.random.randn(6, 4), index=dates, columns=list("ABCD"))
 s = pd.Series([1, 3, 5, np.nan, 6, 8], index=dates).shift(2)
-#%%
-s_dtypes = df.dtypes
-field_index = df.index
-field_columns = df.columns
-field_values = df.values # column명 및 index는 제외한 값만 리턴됨
-length = len(df) # row size
 
+# %%
+
+#날짜 텍스트를 날짜로 변환
+df_datetime_text = pd.read_csv('data/SP500_NOV2019_Hist.csv')
+df_datetime = pd.to_datetime(df_datetime_text['Date']).to_frame()
+
+# timedelta
+days = (df_datetime.loc[:, "Date"] - df_datetime.loc[:, "Date"]) # 21 days 00:00:00
+month_from = np.floor(days.dt.days / 30).astype(np.int64) # 21 / 30

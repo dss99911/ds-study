@@ -13,9 +13,6 @@ df = pd.DataFrame({
 dates = pd.date_range("20130101", periods=6)
 df_number = pd.DataFrame(np.random.randn(6, 4), index=dates, columns=list("ABCD"))
 s = pd.Series([1, 3, 5, np.nan, 6, 8], index=dates).shift(2)
-# %% Filter
-df_head = df.head()  # first 5 rows
-df_tail = df.tail(3)  # last 3 rows
 
 # %%
 
@@ -32,12 +29,10 @@ df_cumsum = df_number.apply(np.cumsum)  # cumulative sum. new-row(n) = new-row(n
 s_filter_by_row = df.apply(lambda r: r['a'] > 1, axis='columns')  # 각 index 별, a column을 체크한다.
 s_max_min_by_column = df_number.apply(lambda x: x.max() - x.min())  # 각 column별, min, max
 
-#날짜 텍스트를 날짜로 변환
-df_datetime_text = pd.read_csv('data/SP500_NOV2019_Hist.csv')
-df_datetime = pd.to_datetime(df_datetime_text['Date'])
-
 # 전체 데이터 타입변환
-df_float = df.astype(float)
+# df_float = df.astype(float)
+# 한 컬럼 타입 변환
+df["a"] = df["a"].astype(float)
 
 # %% When Otherwise
 df['a_sign'] = np.where(df['a'] > 1, 'plus', 'minus')

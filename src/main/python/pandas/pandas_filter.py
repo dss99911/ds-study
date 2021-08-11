@@ -14,11 +14,17 @@ dates = pd.date_range("20130101", periods=6)
 df_number = pd.DataFrame(np.random.randn(6, 4), index=dates, columns=list("ABCD"))
 df_has_nan = df_number.reindex(index=dates[0:4], columns=list(df_number.columns) + ["E"])
 df_has_nan.loc[dates[0] : dates[1], "E"] = 1
+
+#%% limit
+df_head = df.head()  # first 5 rows
+df_tail = df.tail(3)  # last 3 rows
+
 # %% Filtering
 
 
 df_filter_gt = df[df["a"] > 1]
 df_filter_gt2 = df[(df["a"] > 1) & (df["b"] >1)]
+df_filter_loc = df.loc[df.loc[:, "a"] > 1]
 df_filter_isin = df[df["c"].isin(["string1", "string2"])]
 # df_filter_field = df[df > 1] # field side filtering (doesn't remove rows. just show NaN)
 df_filter_by_index = df.filter(like='0', axis='index') # axis=0 is row
@@ -27,6 +33,9 @@ df_filter_by_index3 = df[:2] # row[0,1]
 df_filter_by_row_value = df[df['a'] > 1]
 df_filter_by_row_value2 = df[df.apply(lambda r: r['a'] > 1, axis='columns')] # axis=1 is column
 df_distinct = df.drop_duplicates()
+
+# Filter by index
+Filter_df  = df[df.index.isin("1", "2")]
 
 #%% Filter nan
 # https://pandas.pydata.org/docs/user_guide/10min.html#missing-data

@@ -11,3 +11,6 @@ s_lower = s.str.lower()
 #%%
 # Series을 Dataframe으로 변환
 df = s_lower.to_frame()
+
+# Series 컬럼명 변경
+s_lower.rename("new_name").to_frame()

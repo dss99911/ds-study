@@ -1,6 +1,6 @@
 package spark
 
-import org.apache.spark.sql.SparkSession
+import org.apache.spark.sql.{SaveMode, SparkSession}
 
 /**
  * hive sql engine은 일반 sql구문을 분산처리 시스템에서 돌아갈 수 있도록 변환해줌.
@@ -14,6 +14,26 @@ class Sqls {
 
   //need enableHiveSupport
   val spark = SparkSessions.createSparkSession()
+
+  def createDatabase() = {
+    val sql = """
+              CREATE SCHEMA IF NOT EXISTS hyun
+              COMMENT 'Schema for hyun'
+              LOCATION 's3://hyun/'
+              """
+    spark.sql(sql)
+  }
+
+  def createTable() = {
+
+    import spark.implicits._
+    Seq("1")
+      .toDF()
+      .write
+      .mode(SaveMode.Overwrite)
+      .format("parquet")
+      .saveAsTable("hyun.count")
+  }
 
   def createTableFromFile(filePath: String, tableName: String) = {
     val schema_info = spark.read.parquet(filePath)
