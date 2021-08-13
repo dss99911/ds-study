@@ -10,3 +10,4 @@ df_others.drop('selected_msg')
 c = ["b", "c"]
 d = ["d", "e"]
 df.select("a", *c, *d)
+df.select(["a", "b"])

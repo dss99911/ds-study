@@ -64,7 +64,7 @@ class DataFrames {
 
   def useOnSql() = {
     //tempView를 만든다고, 메모리에 유지되는 건 아니고, table로 연결시켜주는 역할만 하는 것으로 보임
-    //사용 목적은, 제플린 노트에서 정의한 DF를 다른 노트에서도 참조 가능.
+    //가령, scala로 작성한 코드의 데이터를 python에서 참조하고 싶을 때.
     df.createOrReplaceTempView("people")
     spark.sql("SELECT * FROM people")
 

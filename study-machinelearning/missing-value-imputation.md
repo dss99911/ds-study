@@ -1,4 +1,4 @@
-# Missing Value Imputation
+# Missing Value(결측치) Imputation
 - [wiki](https://en.wikipedia.org/wiki/Imputation_(statistics))
 - Impute : 죄 오명 등을 전가시키다. 값이 없는건 좋지 않은 것을 다른 값으로 치환 시키는 것. im: in, pute: cut, prone
 - 없는 값을 어떻게 대체할 지에 대한 방법론으로 여러가지 방식이 많고, 해당 피쳐에 적절한 imputation을 결정해야 한다.

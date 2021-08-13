@@ -6,6 +6,13 @@ from pyspark.sql import SparkSession
 spark = SparkSession.builder.getOrCreate()
 
 
+def create():
+    spark.createDataFrame([
+        (1, 2., 'string1', 1, 2),
+        (2, 3., 'string2', 1, 2),
+        (3, 4., 'string3', 1, 2)
+    ], ['a', 'b', 'c', 'd', 'e'])
+
 def create_by_row():
     return spark.createDataFrame([
         Row(a=1, b=2., c='string1', d=date(2000, 1, 1), e=datetime(2000, 1, 1, 12, 0)),
@@ -20,6 +27,7 @@ def create_by_schema():
         (2, 3., 'string2', date(2000, 2, 1), datetime(2000, 1, 2, 12, 0)),
         (3, 4., 'string3', date(2000, 3, 1), datetime(2000, 1, 3, 12, 0))
     ], schema='a long, b double, c string, d date, e timestamp')
+
 
 
 def create_from_pandas():

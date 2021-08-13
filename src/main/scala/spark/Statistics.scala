@@ -1,5 +1,6 @@
 package spark
 
+import org.apache.spark.ml.functions.vector_to_array
 import org.apache.spark.sql.{Row, SparkSession}
 import org.apache.spark.sql.functions._
 
@@ -39,8 +40,8 @@ class Statistics {
   }
 
   def summary(spark: SparkSession) = {
-    Read.createDataFrameByRow(spark)
-      .summary().show()
+    val df = Read.createDataFrameByRow(spark)
+    df.summary().show()
     /*
 +-------+------------------+------------------+-------+
 |summary|                aa|                bb|     bb|
@@ -56,6 +57,7 @@ class Statistics {
 +-------+------------------+------------------+-------+
 
      */
+    df.summary("count").show()//show count only
   }
 
   /**
@@ -198,5 +200,9 @@ class Statistics {
       .as[(Vector, Vector)].first()
 
     println(s"without weight: mean = ${meanVal2}, sum = ${varianceVal2}")
+  }
+
+  def vector2array() = {
+    vector_to_array(col("column"))
   }
 }

@@ -15,6 +15,7 @@ df_number = pd.DataFrame(np.random.randn(6, 4), index=pd.date_range("20130101", 
 # %%
 # Select
 df_select_column = df["a"]  # get index and column 'a'
+df_select_column = df.a  # get index and column 'a'
 df_select_columns = df[["a", "b"]]  # get index and column 'a'
 df_select_multiple_column_by_column_index = df[0:3]
 
@@ -24,7 +25,7 @@ df_select_by_filter_regex2 = df.filter('a') # axis=1 is column
 
 # %%
 # New column
-df['new_column'] = df['c'].str.lower()
+df['new_column'] = df.c.str.lower()
 
 # %%
 # delete column

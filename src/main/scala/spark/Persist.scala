@@ -10,7 +10,7 @@ import org.apache.spark.storage.StorageLevel
  * - !!!WARNING!!! Dataframe의 경우 물리적 실행계획 기반으로 캐싱이 된다고함.
  *      그래서, 원시 데이터를 읽으려고 했는데, 누군가 캐시를 해놓았다면, 캐싱된 데이터를 읽게되어 잘못 처리될 수 있다고 함.
  *      todo 그러면, 입력값이 다른 경우에도, 캐시로 인해, 결과 값이 달라질 수 있다는 이야기인듯. 그러면, 동시에 같은 애플리케이션을 실행안하도록 해야 하고, 사용 후에는 unpersist()를 해서, 다음에 동일 애플리케이션 호출 때, 캐시 값을 사용 못하게 해야 하는건가?
- *      pergist()는 지연 처리이므로, 캐싱된 데이터를 실제 실행하는 부분 이후에 unpergist()를 해야함.
+ *      pergist()는 지연 처리이므로, 캐싱된 데이터를 실제 실행하는 부분 이후에 unpersist()를 해야함.
  * https://spark.apache.org/docs/latest/rdd-programming-guide.html#rdd-persistence
  *
  * without `persist()` method, the data is not saved in memory
