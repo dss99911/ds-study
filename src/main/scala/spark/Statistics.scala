@@ -58,6 +58,8 @@ class Statistics {
 
      */
     df.summary("count").show()//show count only
+
+    df.summary("count", "min", "25%", "75%", "max").show()
   }
 
   /**

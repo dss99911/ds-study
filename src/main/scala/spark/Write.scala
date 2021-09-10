@@ -24,6 +24,8 @@ class Write {
   }
 
   def writeCsv() = {
+    //특수문자가 들어가고 줄바꿈이 있는 메시지의 경우, 줄바꿈을 제대로 인식 못하는 경우가 있다.
+    //parquet으로 저장 후, 이것을 pandas로 excel로 변환 하면, 엑셀 파일로 공유하려고 할 때, 이렇게 하면 에러가 없음.
     Read.getParquetDataFrame()
       .coalesce(1)
       .write

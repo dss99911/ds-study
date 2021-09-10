@@ -23,6 +23,11 @@ s_mean_by_columns = df_number.mean()
 s_mean_by_rows = df_number.mean(axis=1)
 s_sum_by_columns = df_number.sum()
 
+# mean for a column
+df_number["A"].mean()
+# min's index for a column
+df_number["A"].idxmin()
+
 # 한 컬럼의 각 값들의 count를 구하기(groupby(column).count())
 s_value_counts = df_digit.value_counts()
 

@@ -6,6 +6,8 @@ scalaVersion := "2.12.12"
 
 mainClass in (Compile, run) := Some("spark.MainApp")
 mainClass in (Compile, packageBin) := Some("spark.MainApp")
+//resolvers += "spark-packges" at "https://repos.spark-packages.org"
+
 libraryDependencies ++= Seq(
   "org.apache.spark" %% "spark-core" % "3.1.1" % "provided",
   "org.apache.spark" %% "spark-sql" % "3.1.1" % "provided",
@@ -19,6 +21,7 @@ libraryDependencies ++= Seq(
 
   /*TODO delta libraries are not working for fat jar. fix it!*/
   "io.delta" %% "delta-core" % "0.8.0",
+  "graphframes" % "graphframes" % "0.8.1-spark3.0-s_2.12"
 )
 
 //for Jackson

@@ -45,6 +45,14 @@ def window_filter(df: DataFrame, window):
     df = df.drop("seq")
     return df
 
+def rename_agg(df):
+    for c in df.columns:
+        if "(" not in c :
+            continue
+        new_col = c.replace("(", "_")
+        new_col = new_col.replace(")", "")
+        df = df.withColumnRenamed(c, new_col)
+    return df
 
 def send_slack_message(text, channel="@hyun", username="", icon_emoji=""):
     slack = SlackClient('oauth-token')

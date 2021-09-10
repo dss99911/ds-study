@@ -23,6 +23,7 @@ object Lists {
     val nums4 = ArrayBuffer(1,2,3)
     var text = ListBuffer[String]()
 
+
     val list = 1 :: 2 :: 3 :: Nil // list: List[Int] = List(1, 2, 3)
 
     nums
@@ -34,9 +35,9 @@ object Lists {
       .foldLeft("")(_ + _)//1st : seed value, 2nd : fold
       .foreach(println)
 
-    list.sum//_ + _
+    list.sum //_ + _을 의미
 
-    list.product//_ * _
+    list.product //_ * _ 을 의미
 
     list.reduce(_ * 2 * _)//결과 값과 입력값의 타입이 동일한 경우
     nums.foldLeft("Start : ")((d, v) => d + v + ", ")//결과 값이 입력값과 달라서, 초기 값이 필요한 경우.
@@ -72,6 +73,9 @@ object Lists {
 
     //list to string by join
     nums.mkString(",")
+
+    //with index
+    val listWithIndex = list.zipWithIndex
 
     //java list to scala list
     import scala.collection.JavaConverters._
