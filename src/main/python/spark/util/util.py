@@ -69,3 +69,9 @@ def send_slack_message(text, channel="@hyun", username="", icon_emoji=""):
     )
 
 
+def show_hist(df, value_col, digit_count=2):
+    res = df.withColumn("key", format_number(percent_rank().over(Window.orderBy(value_col)), digit_count)) \
+        .groupBy("key").agg(mean(value_col).alias(value_col)) \
+        .select("key", value_col) \
+        .sort("key")
+    z.show(res)

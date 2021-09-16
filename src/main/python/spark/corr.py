@@ -48,6 +48,17 @@ def show_corr(df, count=300):
         .sort(abs(col("corr")).desc()) \
         .show(count, False)
 
+def crosstab_ratio(df, feature, label):
+    df = df.stat.crosstab(label, feature)
+    columns = df.columns[1:]
+    df_sum = df.groupBy().sum() \
+        .toDF(*list(map(lambda c: f"sum_{c}", columns)))
+    df_cross = df.crossJoin(df_sum)
+    for c in columns:
+        df_cross = df_cross.withColumn(f"ratio_{c}", col(c) / col(f"sum_{c}"))
+        df_cross = df_cross.drop(f"sum_{c}")
+    return df_cross
+
 def change_double_format(df):
     for f in df.schema.fields:
         if f.dataType.__class__ != DoubleType:
