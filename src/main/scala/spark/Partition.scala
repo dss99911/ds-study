@@ -1,6 +1,7 @@
 package spark
 
-import org.apache.spark.sql.SparkSession
+import org.apache.spark.sql.functions.col
+import org.apache.spark.sql.{SaveMode, SparkSession}
 
 /**
  * https://medium.com/@mrpowers/managing-spark-partitions-with-coalesce-and-repartition-4050c57ad5c4
@@ -38,6 +39,34 @@ class Partition {
   // - cache후에 , count등의 액션을 호출해서, coalesce를 호출하기 전에, 캐시에서 데이터를 가져올 수 있게 하기.
   Read.getParquetDataFrame().coalesce(1)
 
+  def makeSortedSingleFilePerPertition() = {
+    spark.read.parquet("source_path")
+      .sort($"count".desc)
+      .coalesce(1)
+      .write
+      .partitionBy("user_id")
+      .option("header","true")
+      .mode(SaveMode.Overwrite)
+      .csv("result_path")
+  }
+
+  /**
+   * TODO 아직 테스트 못해봄.
+   *  만약 된다면, 위의 방식처럼 이상하게 처리하지 않고, 성능도 더 좋을 것이기 때문에, 위에 방식은 지우기.
+   */
+  def makeSortedSingleFilePerPertition2() = {
+    spark.read.parquet("source_path")
+      .select( $"username", $"timestamp", $"activity" )
+      .repartition(col("username"))
+      .sortWithinPartitions(col("username"),col("timestamp")) // <-- both here
+      .write
+      .partitionBy("username")
+      .mode(SaveMode.Overwrite)
+      .option("header", "true")
+      .option("delimiter", ",")
+      .csv("/useractivity")
+  }
+
   //The repartition algorithm does a full shuffle of the data and creates equal sized partitions of data.
   Read.getParquetDataFrame().repartition(Cluster.getCpuCount() * 4)// recommended count of partition is 2~4 https://stackoverflow.com/questions/35800795/number-of-partitions-in-rdd-and-performance-in-spark/35804407#35804407
 
@@ -65,4 +94,5 @@ class Partition {
    * 그래서, key 컬럼이 없는 테이블에 한해서 spark.conf.set("spark.sql.hive.manageFilesourcePartitions", true) 를 사용
    */
   spark.conf.set("spark.sql.hive.manageFilesourcePartitions", false)
+
 }

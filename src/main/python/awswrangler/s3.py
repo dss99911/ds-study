@@ -3,7 +3,12 @@
 import awswrangler as wr
 import boto3
 import pandas as pd
+
+#%% exists
 wr.s3.does_object_exist("s3://hyun.test/test.csv")
+
+#%% list objects
+wr.s3.list_objects("s3://hyun.test")
 
 
 #%% change to custom seesion
@@ -30,6 +35,10 @@ path2 = f"s3://hyun.test/fwf/file2.txt"
 
 df_fwf_widths = wr.s3.read_fwf([path1], names=["id", "name", "date"], widths=[1, 12, 8])
 df_fwf = wr.s3.read_fwf([path2], names=["id", "name", "date"])
+
+#%% delete object
+wr.s3.delete_objects(path1)
+
 
 #%%
 # 직접 입력 받는 역할

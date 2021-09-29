@@ -7,10 +7,10 @@ import org.apache.spark.sql.SparkSession
  * https://jaceklaskowski.gitbooks.io/mastering-spark-sql/content/spark-sql-bucketing.html
  * https://mathjhshin.github.io/Spark%EC%97%90%EC%84%9C%EC%9D%98-Bucketing/
  *
- * partitioning을 unlimited한 필드에 하게 되면, partition이 너무 많이 발생하게 되고, 이게 오히려, 성능저하를 야기할 수 있다.
- * 그래서, bucketing을 통해, 일정한 크기만큼만 분할학 위한 목적으로 이해했었지만
+ * partitioning한 컬럼의 값이 user_id처럼 다양하면, partition이 너무 많이 발생하게 되고, 이게 오히려, 성능저하를 야기할 수 있다.
+ * 이럴때 bucketing을 사용함.
  *
- * join시 특정 shuffle을 방지하는 목적이라고 함..
+ * join시 특정 shuffle을 방지하는 목적도 있음
  *
  * shuffle 방지 목적
  *
@@ -44,7 +44,7 @@ class Bucketing {
 
   t1.write
   .bucketBy(16, "key")
-    .sortBy("value")
+    .sortBy("value")//todo key로 정렬 안 하면, 한 android_id가 여러 파일에 존재하게 될 수도 있는 건지. 성능 체크하기. 근데, 당연히 문제 없을 것 같은데.
     .saveAsTable("bucketed")
 
   val t3 = spark.table("bucketed")
