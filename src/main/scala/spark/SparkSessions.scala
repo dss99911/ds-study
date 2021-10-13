@@ -27,8 +27,8 @@ object SparkSessions {
     //https://m.blog.naver.com/gyrbsdl18/220880041737
     val spark = SparkSession.builder.appName("acs_tx_extractor")
       .config("spark.dynamicAllocation.enabled", true)//spark.dynamicAllocation.maxExecutors를 사용하려면 true로 해줘야 함.
-      .config("spark.executor.cores", 2)
-      .config("spark.executor.memory", "3g")
+      .config("spark.executor.cores", 4)
+      .config("spark.executor.memory", "12g")
       .config("spark.dynamicAllocation.maxExecutors", 30)
       .getOrCreate()
   }

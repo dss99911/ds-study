@@ -23,6 +23,9 @@ df_new = df.rename(columns={'a': 'new_a'}, index={'b': 'new_b'})
 #현재의 df의 컬러명 변경
 def rename_column(df, suffix=None):
     df.columns = [f"{col}_{suffix}" for col in df.columns.values]
+#현재의 df의 컬러명 변경. 컬럼 깊이가 여러개 인 경우.(json을 df로 변환시, 컬럼에 깊이가 여러개 일 수 있음.
+def rename_column(df, suffix=None):
+    df.columns = [f"{col}_{col2}_{suffix}" for col, col2 in df.columns.values]
 df_rename = df.copy()
 rename_column(df_rename, "new")
 
@@ -34,3 +37,6 @@ df["test2"] = np.abs(df["a"])
 df["test3"] = df["test2"][df["test2"] == 2]
 df.loc[df["test2"] == 2, "test4"] = df["test2"]
 
+
+#%% pop : df에서 column을 제거하고, 해당 column만 있는 dataframe을 리턴한다.
+s_a = df.pop("A") # series 리턴

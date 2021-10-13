@@ -5,6 +5,11 @@ object Files {
 
   import org.apache.hadoop.fs.{FileSystem, FileUtil, Path}
 
+  def exists() = {
+    val path = new Path("s3://tb.es/analysis/log/message_by_aid")
+    FileSystem.get(path.toUri, spark.sparkContext.hadoopConfiguration).exists(path)
+  }
+
   def copyFile(sourcePath: String, destinationPath: String) = {
     val srcPath = new Path(sourcePath)
     val srcFs = FileSystem.get(srcPath.toUri(), spark.sparkContext.hadoopConfiguration)

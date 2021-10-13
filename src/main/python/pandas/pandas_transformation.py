@@ -42,3 +42,4 @@ df['a_char'] = df['a'].map(replace_fct)
 # if null
 df["a"] = df["a"].replace(np.NaN, df["a"].mean())
 df["a"] = df["a"].fillna("U")
+

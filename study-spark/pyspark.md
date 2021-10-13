@@ -25,7 +25,7 @@ conda env create -f environment.yml
 - https://databricks.com/blog/2020/12/22/how-to-manage-python-dependencies-in-pyspark.html
 - use conf `spark.submit.pyFiles` or `spark.archives`
 - archives방식은 시도해봤지만, 무슨 이유에선가 안됨
-- site-packages 를 zip으로 압축하여, pyFiles에 추가하는 방식으로 처리. spark-defaults.conf에 추가하면 별도로 추가할 필요가 없음. 하지만 별도의 python file을 추가할 경우. --py-files {a-path},{b-path} 와 같은 식으로, 둘다 추가해줘야 함. conf파일에 등록되어 있어도 --py-files를 추가하면, overwrite됨.
+- site-packages 를 zip으로 압축하여(project py파일의 경우 setuptools의 bdist_egg를 사용해도 되고, 직접 압축해도 됨), pyFiles에 추가하는 방식으로 처리. spark-defaults.conf에 추가하면 별도로 추가할 필요가 없음. 하지만 별도의 python file을 추가할 경우. --py-files {a-path},{b-path} 와 같은 식으로, 둘다 추가해줘야 함. conf파일에 등록되어 있어도 --py-files를 추가하면, overwrite됨.
 - 다른 방법 : EMR Bootstrap Actions에 설정해놓으면, 전체 클러스터에 설치해준다.
     - 단점 : 처음 cluster설정시에만 설정가능하고, 추가 설치를 못한다.
 - 다른 방법2 : docker를 이용. 아래와 같이 step을 추가할 때, docker image를 추가하면, 해당 step을 실행할 때, image를 실행시킨 후에 처리하는 듯.

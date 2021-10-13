@@ -1,7 +1,10 @@
+import org.apache.spark.sql.DataFrame
+
 import scala.collection.mutable.ArrayBuffer
 
 object Classes {
   val p: Person2 = new Person2("Regina", "dd")
+  var senderDF: String = _ // lateinit var를 이런식으로 표현
 }
 
 class Person2(var firstName: String, var lastName: String) {

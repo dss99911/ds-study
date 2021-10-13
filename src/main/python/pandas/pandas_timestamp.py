@@ -23,3 +23,9 @@ df_datetime = pd.to_datetime(df_datetime_text['Date']).to_frame()
 # timedelta
 days = (df_datetime.loc[:, "Date"] - df_datetime.loc[:, "Date"]) # 21 days 00:00:00
 month_from = np.floor(days.dt.days / 30).astype(np.int64) # 21 / 30
+
+#%%
+
+# 하나의 데이터도 Timestamp로 변환 가능
+timestamp_data = pd.to_datetime("11/1/2019")
+

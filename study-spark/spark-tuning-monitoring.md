@@ -16,6 +16,7 @@
         - Spark monitoring과 비슷한 정보를 줌. Hadoop cluster정보에 대한 모니터링 정보도 추가로 보여주는듯..
         - failure가 발생했을 때, 익셉션 정보 확인 가능(이상하게 spark web ui에서는 실패가 확인이 안됐음)
         - driver node log는 driver node 서버 접근 해서 확인 가능. `/home/hadoop/application_1605508398020_10199.log`
+        - yarn log 확인하기. `yarn logs -applicationId application_16012459249102491 > application_16012459249102491.log`
     - [DAG understanding](dag/dag-understanding.md) : 실제 코드
     - [DAG understanding2](dag/dag-understanding2.md) : 책에 나오는 간단한 예제(이해하기 쉬움)
     - [DAG SQL Tab](dag/dag-sql-tab.md)

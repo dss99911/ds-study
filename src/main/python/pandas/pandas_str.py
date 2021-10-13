@@ -1,7 +1,9 @@
+import json
 from datetime import date, datetime
 
 import numpy as np
 import pandas as pd
+from pandas import json_normalize
 
 df = pd.DataFrame({
     'a': [1, 2, 3],
@@ -30,3 +32,8 @@ equals = df['new_column'] == df['new_column']
 
 #%% isin
 isin = np.isin(df['new_column'], ["a", "b"])
+#%% json
+json_data = "{\"a\": {\"b\":2}, \"c\":1}"
+# json_data = "{\"a\": [1,2,3]}"
+dict_data = json.loads(json_data) # return dict
+df_data = json_normalize(dict_data) # return DataFrame

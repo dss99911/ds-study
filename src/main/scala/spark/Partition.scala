@@ -1,6 +1,6 @@
 package spark
 
-import org.apache.spark.sql.functions.col
+import org.apache.spark.sql.functions.{col, spark_partition_id}
 import org.apache.spark.sql.{SaveMode, SparkSession}
 
 /**
@@ -67,8 +67,16 @@ class Partition {
       .csv("/useractivity")
   }
 
+  def withPartitionId() = {
+    spark.read.parquet("source_path")
+      .repartition(125)
+      .withColumn("partitionId", spark_partition_id) // todo 125개로 리파티션해서, 0~124의 번호가 할당될 것으로 추정. 확인 필요
+  }
+
   //The repartition algorithm does a full shuffle of the data and creates equal sized partitions of data.
   Read.getParquetDataFrame().repartition(Cluster.getCpuCount() * 4)// recommended count of partition is 2~4 https://stackoverflow.com/questions/35800795/number-of-partitions-in-rdd-and-performance-in-spark/35804407#35804407
+  //각 파티션별로 데이터 차이가 크고(애초에 저장된 데이터가 파티션별로 차이가 있거나, 필터링등의 작업으로 차이가 생김) , 처리해야하는게 많다면, 처리전에 repartition해주는게 좋음.
+  //stage에서 min, max 테스크 차이가 크면, 파티션 갯수를 늘려서, 고르게 할당하는게 좋음. 하지만, 셔플에 들어가는 비용도 있으므로, 균형을 잘 잡는게 좋음
 
   //coalesce combines existing partitions to avoid a full shuffle. so it may not be 6 partition but can be less
   //coalesce doesn't increase partition count. but move rows between existing partition. so, if set count more than current. it keep current count

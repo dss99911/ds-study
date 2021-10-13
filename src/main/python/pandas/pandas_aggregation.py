@@ -56,9 +56,14 @@ for a1, b in df_resample_multiple_agg.columns.values:
     #컬럼이 (Open, first) 형식으 로 되어 있다.
     print(f"{a1} : {b}")
 
+df_sp.agg({
+    'Open': pd.Series.nunique
+})
+
 # 그룹핑 없이 전체를 agg하기. (True대신에 다른 키값을 입력해도 됨. 하지만 동일한 값을 넣어야 전체가 그룹핑됨.
 # 커스텀 조건에 따라 그룹핑하는 것도 가능
 df_sp.groupby(lambda _: True).agg({'Open': 'first', 'High': 'max', 'Low': 'min', 'Close': 'last', 'Volume': 'sum'})
+
 
 # sum()은 그룹핑 없이도 가능.
 df.isnull().sum()

@@ -1,6 +1,7 @@
 package spark
 
 import org.apache.spark.sql.SparkSession
+import org.apache.spark.sql.functions.col
 
 /**
  * https://luminousmen.com/post/the-5-minute-guide-to-using-bucketing-in-pyspark
@@ -42,8 +43,10 @@ class Bucketing {
                +- *(3) FileScan parquet default.unbucketed2[key#14L,value#15] Batched: true, Format: Parquet, Location: InMemoryFileIndex[file:/opt/spark/spark-warehouse/unbucketed2], PartitionFilters: [], PushedFilters: [IsNotNull(key)], ReadSchema: struct<key:bigint,value:double>, SelectedBucketsCount: 16 out of 16
    */
 
-  t1.write
-  .bucketBy(16, "key")
+  t1
+    .repartition(16, col("key"))// repartition안하고, overwrite하면 file exists 에러가 남.
+    .write
+    .bucketBy(16, "key")
     .sortBy("value")//todo key로 정렬 안 하면, 한 android_id가 여러 파일에 존재하게 될 수도 있는 건지. 성능 체크하기. 근데, 당연히 문제 없을 것 같은데.
     .saveAsTable("bucketed")
 
