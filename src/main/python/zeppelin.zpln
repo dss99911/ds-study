@@ -38,7 +38,7 @@
    },
    "apps": [],
    "status": "READY",
-   "text": "\n",
+   "text": "%%timeit\n\n\n",
    "id": "",
    "config": {}
   }
