@@ -32,6 +32,7 @@ class Sqls {
       .write
       .mode(SaveMode.Overwrite)
       .format("parquet")
+      .option("path", "s3://bucket/tmp/tmp1")//저장 path 변경 가능. https://stackoverflow.com/questions/30874928/how-to-specify-the-path-where-saveastable-saves-files-to
       .saveAsTable("hyun.count")
   }
 

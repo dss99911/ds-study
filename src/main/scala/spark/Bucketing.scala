@@ -44,10 +44,10 @@ class Bucketing {
    */
 
   t1
-    .repartition(16, col("key"))// repartition안하고, overwrite하면 file exists 에러가 남.
+    .repartition(16, col("key"))// repartition안하고, overwrite하면 file exists 에러가 남?
     .write
-    .bucketBy(16, "key")
-    .sortBy("value")//todo key로 정렬 안 하면, 한 android_id가 여러 파일에 존재하게 될 수도 있는 건지. 성능 체크하기. 근데, 당연히 문제 없을 것 같은데.
+    .bucketBy(16, "key")//partitionBy도 설정할 수 있음. 하지만, bucketBy의 컬럼과 겹치면 안됨. parition dynamic overwrite 사용하면 bucketBy의 컬럼에는 적용안됨.
+    .sortBy("value")//생략 가능
     .saveAsTable("bucketed")
 
   val t3 = spark.table("bucketed")

@@ -24,6 +24,10 @@
         - 클러스터 모니터링 도구. 클러스터 매니저 및 클러스터를 모니터링함
         - Spark앱이 아닌 클러스터를 모니터링.
         - `http://<server-url>/ganglia`
+        - cluster의 cpu, memory, load, network 통계를 보여줌
+        - instance, core의 load를 보여줌
+        - 메모리가 부족한지, cpu가 부족한지, network i/o가 오래걸리는지 등을 확인 가능
+        - 각 instance, core가 균형되게 처리하고 있는지도 확인 가능
 
 # Performance
 - [ ] [Tuning Guide](https://spark.apache.org/docs/latest/tuning.html): best practices to optimize performance and memory use
@@ -37,6 +41,11 @@
     - [ ] [Apache Spark Partitioning](https://medium.com/@adrianchang/apache-spark-partitioning-e9faab369d14)
 - [ ] [Adaptive Query Execution: Speeding Up Spark SQL at Runtime](https://databricks.com/blog/2020/05/29/adaptive-query-execution-speeding-up-spark-sql-at-runtime.html)
 
+- [x] [Memory Managing](https://aws.amazon.com/blogs/big-data/best-practices-for-successfully-managing-memory-for-apache-spark-applications-on-amazon-emr/)
+  - Ganglia 사용하기
+  - memory, executor, core 설정하기
+  - GC 설정
+  - Yarn설정
 
 # Performance Advice
 - " "또는 "EMPTY" 보다는 null을 쓰는게 좋음. null은 spark가 데이터가 없다는 걸 인지해서, 최적화된 처리 방법을 찾을 수 있음
