@@ -1,7 +1,7 @@
 ﻿{
  "paragraphs": [
   {
-   "text": "spark.table(\"log.message\").printSchema()\n",
+   "text": "spark.table(\"log.message\").printSchema()\n\n\n\n\n",
    "user": "hyun.kim",
    "dateUpdated": "2021-10-05T10:18:49+0000",
    "config": {
@@ -30,17 +30,6 @@
    "dateStarted": "2021-10-05T10:18:49+0000",
    "dateFinished": "2021-10-05T10:18:50+0000",
    "status": "FINISHED"
-  },
-  {
-   "settings": {
-    "params": {},
-    "forms": {}
-   },
-   "apps": [],
-   "status": "READY",
-   "text": "%%timeit\n\n\n",
-   "id": "",
-   "config": {}
   }
  ],
  "name": "Zeppelin Notebook",
