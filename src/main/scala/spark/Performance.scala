@@ -31,7 +31,7 @@ import org.apache.spark.sql.SparkSession
  *  - 처리 순서에 따라, 중간 데이터를 저장한 후에, 다시 처리하거나. 파티션으로 row들을 분리해서, 한 파티션씩 처리(user id prefix등으로)
  */
 object Performance {
-val builder: SparkSession.Builder
+var builder: SparkSession.Builder = _
 
   def confs() = {
     builder

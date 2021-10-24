@@ -24,7 +24,7 @@ object Strings {
   }
 
   def regexFind() = {
-    "\\d+(?:[,.]\\d+)*".toRegex().findAll("asdf")
+//    "\\d+(?:[,.]\\d+)*".toRegex().findAll("asdf")
   }
 
   def main(args: Array[String]): Unit = {

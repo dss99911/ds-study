@@ -88,7 +88,7 @@ class AggregationAndGrouping {
   def group() = {
     df.groupBy("age").count()// (age, count), count()'s column name is 'count'
     df.groupBy().min("age")// agg for all rows.
-    df.agg(min("age"), collect_set())// same with `groupBy().min("age")`
+    df.agg(min("age"), collect_set("age"))// same with `groupBy().min("age")`
   }
 
   /**

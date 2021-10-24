@@ -6,7 +6,7 @@ scalaVersion := "2.12.12"
 
 mainClass in (Compile, run) := Some("spark.MainApp")
 mainClass in (Compile, packageBin) := Some("spark.MainApp")
-//resolvers += "spark-packges" at "https://repos.spark-packages.org"
+resolvers += "spark-packges" at "https://repos.spark-packages.org"
 
 libraryDependencies ++= Seq(
   "org.apache.spark" %% "spark-core" % "3.1.1" % "provided",
