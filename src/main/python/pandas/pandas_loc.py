@@ -20,7 +20,7 @@ df_number = pd.DataFrame(np.random.randn(6, 4), index=dates, columns=list("ABCD"
 series_loc = df.loc[0]  # get fields of a row index
 df_loc_date_index = df_number.loc['2013'] # get rows with date like
 df_loc_date_index2 = df_number.sort_index().loc["2021-07-05T01:11":"2021-07-05T01:16"] # get rows with date like
-df_loc_date_index3 = df_number.sort_index().loc[datetime(2021,7,5,1,11):datetime(2021,7,5,1,16)]
+df_loc_date_index3 = df_number.sort_index().loc[datetime(2021,7,5,1,11):datetime(2021,7,5,1,16)] # need `sort_index()` for range loc()
 df_loc_multi_scope = df.loc[0:2, ["a", "b"]]  # select by row index and columns
 df_loc_all_rows_some_columns = df.loc[:, ["a", "b"]]  # select columns of all rows
 df_loc_single_value = df.loc[0, "a"]  # get specific value

@@ -1,4 +1,4 @@
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 
 import numpy as np
 import pandas as pd
@@ -22,5 +22,10 @@ df_index = df.set_index("a") # a 컬럼을 인덱스로 씀
 df_index.index = ["r1", "r2", "r3"] # 각 row의 index명을 바꿈
 
 df_reset_index = df_index.reset_index() # 인덱스를 컬럼으로 변환
-
+index = df_index.index + "a" # index 수정
 1 in df_index.index #인덱스가 존재하는지 확인
+
+index_date = df_number.index.values
+index_date_transformation = list(map(lambda d: pd.to_datetime(str(d)), df_number.index.values))
+list2 = df_number.index.tolist()
+df_number.index = list(map(lambda d: datetime(d.year, d.month, 1), list2))

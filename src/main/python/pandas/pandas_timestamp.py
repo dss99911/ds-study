@@ -24,6 +24,9 @@ df_datetime = pd.to_datetime(df_datetime_text['Date']).to_frame()
 days = (df_datetime.loc[:, "Date"] - df_datetime.loc[:, "Date"]) # 21 days 00:00:00
 month_from = np.floor(days.dt.days / 30).astype(np.int64) # 21 / 30
 
+# datetime index -> timestamp -> datetime index
+df_number.index = list(map(lambda d: datetime(d.year, d.month, 1), df_number.index.tolist()))
+
 #%%
 
 # 하나의 데이터도 Timestamp로 변환 가능
