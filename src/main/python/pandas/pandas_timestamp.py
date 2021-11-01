@@ -27,6 +27,11 @@ month_from = np.floor(days.dt.days / 30).astype(np.int64) # 21 / 30
 # datetime index -> timestamp -> datetime index
 df_number.index = list(map(lambda d: datetime(d.year, d.month, 1), df_number.index.tolist()))
 
+# timestamp index
+df_loc_date_index = df_number.loc['2013'] # get rows with date like
+df_loc_date_index2 = df_number.sort_index().loc["2021-07-05T01:11":"2021-07-05T01:16"] # get rows with date like
+df_loc_date_index3 = df_number.sort_index().loc[datetime(2021,7,5,1,11):datetime(2021,7,5,1,16)] # need `sort_index()` for range loc()
+
 #%%
 
 # 하나의 데이터도 Timestamp로 변환 가능
