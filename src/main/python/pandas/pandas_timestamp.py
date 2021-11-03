@@ -37,3 +37,5 @@ df_loc_date_index3 = df_number.sort_index().loc[datetime(2021,7,5,1,11):datetime
 # 하나의 데이터도 Timestamp로 변환 가능
 timestamp_data = pd.to_datetime("11/1/2019")
 
+#%% long to datetime
+df['time'] = pd.to_datetime(df['time'], unit='ms')
