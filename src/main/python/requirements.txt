@@ -26,7 +26,7 @@ six==1.15.0
 slackclient==2.9.3
 tabulate==0.8.9
 threadpoolctl==2.1.0
-pyspark-stubs=3.0.3
-tensorflow=2.6.0
-awswrangler=2.11.0
-boto3=1.18.36
+pyspark-stubs==3.0.3
+tensorflow==2.6.0
+awswrangler==2.11.0
+boto3==1.18.36
