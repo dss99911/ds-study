@@ -3,6 +3,7 @@
 [Cluster Model Overview](https://spark.apache.org/docs/latest/cluster-overview.html) : overview of concepts and components when running on a cluster
 [Understanding of Cluster Manager, Master and Driver nodes](https://stackoverflow.com/a/40560068/4352506)
 [reference](https://aws.amazon.com/blogs/big-data/best-practices-for-successfully-managing-memory-for-apache-spark-applications-on-amazon-emr/)
+[executor count](https://jaemunbro.medium.com/spark-executor-%EA%B0%9C%EC%88%98-%EC%A0%95%ED%95%98%EA%B8%B0-b9f0e0cc1fd8)
 
 ## Explanation
 - Driver Node, Worker Node가 있다.(Node는 서버와 대응. 두개를 포괄하여, cluster라고 하는 듯)
@@ -21,15 +22,12 @@
 Executor : driver한테서 application code를 받아서, 각 core에 task를 할당함.
 Core : 노드의 cpu core와 일치하는 개념. executor 가 각 core를 담당.
 
-- executor당 core갯수가 작으면, executor수가 많아지고, I/O operation 양이 많아짐(셔플, application code받기 등에서, executor수만큼 I/O가 발생)
+- executor당 core갯수가 작으면, executor수가 많아지고, I/O operation 양이 많아짐(셔플등에서 executor수만큼 I/O가 발생)
 - executor당 core갯수를 크게 설정하면, executor갯수가 작아지고, 병렬성이 낮아짐(task들을 각 executor들이 처리하는데, 동시에 처리하는 task갯수가 줄어듬. 대신에, core를 여러개 쓰므로,하나의 task를 완료하는 시간은 더 빠를 듯)
 
-추측
-- 하나의 task를 수행하기에 앞서, 준비 작업도 많이 필요하고, 주로 I/O 통신량이 많을 텐데, I/O통신은 느리고, 여기서 지연이 생길 수 있다.
-- executor가 많으면, 병렬로 I/O통신을 하기 때문에, task들의 준비 작업이 병렬로 이루어져, 전체 준비시간이 감소한다.
-- 하지만, 셔플 등에서, executor들 간의 데이터의 이동량이 많아짐.
+하나의 executor당 최대 5개까지의 core(2~5), 4g이상(~ 64gb) memory 권장
 
-하나의 executor당 5개정도의 core를 권장?
+시작 점 : ```—-executor-cores 2 --executor-memory 16GB```
 
 ## deploy mode
 - clinet mode : spark-submit을 하는 서버가 driver가 되고, cluster에 대해서, 말그대로 client역할을 하는 것임(cluster에 요청하고, 결과를 받고 하는 식으로. )
