@@ -6,6 +6,7 @@ package spark
 class PerformanceAndOptimizer {
   /**
    * can see how to process the data in physical side
+   * 파티션 수도 나옴. splits등
    * == Physical Plan ==
    * *(1) SerializeFromObject [assertnotnull(input[0, $line60.$read$$iw$$iw$foo, true]).id AS id#894L, assertnotnull(input[0, $line60.$read$$iw$$iw$foo, true]).addOne AS addOne#895L]
    * +- *(1) MapElements <function1>, obj#893: $line60.$read$$iw$$iw$foo

@@ -93,4 +93,10 @@ var builder: SparkSession.Builder = _
       .config("spark.default.parallelism", parallelism)
       .config("spark.sql.shuffle.partitions", parallelism)
   }
+
+  def frequentlyUsed() = {
+    builder
+      .config("spark.executor.cores", 3) // 하나의 executor가 몇개의 cpu core를 사용할지. default : Yarn  1, 다른 모드에서는 worker node의 전체 core를 사용.
+      .config("spark.files.maxPartitionBytes", 134217728)// 파일 읽을 때 파티션 수. 파티션이 적절히 있어야 빨리 읽어옮. default 128m
+  }
 }

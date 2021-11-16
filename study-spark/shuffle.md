@@ -2,3 +2,4 @@
 - beforing starting stage. save shuffle file on disk. so that, if the stage/task is failed. read the disk and try again from the stage
   - if multiple jobs are called and used already shuffled data. spark skip the source shuffle. so, Spark UI shows skipped on this case.
 - shuffle occurred between stage.
+- 셔플 전에 sorting을 하는 경우가 많고, I/O통신 및, data저장을 하기 때문에, 속도가 많으 느림. 
