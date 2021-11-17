@@ -27,6 +27,9 @@ Core : 노드의 cpu core와 일치하는 개념. executor 가 각 core를 담�
 
 하나의 executor당 최대 5개까지의 core(2~5), 4g이상(~ 64gb) memory 권장
 
+계산
+- 각 node당 하나의 core는 cluster manager의 prcess로 남겨놓는다
+
 시작 점 : ```—-executor-cores 2 --executor-memory 16GB```
 
 ## deploy mode
