@@ -36,6 +36,7 @@ Core : 노드의 cpu core와 일치하는 개념. executor 가 각 core를 담�
 - clinet mode : spark-submit을 하는 서버가 driver가 되고, cluster에 대해서, 말그대로 client역할을 하는 것임(cluster에 요청하고, 결과를 받고 하는 식으로. )
   - driver program이 spark실행하는 서버에서 진행하기 때문에, driver program의 console로그를 확인가능(제플린 등에 적절)
 - cluster mode : spark-submit을 멀리서 요청한 경우(local laptop에서 요청했을 때 등. driver program이 local이기 때문에, 지연이 심하여, 서버의 cluster에서만 호출되도록 처리)
+  - driver program이 worker node에서 실행되고, driver program이 속한 node는 task를 처리 안함.
 
 ## Cluster Manager
 - master process : the term of cluster manager in Spark standalone mode
