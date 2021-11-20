@@ -1,5 +1,6 @@
 import awswrangler as wr
 import getpass
+import boto3
 
 subnet = getpass.getpass()
 #%% create cluster
@@ -15,6 +16,23 @@ while wr.emr.get_step_state(cluster_id, step_id) != "COMPLETED":
 
 #%% terminate cluster
 wr.emr.terminate_cluster(cluster_id)
+
+#%% check cluster
+def emr_instance_running(name):
+    client = boto3.client('emr')
+    cluster_response = client.list_clusters(
+        ClusterStates=[
+            'STARTING', 'BOOTSTRAPPING', 'RUNNING', 'WAITING', 'TERMINATING',
+        ]
+    )
+
+    if cluster_response["ResponseMetadata"]["HTTPStatusCode"] == 200:
+        for c in cluster_response["Clusters"]:
+            if c["Name"] == name:
+                return True
+        return False
+    else:
+        raise Exception(f"response error : {cluster_response}")
 
 #%% use docker by ECR
 # https://github.com/awslabs/aws-data-wrangler/blob/main/tutorials/016%20-%20EMR%20%26%20Docker.ipynb

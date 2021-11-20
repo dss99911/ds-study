@@ -43,3 +43,10 @@ exist = exists("hyun.test", "test.csv")
 #%% download
 s3_client = boto3.client('s3')
 s3_client.download_file("hyun.test", "object", "path")
+
+#%% delete dir
+s3 = boto3.resource('s3')
+bucket = s3.Bucket('mybucket')
+bucket.objects.filter(Prefix="myprefix/").delete()
+
+#%%
