@@ -3,17 +3,13 @@ from pyspark.ml.functions import *
 
 from pyspark.sql import DataFrame
 from pyspark.sql import SparkSession
-from pyspark.sql import functions as F
 from pyspark.sql.functions import *
+from pyspark.sql.types import *
 from pyspark.sql.window import Window
 from slackclient import SlackClient
-from pyspark.sql import functions as F, SparkSession
-from pyspark.sql.types import *
-from pyspark.sql import DataFrame
-from pyspark.sql.functions import *
-from pyspark.sql import SparkSession
-import res.resource_dev as res_dev
-import res.resource_live as res_live
+
+import spark.res.resource_dev as res_dev
+import spark.res.resource_live as res_live
 
 
 def res():
@@ -40,8 +36,8 @@ def create_spark_session(name, use_delta=True):
 
 
 def window_filter(df: DataFrame, window):
-    df = df.withColumn("seq", F.row_number().over(window))
-    df = df.filter(F.col("seq") == 1)
+    df = df.withColumn("seq", row_number().over(window))
+    df = df.filter(col("seq") == 1)
     df = df.drop("seq")
     return df
 

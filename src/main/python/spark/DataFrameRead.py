@@ -1,8 +1,6 @@
 from datetime import datetime, date
 import pandas as pd
-from pyspark.sql import Row
-from pyspark.sql import SparkSession
-
+from spark.util.util import *
 spark = SparkSession.builder.getOrCreate()
 
 
@@ -57,6 +55,15 @@ def read_from_excel(path):
     pandas_df = pd.read_excel(path, index_col=0)  # 인덱스 컬럼이 연속해서 추가되는 것을 방지, 인덱스 컬럼을 0번 컬럼으로
     return spark.createDataFrame(pandas_df)
 
+def read_files():
+    """read file path and contents"""
+    texts = spark.sparkContext.wholeTextFiles(".")  # read root path's file only
+    # texts = spark.sparkContext.wholeTextFiles("./*")  # read file recursively
+    schema = StructType([
+        StructField('filename', StringType()),
+        StructField('text', StringType()),
+    ])
+    return spark.createDataFrame(texts, schema)
 
 if __name__ == '__main__':
     df = create_from_rdd()
