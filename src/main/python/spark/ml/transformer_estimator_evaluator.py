@@ -21,7 +21,9 @@ schema = StructType([
 iris = spark.read.csv('./data/iris.data', schema=schema)
 iris.createOrReplaceTempView('iris')
 #%% SQLTransformer
-
+# pipeline이 길어지면, 안 쓰는 컬럼들이 많아진다. SqlTrqansformer로 select해서, 중간 중간에 안 쓰는 컬럼 제외
+# tempView나 외부 데이터 참조시 사용
+# udf를 통해 자유롭게 로직을 넣을 수 있음(udf는 등록해주어야 함)
 from pyspark.ml.feature import SQLTransformer
 
 statement = '''

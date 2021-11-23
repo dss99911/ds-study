@@ -101,7 +101,7 @@ custom_pipeline = Pipeline(stages=[
 lemmata = custom_pipeline.transform(texts).first()["lemmata"]
 
 #%% stopwords.
-
+# 전처리 끝난 후, stopwords를 마지막에 함으로써, stopwords dictionary에는 표제어만 추가하면 되게 하고 있음
 from pyspark.ml.feature import StopWordsRemover
 
 # is, from, of, i, me, my등의 리스트
@@ -117,3 +117,9 @@ larger_pipeline = Pipeline(stages=[
 ]).fit(texts)
 
 terms = larger_pipeline.transform(texts).first()["terms"]
+
+#%% LightPipeline
+# DataFrame을 transform하는 것이 아닌 텍스트를 annotate 할 수 있음
+from sparknlp.base import LightPipeline
+light = LightPipeline(larger_pipeline)
+light.annotate("We are very happy about Spark NLP")
