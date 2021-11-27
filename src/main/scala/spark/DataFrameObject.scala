@@ -47,6 +47,10 @@ class DataFrameObject {
 
   def convertDataFrameToObject() = {
     Read.getCsv()
+      .selectExpr("CAST(key AS STRING)", "CAST(value AS STRING)")
+      .as[(String, String)]
+
+    Read.getCsv()
       .as[Person] //convert to object
       .map(p => p.age)
       .show()

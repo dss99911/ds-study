@@ -1,3 +1,5 @@
+import sbt.Keys.libraryDependencies
+
 name := "spark_study"
 
 version := "0.1"
@@ -7,6 +9,7 @@ scalaVersion := "2.12.12"
 mainClass in (Compile, run) := Some("spark.MainApp")
 mainClass in (Compile, packageBin) := Some("spark.MainApp")
 resolvers += "spark-packges" at "https://repos.spark-packages.org"
+resolvers += "confluent" at "https://packages.confluent.io/maven/"
 
 libraryDependencies ++= Seq(
   "org.apache.spark" %% "spark-core" % "3.1.1" % "provided",
@@ -21,7 +24,11 @@ libraryDependencies ++= Seq(
 
   /*TODO delta libraries are not working for fat jar. fix it!*/
   "io.delta" %% "delta-core" % "0.8.0",
-  "graphframes" % "graphframes" % "0.8.1-spark3.0-s_2.12"
+  "graphframes" % "graphframes" % "0.8.1-spark3.0-s_2.12",
+
+  //SchemaRegistry for streaming
+  "io.confluent" % "kafka-schema-registry-client" % "5.5.0",
+  "za.co.absa" %% "abris" % "4.2.0",
 )
 
 //for Jackson
