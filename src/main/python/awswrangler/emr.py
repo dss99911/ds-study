@@ -33,7 +33,11 @@ cluster_id = wr.emr.create_cluster(subnet_id="subnet_id",
                                    steps=steps,
                                    key_pair_name="hyun",
                                    security_groups_master_additional=["ssh_security_group"],
-                                   debugging=False
+                                   debugging=False,
+                                   spark_defaults={
+                                       "spark.executor.defaultJavaOptions": "-verbose:gc -XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:OnOutOfMemoryError='kill -9 %p' -XX:+UseConcMarkSweepGC -XX:CMSInitiatingOccupancyFraction=70 -XX:MaxHeapFreeRatio=70 -XX:+CMSClassUnloadingEnabled",
+                                       "spark.driver.defaultJavaOptions": "-XX:OnOutOfMemoryError='kill -9 %p' -XX:+UseConcMarkSweepGC -XX:CMSInitiatingOccupancyFraction=70 -XX:MaxHeapFreeRatio=70 -XX:+CMSClassUnloadingEnabled"
+                                   }
                                    )
 
 #%% add step

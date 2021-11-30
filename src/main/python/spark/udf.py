@@ -3,7 +3,7 @@ from pyspark.sql.functions import udf
 from pyspark.sql.functions import col, asc, desc
 from pyspark.sql.types import FloatType, StructType, StringType, StructField, DoubleType
 
-from src.main.python.spark.DataFrameRead import create_by_row
+from spark.DataFrameRead import create_by_row
 
 x2 = udf(lambda x: x * 2, StringType())
 create_by_row().withColumn("x2", x2("x"))  # make x2 column from x column
@@ -16,7 +16,7 @@ create_by_row().withColumn("x2", x2("x"))  # make x2 column from x column
 
 from difflib import SequenceMatcher
 
-from org.apache.spark.sql import SparkSession
+from pyspark.sql import SparkSession
 from pyspark.sql.types import FloatType, StructType, StringType, StructField
 from pyspark.sql.functions import udf
 import pyspark.sql.functions as F

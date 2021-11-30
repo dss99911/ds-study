@@ -269,4 +269,8 @@ class Streaming {
       })
     }
   }
+
+  def performance() = {
+    //udf이후 filter를 하면, 성능이 급격히 하락하는 사례가 있었음.
+  }
 }

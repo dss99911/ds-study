@@ -35,8 +35,8 @@
 
 ## Study
 - Demo : https://nlp.johnsnowlabs.com/demos
-- learn : https://nlp.johnsnowlabs.com/learn
-
+- Learn : https://nlp.johnsnowlabs.com/learn
+- Workshop : https://github.com/JohnSnowLabs/spark-nlp-workshop
 
 ## Alternative
 - [spaCy](https://spacy.io/)도 있지만, 분산처리를 지원하는 sparkNLP가 요즘 대세라고 함.

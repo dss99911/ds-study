@@ -1,1 +1,0 @@
-aws s3 cp s3://path/re2j-1.2.jar external_jars/

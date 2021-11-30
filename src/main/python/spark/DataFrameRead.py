@@ -11,6 +11,13 @@ def create():
         (3, 4., 'string3', 1, 2)
     ], ['a', 'b', 'c', 'd', 'e'])
 
+    # single column
+    spark.createDataFrame([
+        (1,),
+        (2,),
+        (3,)
+    ], ['a'])
+
 def create_by_row():
     return spark.createDataFrame([
         Row(a=1, b=2., c='string1', d=date(2000, 1, 1), e=datetime(2000, 1, 1, 12, 0)),
