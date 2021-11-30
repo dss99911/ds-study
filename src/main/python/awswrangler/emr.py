@@ -6,6 +6,36 @@ subnet = getpass.getpass()
 #%% create cluster
 cluster_id = wr.emr.create_cluster(subnet)
 
+#%% create cluster sample
+import awswrangler as wr
+
+steps = [wr.emr.build_spark_step(path="submit_script",
+                                 name="name",
+                                 docker_image="docker-image"
+                                 )
+         ]
+
+cluster_id = wr.emr.create_cluster(subnet_id="subnet_id",
+                                   docker=True,
+                                   cluster_name="name",
+                                   logging_s3_path="s3://aad",
+                                   emr_release="emr-6.4.0",
+                                   instance_type_master="m4.large",
+                                   instance_type_core="instance_type",
+                                   instance_type_task="instance_type",
+                                   instance_ebs_size_master=64,
+                                   instance_ebs_size_core=64,
+                                   instance_ebs_size_task=64,
+                                   instance_num_on_demand_core=1,
+                                   applications=["Hadoop", "Spark", "Hive", "Ganglia"],
+                                   maximize_resource_allocation=True,
+                                   keep_cluster_alive_when_no_steps=False,
+                                   steps=steps,
+                                   key_pair_name="hyun",
+                                   security_groups_master_additional=["ssh_security_group"],
+                                   debugging=False
+                                   )
+
 #%% add step
 step_id = wr.emr.submit_step(cluster_id, command=f"spark-submit s3://hyun.test/test.py")
 
