@@ -158,3 +158,8 @@ avgMetrics = cv_model.avgMetrics
 #%% write pipeline model
 
 pipeline_model.write().overwrite().save('pipeline.model')
+
+#%% load pipeline model
+from pyspark.ml import PipelineModel
+model = PipelineModel.load('pipeline.model')
+# model.transform()

@@ -1,6 +1,6 @@
 from collections import Counter
 from spark.util.util import *
-
+from pyspark.ml import PipelineModel, Pipeline
 
 def collect_counter(df: DataFrame, col_name: str, get_label=lambda i: i) -> Counter:
     counts = Counter()

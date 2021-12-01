@@ -162,6 +162,7 @@ larger_pipeline = Pipeline(stages=[
     stopwords_remover
 ]).fit(texts)
 
+larger_pipeline.write().overwrite().save('pipeline/nlp')
 #%% LightPipeline
 # DataFrame을 transform하는 것이 아닌 텍스트를 annotate 할 수 있음.
 # 그런데, stopwords_remover의 output이 안나오는 걸 보면, nlp annotator들만 되는듯.

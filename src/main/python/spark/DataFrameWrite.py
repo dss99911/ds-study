@@ -19,6 +19,8 @@ def write_to_excel(df, path):
 
 def collect_rows(df: DataFrame):
     l: list[Row] = df.collect()
+    a: list[str] = df.select("a").rdd.flatMap(lambda x: x).collect()  # select single column
+    all: list[dict] = df.rdd.map(lambda r: r.asDict()).collect()  # select multiple columns
     for row in df.toLocalIterator():
         row["a"]
 
