@@ -25,7 +25,7 @@ def create_spark_session(name, use_delta=True):
     builder = SparkSession.builder \
         .appName(name) \
         .enableHiveSupport() \
-        .config("spark.sql.hive.manageFilesourcePartitions", False)
+        .config("spark.sql.hive.manageFilesourcePartitions", True)
 
     if use_delta:
         builder = builder.config("spark.jars.packages", "io.delta:delta-core_2.12:0.8.0") \

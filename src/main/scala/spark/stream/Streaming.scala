@@ -45,7 +45,7 @@ class Streaming {
 
     val static = spark.read.json("data/activity-data/")
     val dataSchema = static.schema
-    val streaming = spark.readStream.schema(dataSchema)
+    val streaming = spark.readStream.schema(dataSchema)//input schema is mandatory
       .option("maxFilesPerTrigger", 1)//한 트리거당 최대 처리할 파일 수
       .json("data/activity-data")
 

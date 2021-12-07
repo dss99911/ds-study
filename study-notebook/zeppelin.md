@@ -7,6 +7,7 @@
 
 ## Ztools
 - [Ztools](https://blog.jetbrains.com/idea/2020/10/ztools-for-apache-zeppelin/)
+- https://github.com/jetbrains/ztools
 - Schema autocomplete
 - Variable Explorer
 -  

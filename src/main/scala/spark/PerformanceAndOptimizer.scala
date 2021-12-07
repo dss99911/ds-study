@@ -18,6 +18,23 @@ class PerformanceAndOptimizer {
   Read.getParquetDataFrame().explain
   Read.getParquetDataFrame().explain(true)
 
+
+  Read.getParquetDataFrame().queryExecution.executedPlan //직접 실행한 것처럼 로그가 찍힘. zeppelin처럼 로그가 안찍히는 경우 안 보임.
+  Read.getParquetDataFrame().queryExecution.executedPlan.numberedTreeString //직접 실행한 것처럼 로그가 찍힘. zeppelin처럼 로그가 안찍히는 경우 안 보임.
+  Read.getParquetDataFrame().queryExecution.toRdd.getNumPartitions // 버캣 갯수등, 파티션 수를 알 수 있음
+
+  def partitionPrune() = {
+    //파티션 prune이 제대로 되는지 확인하기.
+    //FileSourceStrategy 로그에 prune여부가 찍힘(zeppelin에서는 로그가 안 보이기 때문에, spark-shell 등에서 실행해야 함)
+    import org.apache.spark.sql.execution.datasources.FileSourceStrategy
+    val logger = FileSourceStrategy.getClass.getName.replace("$", "")
+    import org.apache.log4j.{Level, Logger}
+    Logger.getLogger(logger).setLevel(Level.INFO)
+
+    Read.getParquetDataFrame().filter("partition_id = 'a'").queryExecution.executedPlan
+
+  }
+
   /**
    * DAGScheduler
    *    converts logical execution plan (i.e. RDD lineage of dependencies built using RDD transformations)

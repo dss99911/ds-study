@@ -38,6 +38,8 @@ tokenizer = tokenizer.setOutputCol('tokens')
 tokens = tokenizer.fit(sentences).transform(sentences)
 token_dict = tokens.limit(5).toPandas().to_dict()
 
+tokenizer.extractParamMap() # 설정 값을 보여줌.
+
 # Spark ML's RegexTokenizer
 # regex \b is boundary. start and end of alpha-numeric
 ws_tokenizer = RegexTokenizer() \

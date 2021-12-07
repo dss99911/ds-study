@@ -15,6 +15,10 @@
 # 1. inversed index 만들기
 # 2. query를 받으면, inversed index를 통해, 문서를 찾고, 문서들을 rank 높은 순으로 정렬
 
+# 아래 검색 로직의 한계
+# - tfidf에 n-gram 에 대한 고려가 없음
+# - 더 긴문서에 ranking이 치우쳐 있음(문서의 길이가 길 수록 tfidf의 점수의 비중을 낮춰야 할까?)
+
 #%% write model
 
 from spark.ml.util import *

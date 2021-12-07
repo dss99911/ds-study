@@ -113,6 +113,10 @@ object Read {
     spark.table("mms.company")
   }
 
+  def range() = {
+    spark.range(10e4.toLong)
+  }
+
   def getCsv() = {
 
     //format ex) 1,abcd,"asdfsd""dd""f" ==> quote in string

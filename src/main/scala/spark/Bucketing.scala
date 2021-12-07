@@ -19,6 +19,13 @@ import org.apache.spark.sql.functions.col
  * - id로 조인하는 경우, id로 partition을 나누면 파티션이 너무 많이 만들어지고, 파티션별로 폴더가 생성된다.
  * - 이 경우, id로 bucketing하면, sortMergeJoin등에서 shuffle이 일어나지 않는다.
  *
+ *
+ * no exchange query가 되기 위한 조건
+ * - The number of partitions on both sides of a join has to be exactly the same. (파티션 수 주의)
+ * - Both join operators have to use HashPartitioning partitioning scheme. (broadcast join이면 안됨)
+ *    - spark.conf.set("spark.sql.autoBroadcastJoinThreshold", -1)
+ * - partition과 bucket을 동시에 사용하는 경우, bucket_id만 가지고 join해야 됨. partition과 bucket을 같이 하면 안됨.(이유 모름)
+ *
  */
 class Bucketing {
   private val spark: SparkSession = SparkSessions.createSparkSession()

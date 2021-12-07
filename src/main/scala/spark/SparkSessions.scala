@@ -4,8 +4,8 @@ import org.apache.spark.sql.SparkSession
 
 object SparkSessions {
   def createSparkSession(): SparkSession = {
-    val spark = SparkSession.builder.appName("acs_tx_extractor")
-      .enableHiveSupport()//udf를 쓰기 위해서 인지? 아니면 partitionBy 메서드를 쓰기 위해서 인지. https://stackoverflow.com/a/52170175/4352506
+    val spark: SparkSession = SparkSession.builder.appName("acs_tx_extractor")
+      .enableHiveSupport()//1. hive table사용할 때. https://spark.apache.org/docs/latest/sql-data-sources-hive-tables.html 2. udf를 쓰기 위해서도 필요한지는 확인 필요. https://stackoverflow.com/a/52170175/4352506
       .getOrCreate()
 
     //available to overwrite specific partition only
@@ -21,6 +21,15 @@ object SparkSessions {
 
   def version() = {
     createSparkSession().version
+  }
+
+  def checkConf() = {
+    val spark: SparkSession = SparkSession.builder.appName("acs_tx_extractor")
+      .enableHiveSupport()//1. hive table사용할 때. https://spark.apache.org/docs/latest/sql-data-sources-hive-tables.html 2. udf를 쓰기 위해서도 필요한지는 확인 필요. https://stackoverflow.com/a/52170175/4352506
+      .getOrCreate()
+
+    spark.sessionState.conf.partitionOverwriteMode
+    spark.sessionState.conf.manageFilesourcePartitions
   }
 
 }
