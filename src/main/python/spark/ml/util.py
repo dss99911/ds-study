@@ -1,6 +1,10 @@
 from collections import Counter
 from spark.util.util import *
+from pyspark.ml.feature import *
 from pyspark.ml import PipelineModel, Pipeline
+from pyspark.ml.classification import *
+from pyspark.ml.tuning import *
+from pyspark.ml.evaluation import *
 
 def collect_counter(df: DataFrame, col_name: str, get_label=lambda i: i) -> Counter:
     counts = Counter()

@@ -69,6 +69,7 @@ norvig = NorvigSweetingModel.pretrained() \
 # - 딕셔너리가 없다. 알고리즘 기반
 # - 알 수 없는 단어가 많이 있는 경우
 # - 의미에 따른 단어의 결합의 경우, 어간 추출이 거의 불가능
+# - 알고리즘 기반이다보니, 커스터마이징 할 수 있는 방법은 없는듯
 from sparknlp.annotator import Stemmer
 
 stemmer: Stemmer = Stemmer()
@@ -84,6 +85,7 @@ from sparknlp.annotator import Lemmatizer, LemmatizerModel
 # 특정 단어의 표제어(are의 경우 be) 찾기. 각 사용케이스에 맞춰서, dictionary를 customizing할 수 있음
 
 lemmatizer: Lemmatizer = LemmatizerModel.pretrained()
+# lemmatizer.setDictionary() # pretrained에 추가로 어휘를 추가할 수 있는 듯
 lemmatizer = lemmatizer.setInputCols("norvig")
 lemmatizer = lemmatizer.setOutputCol("lemma")
 
@@ -91,10 +93,36 @@ lemmatizer_custom = Lemmatizer() \
     .setInputCols("tokens") \
     .setOutputCol("lemma") \
     .setDictionary('data/en_lemmas.txt', '\t', ',')
-
+# 사전에 없으면 token값을 그대로 사용
 
 lemmas = lemmatizer_custom.fit(tokens).transform(tokens)
-lemmas.limit(5).toPandas()
+lemmas_pandas = lemmas.limit(5).toPandas()
+
+#%% RegexMatcher
+
+# ,로 구분하여, 왼쪽은 regex, 오른쪽은 변환될 단어라고 생각했는데, 매칭되는 단어를 찾아주기만 함
+# TODO regex로 특정 단어를 다른 단어로 변환하는 annotator가 있으면 좋을 것 같은데, 이건 어떻게 하지?
+# setInputCols()가 생략되어 있는데, 이 경우, 이전 annotation 컬럼을 사용한다고 함.
+from sparknlp.annotator import RegexMatcher
+from pyspark.ml import Pipeline, PipelineModel
+
+regex_matcher = RegexMatcher() \
+    .setOutputCol("regex") \
+    .setExternalRules('./data/scifi_rules.tsv', ',')  # regex,word 형식. regex를 word로 변환
+
+# tsv파일의 ',' 오른쪽 단어는 아래와 같이 metadata.identifier에 설정됨.
+# {'annotatorType': 'chunk', 'begin': 8, 'end': 12, 'result': 'alien', 'metadata': {'sentence': '0', 'identifier': 'space_word', 'chunk': '0'}, 'embeddings': []}
+
+regex_finisher = Finisher() \
+    .setInputCols(['regex']) \
+    .setOutputCols(['regex']) \
+    .setOutputAsArray(True)
+
+regex_rule_pipeline = Pipeline().setStages([
+    document_assembler, regex_matcher, regex_finisher
+]).fit(texts)
+
+regex_matches = regex_rule_pipeline.transform(texts)
 
 #%% normalizer
 # change to lower case, clean up by regex
@@ -164,7 +192,12 @@ larger_pipeline = Pipeline(stages=[
     stopwords_remover
 ]).fit(texts)
 
+#%% save
 larger_pipeline.write().overwrite().save('pipeline/nlp')
+
+#%% load
+from pyspark.ml import PipelineModel
+larger_pipeline_load = PipelineModel.load("pipeline/nlp")
 #%% LightPipeline
 # DataFrame을 transform하는 것이 아닌 텍스트를 annotate 할 수 있음.
 # 그런데, stopwords_remover의 output이 안나오는 걸 보면, nlp annotator들만 되는듯.

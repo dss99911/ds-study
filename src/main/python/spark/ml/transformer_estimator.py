@@ -42,6 +42,7 @@ sql_transformer = SQLTransformer(statement=statement)
 df_sql_transformer = sql_transformer.transform(iris).toPandas()
 
 #%% Binarizer
+# threshold에 따라, true, false값을 가지는 outputCol생성
 from pyspark.ml.feature import Binarizer
 
 binarizer = Binarizer(
@@ -70,7 +71,7 @@ iris_w_vecs.limit(5).toPandas()
 #%% MinMaxScaler
 # make value from 0 to 1.
 # 수치를 바꾸려면, 데이터의 최소값 최대값이 필요하고,
-# trained data에 있는 것보다 더 큰 데이터가 serving시에 있는 경우에는 정확한 값이 아니므로 estimator로 분류
+# trained data에 있는 것보다 더 큰 데이터가 serving시에 있는 경우에는 정확한 값이 아니고, fit을 통해, min,max값을 구하는게 필요하므로 estimator로 분류
 # [5.1, 3.5, 1.4, 0.2] => [0.22222222222222213, 0.6249999999999999, 0.06...
 from pyspark.ml.feature import MinMaxScaler
 
@@ -112,17 +113,6 @@ iris_w_pred.limit(5).toPandas()
 iris_w_pred_class = index2string.transform(iris_w_pred)
 iris_w_pred_class.limit(5).toPandas()
 
-#%% MulticlassClassificationEvaluator
-# 모델 평가하기. 0~1 사이의 정확도를 리턴함.
-from pyspark.ml.evaluation import MulticlassClassificationEvaluator
-
-evaluator = MulticlassClassificationEvaluator(
-    labelCol='class_ix',
-    metricName='accuracy'
-)
-
-evaluator.evaluate(iris_w_pred_class)
-
 #%% Pipeline
 
 from pyspark.ml import Pipeline
@@ -137,24 +127,6 @@ pipeline = Pipeline(stages=[
 pipeline_model = pipeline.fit(iris)
 pipeline_model.transform(iris).limit(5).toPandas()
 
-#%% cross validation
-
-from pyspark.ml.tuning import CrossValidator, ParamGridBuilder
-
-# performance tuning을 위한 validate할 parameter들을 지정
-param_grid = ParamGridBuilder(). \
-    addGrid(dt_clfr.maxDepth, [5, 6]). \
-    build()
-cv = CrossValidator(
-    estimator=pipeline,
-    estimatorParamMaps=param_grid,
-    evaluator=evaluator,
-    numFolds=3,
-    seed=123
-)
-
-cv_model = cv.fit(iris)
-avgMetrics = cv_model.avgMetrics
 #%% write pipeline model
 
 pipeline_model.write().overwrite().save('pipeline.model')

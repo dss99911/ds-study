@@ -17,4 +17,9 @@ df.plot(x="years", y="values", kind='bar', figsize=(10, 5))  # x, y column
 
 plt.show()
 
-# %%
+# %% hist
+# 각 값의 분포도
+plt.figure(figsize=(12, 8))
+df["values"].hist(bins=5)
+plt.title('Histogram of mean term frequency per word over the corpus')
+plt.show()

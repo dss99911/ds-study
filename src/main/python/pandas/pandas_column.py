@@ -14,6 +14,30 @@ df = pd.DataFrame({
 })
 s = pd.Series([1, 3, 5, np.nan, 6, 8], index=dates).shift(2)
 
+# %%
+# Select
+df_select_column = df["a"]  # get index and column 'a'
+df_select_column = df.a  # get index and column 'a'
+df_select_columns = df[["a", "b"]]  # get index and column 'a'
+df_select_multiple_column_by_column_index = df[0:3]
+
+df_select_by_filter_columns = df.filter(items=['a', 'b']) # same with df[["a", "b"]]
+df_select_by_filter_regex = df.filter(regex='[a-c]') # axis=1 is column
+df_select_by_filter_regex2 = df.filter('a') # axis=1 is column
+
+# %%
+# New column
+df['new_column'] = df.c.str.lower()
+
+# %%
+# delete column
+del df['a']
+
+# %% Rename column
+
+df_changed_columns = df.copy()
+# change whole columns
+df_changed_columns.columns = ["A", "B", "C", "D", "E"]
 #%%
 #특정 이름의 컬럼이 존재하는지.
 exists_a = 'a' in df.columns
