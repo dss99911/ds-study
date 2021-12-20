@@ -17,9 +17,14 @@ s = pd.Series([1, 3, 5, np.nan, 6, 8], index=dates).shift(2)
 s_dtypes = df.dtypes
 field_index = df.index
 field_columns = df.columns
-field_values = df.values # column명 및 index는 제외한 값만 리턴됨. for문에, 각 컬럼을 사용할 수 있음.
+field_values = df.values # column명 및 index는 제외한 값만 리턴됨. for문에, 각 컬럼을 사용할 수 있음. ndarray
+
 for a,b,c,d,e in field_values:
     print(f"{a},{b},{c},{d},{e}")
+
+# row와 index
+for i, row in df.iterrows():
+    print(i, row["a"])
 
 length = len(df) # row size
 

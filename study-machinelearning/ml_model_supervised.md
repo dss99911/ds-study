@@ -1,4 +1,4 @@
-# ML Model
+# ML Model (Supervised Learning)
 
 ## Linear Model
 피쳐가 독립적이라는 가정
