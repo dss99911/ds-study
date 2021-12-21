@@ -18,3 +18,12 @@ jupyter notebook
 
 ### Jupyter
 - result is saved
+  https://github.com/dss99911/spark-study/blob/master/src/main/python/jupyter/matplot.ipynb
+
+
+View the notebooks online:
+[![nbviewer](https://raw.githubusercontent.com/jupyter/design/master/logos/Badges/nbviewer_badge.svg)](https://nbviewer.jupyter.org/github/dss99911/spark-study/blob/master/src/main/python/jupyter)
+
+
+Excecute the notebooks in Binder:
+  [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/dss99911/spark-study/HEAD)

@@ -1,4 +1,7 @@
 # Deep learning
+- Tensorflow
+- Pytorch
+- skit-learn
 
 ## Perceptron
 
@@ -58,6 +61,7 @@
 - hidden unit이 자신을 호출하는 recurrent한 구조라고 함
 - 시계열 처리하기 위해 탄생. 기존 신경망은 앞으로만 전진하는데 반해, rnn은 자기 자신을 참조
 - 다중 퍼셉트론의 경우, 같은 레이어의 노드들은 독립적인데(앞단의 레이어의 노드들은 서로 연관이 가능), RNN의 경우, 같은 레이어의, 노드들이 서로 연관됨.
+- 사용 예 : 음성 인식, 언어 모델링, 번역, 이미지 주석 생성
 
 ### LSTM
 - https://colah.github.io/posts/2015-08-Understanding-LSTMs/

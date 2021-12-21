@@ -33,6 +33,8 @@ df_filter_by_index3 = df[:2] # row[0,1]
 df_filter_by_row_value = df[df['a'] > 1]
 df_filter_by_row_value2 = df[df.apply(lambda r: r['a'] > 1, axis='columns')] # axis=1 is column
 df_distinct = df.drop_duplicates()
+df_distinct_count = df.nunique()
+df_distinct_from_series = df["id"].unique()
 
 # Filter by index
 Filter_df  = df[df.index.isin("1", "2")]

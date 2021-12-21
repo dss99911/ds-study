@@ -21,3 +21,6 @@ s_lower.rename("new_name").to_frame()
 #%%
 #%% map
 list_a = s.map(lambda c: f"c{c}").tolist()
+
+#%% random
+np.random.choice(s)
