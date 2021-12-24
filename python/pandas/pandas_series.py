@@ -23,4 +23,4 @@ s_lower.rename("new_name").to_frame()
 list_a = s.map(lambda c: f"c{c}").tolist()
 
 #%% random
-np.random.choice(s)
+ran = np.random.choice(s)

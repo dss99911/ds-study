@@ -22,6 +22,7 @@ df_loc_date_index = df_number.loc['2013'] # get rows with date like
 df_loc_date_index2 = df_number.sort_index().loc["2021-07-05T01:11":"2021-07-05T01:16"] # get rows with date like
 df_loc_date_index3 = df_number.sort_index().loc[datetime(2021,7,5,1,11):datetime(2021,7,5,1,16)] # need `sort_index()` for range loc()
 df_loc_multi_scope = df.loc[0:2, ["a", "b"]]  # select by row index and columns
+df_loc_condition = df.loc[(df.index >= '2012-07-01') & (df.a > 1), ["a", "b"]]  # select by row index condition and columns
 df_loc_all_rows_some_columns = df.loc[:, ["a", "b"]]  # select columns of all rows
 df_loc_single_value = df.loc[0, "a"]  # get specific value
 df_loc_single_value2 = df.at[0, "a"]  # get specific value(equivalent to the prior method

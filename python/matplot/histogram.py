@@ -20,4 +20,29 @@ plt.axis([40, 160, 0, 0.03])
 plt.grid(True)
 plt.show()
 
-#%%
+
+# %% hist
+# 각 값의 분포도
+# plt.figure(figsize=(12, 8))
+import pandas as pd
+
+df = pd.DataFrame({
+    'num': np.arange(3) + 2,
+    'years': ['2018', '2019', '2020'],
+    'values': [1, 2, 3],
+
+})
+
+df["values"].hist(bins=5, density=True, figsize=(12, 8))  # density : 갯수가 아닌 밀도로 표시
+plt.title('Histogram of mean term frequency per word over the corpus')
+plt.show()
+
+#
+state = pd.read_csv("data/state.csv")
+ax = state['Murder.Rate'].plot.hist(density=True, xlim=[0, 12],  # xlim : x축의 범위 정함
+                                    bins=range(1, 12), figsize=(4, 4))  #bin에 구체적 범위값을 넣으면, 소수점 없이 정확히 분할함
+state['Murder.Rate'].plot.density(ax=ax)  # density 그래프(histogram의 부드러운 버전)를 ax 위에 그림. 단위가 밀도이므로 density=True필요
+ax.set_xlabel('Murder Rate (per 100,000)')
+
+plt.tight_layout()
+plt.show()

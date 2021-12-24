@@ -22,4 +22,8 @@
 ## Step 6: Ordinal features인 경우, [missing value imputation] 을 median으로 수행한 후, Spearman correlation을 구한다.
 ##### 절대값이 크면 클수록 좋은 피쳐이다.
 
+### Step 7: 학습 후, feature importance 구하기
+- impurity-based importances : biased towards high cardinality features
+- Permutation importance :  단일 column 값을 섞고 결과 데이터 집합을 사용하여 예측합니다. 이러한 예측과 실제 target 값을 사용하여 손실 함수가 셔플링으로 얼마나 많이 깎였는지 계산하십시오. 이러한 성능 저하는 방금 섞은 변수의 중요성을 측정. https://eat-toast.tistory.com/10
+
 [missing value imputation]: missing-value-imputation.md

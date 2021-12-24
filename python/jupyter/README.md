@@ -22,7 +22,7 @@ jupyter notebook
 
 
 View the notebooks online:
-[![nbviewer](https://raw.githubusercontent.com/jupyter/design/master/logos/Badges/nbviewer_badge.svg)](https://nbviewer.jupyter.org/github/dss99911/spark-study/blob/master/src/main/python/jupyter)
+[![nbviewer](https://raw.githubusercontent.com/jupyter/design/master/logos/Badges/nbviewer_badge.svg)](https://nbviewer.jupyter.org/github/dss99911/spark-study/blob/master/python/jupyter)
 
 
 Excecute the notebooks in Binder:

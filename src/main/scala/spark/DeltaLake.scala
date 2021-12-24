@@ -55,7 +55,7 @@ class DeltaLake {
     .config("spark.sql.extensions", "io.delta.sql.DeltaSparkSessionExtension")
     .config("spark.sql.catalog.spark_catalog", "org.apache.spark.sql.delta.catalog.DeltaCatalog")
     .config("spark.databricks.delta.retentionDurationCheck.enabled", value = false) // todo check what this is for
-    .config("spark.databricks.delta.schema.autoMerge.enabled", value = true)// todo check what this is for
+    .config("spark.databricks.delta.schema.autoMerge.enabled", value = true)// 새 컬럼을 delta table에 merge할 때, 옵션을 true로 설정해야 무시되지 않는다.
     .enableHiveSupport().getOrCreate()
   import spark.implicits._
 
