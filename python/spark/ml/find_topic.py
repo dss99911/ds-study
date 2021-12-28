@@ -64,7 +64,7 @@ for k, topic in enumerate(topics):
 #%% 어휘 빈도 구하기, n-gram, idf
 
 from spark.ml.util import *
-from matplot.util import *
+from matplot.counter import *
 
 from pyspark.ml.feature import NGram
 # https://books.google.com/ngrams
