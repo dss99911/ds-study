@@ -48,13 +48,42 @@ def is_bijective_function(f, x=x, y=y, i=-1):
     return g.subs(x, f).equals(x) == True
 
 
-def plot_function(f, xlim=(-10, 10), ylim=(-10, 10), is_dot=False, dot_count=1000):
-    x = np.linspace(xlim[0], xlim[1], dot_count)
-    call = lambda x: f.eval(x) if isinstance(f, type) and issubclass(f, Function) else f(x)
+def plot_function(f, xlim=(-10, 10), ylim=(-10, 10), is_dot=False, dot_count=1000, ax=None, show=True):
+    if isinstance(f, Expr):
+        f = lambdify(x, f) # support only 'x' variable
 
-    y = np.array([call(ix) for ix in x])
-    _show_graph(x, y, xlim, ylim, is_dot)
+    x_value = np.linspace(xlim[0], xlim[1], dot_count)
 
+    call = lambda x_value: f.eval(x_value) if isinstance(f, type) and issubclass(f, Function) else f(x_value)
+
+    y = np.array([call(ix) for ix in x_value])
+    _show_graph(x_value, y, xlim, ylim, is_dot, ax, show)
+
+
+def diff_line(f, x_symbol, x_value):
+    """
+    함수의 특정 점에서의 접선을 리턴한다
+    :param x_value: 접선과 함수의 접점
+    :return: 점선
+    :rtype: Expr
+    """
+    d = diff(f)
+    a = d.subs(x_symbol, x_value)
+    b = f.subs(x_symbol, x_value) - a*x_value
+    return a*x_symbol + b
+
+
+
+def idiff_line(f, y, x, point):
+    """
+    implicit 함수의 특정 점에서의 접선을 리턴한다
+    :return: 점선
+    :rtype: Expr
+    """
+    d = idiff(f, y, x)
+    a = d.subs(x, point[0]).subs(y, point[1])
+    b = point[1] - a*point[0]
+    return a*x + b
 
 #%%
 
@@ -69,11 +98,15 @@ def _set_axes(ax, xlim, ylim):
     ax.yaxis.set_ticks_position('left')
 
 
-def _show_graph(x, y, xlim, ylim, is_dot=False):
-    fig, ax = plt.subplots()
+def _show_graph(x, y, xlim, ylim, is_dot=False, ax=None, show=True):
+    if ax is None:
+        fig, ax = plt.subplots()
+        _set_axes(ax, xlim, ylim)
+
     if is_dot:
         ax.plot(x, y, "o", markersize=0.3)
     else:
         ax.plot(x, y)
-    _set_axes(ax, xlim, ylim)
-    plt.show()
+
+    if show:
+        plt.show()
