@@ -69,9 +69,7 @@ def diff_line(f, x_symbol, x_value):
     """
     d = diff(f)
     a = d.subs(x_symbol, x_value)
-    b = f.subs(x_symbol, x_value) - a*x_value
-    return a*x_symbol + b
-
+    return a*(x - x_value) + f.subs(x_symbol, x_value)
 
 
 def idiff_line(f, y, x, point):
@@ -82,8 +80,7 @@ def idiff_line(f, y, x, point):
     """
     d = idiff(f, y, x)
     a = d.subs(x, point[0]).subs(y, point[1])
-    b = point[1] - a*point[0]
-    return a*x + b
+    return a*(x - point[0]) + point[1]
 
 #%%
 
