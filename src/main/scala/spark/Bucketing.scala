@@ -74,4 +74,17 @@ class Bucketing {
          +- *(2) Filter isnotnull(key#29L)
             +- *(2) FileScan parquet default.bucketed[key#29L,value#30] Batched: true, Format: Parquet, Location: InMemoryFileIndex[file:/opt/spark-warehouse/bucketed], PartitionFilters: [], PushedFilters: [IsNotNull(key)], ReadSchema: struct<key:bigint,value:double>, SelectedBucketsCount: 16 out of 16
    */
+
+  def bigdata_bucket() = {
+    /**
+     * bucketing table 스캔하는데, 시간이 너무 오래 걸림
+        - join보다는 filter가 그나마 빠름
+        - 하나의 버캣을 체크하는데, 하나의 executor만 사용되는 것 같음. daily배치처럼 여러 bucket에서 사용하는게 많을 경우에는 병렬로 처리 되겠으나, 하나의 id만 불러오는 경우, 오래 걸림.
+        - bucketing prune이 잘 되어, 하나의 버캣만 체크하는 것은 잘 되나, 시간이 오래 걸리는 이유가 현재 bucket에 저장 방식이 append이고, 파일을 너무 많이 형성되어, 하나의 버켓내에서도 파일을 많이 체크해야 하는 문제가 있어서 그런 것은 아닌가 생각됨.
+            - delta + bucketing 은 discussion 중으로, 어려울 듯 https://github.com/delta-io/delta/issues/524
+        - id별로 별도의 디렉토리를 만들어 보는 건 어떨까?
+            - 파일이 분산되는 건 delta 써서 머지하는 것도 고려
+        - cardinarity가 높은 컬럼으로 bucketing하는 경우. Relational Database 사용 고려. apache ignite는 분산 sql
+     */
+  }
 }
