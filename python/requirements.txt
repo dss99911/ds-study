@@ -37,3 +37,4 @@ geopy==2.2.0
 statsmodels==0.13.1
 wquantiles==0.6
 sympy==1.9
+sagemaker-pyspark==1.4.2

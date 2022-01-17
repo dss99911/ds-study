@@ -33,6 +33,9 @@ df['new_column'] = df.c.str.lower()
 # delete column
 del df['a']
 
+df.drop(df.columns[0], axis=1, inplace=True)  # delete column, inplace True return None
+df_drop = df.drop(['c'], axis=1)  # return all columns except for the column
+
 # %% Rename column
 
 df_changed_columns = df.copy()

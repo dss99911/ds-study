@@ -10,6 +10,7 @@ df = pd.DataFrame({
     'd': [date(2000, 1, 1), date(2000, 2, 1), date(2000, 3, 1)],
     'e': [datetime(2000, 1, 1, 12, 0), datetime(2000, 1, 2, 12, 0), datetime(2000, 1, 3, 12, 0)]
 })
+s = pd.Series(["A", "B", "C", "Aaba", "Baca", np.nan, "CABA", "dog", "cat"])
 df_number = pd.DataFrame(np.random.randn(6, 4), index=pd.date_range("20130101", periods=6), columns=list("ABCD"))
 
 # %%
@@ -23,3 +24,6 @@ df_sort_by_index = df.sort_index(axis=0, ascending=False)
 
 # Sort by 'b' column's value
 df_sort_by_value = df.sort_values(by="b")
+
+# series
+s.sort_values()

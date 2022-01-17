@@ -15,8 +15,8 @@ df = pd.DataFrame({
 s = pd.Series([1, 3, 5, np.nan, 6, 8], index=dates).shift(2)
 #%%
 
-# - index(0) : 각 컬럼 별로, axis인 index를 처음부터 끝까지 반복문으로 체크한다.
-# - columns(1) : 각 인덱스 별로, axis인 columns를 처음부터 끝까지 반복문으로 체크한다.
+# - index(0) : 각 컬럼 별로, axis인 index를 처음부터 끝까지 반복문으로 체크한다(row를 의미함)
+# - columns(1) : 각 인덱스 별로, axis인 columns를 처음부터 끝까지 반복문으로 체크한다(column을 의미함. 1은 기다란 column과 비슷하다고 외우거나, 행렬이 행이 먼저고, 열이 나중이니, 1)
 # 특별히 명시하지 않으면, 대부분 index가 기본값. sql에서 select max(a), min(b) 처럼, 한 컬럼의 전체 row를 체크하여, min max구하듯이. row전체를 체크하는게 기본값.
 # 기본 값이 columns 인 예외 케이스
 #      - filter

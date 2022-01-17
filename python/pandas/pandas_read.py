@@ -9,6 +9,15 @@ from pandas import DataFrame
 df_from_parquet = pd.read_parquet("path")
 
 #%% csv
+adult_columns = [
+    "Age",
+    "Workclass",
+]
+pd.read_csv("adult.test",
+            names=adult_columns,  # columns
+            sep=r"\s*,\s*", engine="python",  # for using sep, engine should be python. default is 'c'
+            na_values="?",
+            skiprows=1)  # skip first row
 df_from_csv = pd.read_csv("path")
 
 #%% excel

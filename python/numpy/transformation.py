@@ -24,7 +24,7 @@ x_where = np.where(x > 0.1, x, 0)
 y.sort() # y is sorted.
 
 #%% reshape
-r = x.reshape(5, 20)
+r = x.reshape(5, 20)  # row, column
 r.resize((20, 5)) # resize change the array. reshape return new changed array
 
 for element in r.flat: # make flat array for iterator

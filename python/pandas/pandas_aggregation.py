@@ -44,6 +44,8 @@ df_groupby_sum1 = df.groupby(["A", "B"])["C"].sum()
 # C의 값이 널이면, count에 포함 안됨
 df_groupby_sum_count = df.groupby(["A", "B"])["C"].agg(["sum", "count"])
 
+df["A"].value_counts()  # A의 각 값별 count
+
 # group by time
 df_sp = pd.read_csv("data/SP500_NOV2019_Hist.csv", index_col=0, parse_dates=True)
 s_open = df_sp["Open"].groupby(pd.Grouper(freq="1H")).first()

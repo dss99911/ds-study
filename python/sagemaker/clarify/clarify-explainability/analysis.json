@@ -1,0 +1,26 @@
+{
+    "version": "1.0",
+    "explanations": {
+        "kernel_shap": {
+            "label0": {
+                "global_shap_values": {
+                    "Age": 0.03686210515314126,
+                    "Workclass": 0.017997410021209147,
+                    "fnlwgt": 0.021204304534931273,
+                    "Education": 0.018582914097975203,
+                    "Education-Num": 0.03672954167529178,
+                    "Marital Status": 0.029256803194779364,
+                    "Occupation": 0.026871955508997073,
+                    "Relationship": 0.03649589363038544,
+                    "Ethnic group": 0.01985812536018984,
+                    "Sex": 0.017708344133192264,
+                    "Capital Gain": 0.033653118952009696,
+                    "Capital Loss": 0.019260856251513764,
+                    "Hours per week": 0.0216500414902472,
+                    "Country": 0.04601540670112644
+                },
+                "expected_value": 0.0006380207487381995
+            }
+        }
+    }
+}
