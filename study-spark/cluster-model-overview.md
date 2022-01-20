@@ -37,6 +37,7 @@ Core : 노드의 cpu core와 일치하는 개념. executor 가 각 core를 담�
   - driver program이 spark실행하는 서버에서 진행하기 때문에, driver program의 console로그를 확인가능(제플린 등에 적절)
 - cluster mode : spark-submit을 멀리서 요청한 경우(local laptop에서 요청했을 때 등. driver program이 local이기 때문에, 지연이 심하여, 서버의 cluster에서만 호출되도록 처리)
   - driver program이 worker node에서 실행되고, driver program이 속한 node는 task를 처리 안함.
+  - cluster mode를 하는 이유는 client mode는 driver가 driver node에서 돌아가는데, 이렇게 되면, driver node의 자원을 많이 쓰게되고, 만약 driver노드에 다른 애플리케이션들이 돌아가고 있으면, driver node의 자원이 부족해져 OOM 에러 날 수 있음. 각 application을 분산하여 관리하기 위해 필요. 여러 앱을 한번에 돌리거나, 하나의 앱이라 하더라도 driver node 자원이 충분하지 않으면 custer mode 쓰기
 
 ## Cluster Manager
 - master process : the term of cluster manager in Spark standalone mode

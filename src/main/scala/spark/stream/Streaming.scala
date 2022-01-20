@@ -131,6 +131,9 @@ class Streaming {
   /**
    * Aggregation not supported
    * 워터마크와 이벤트시간을 이용하면, 집계한 결과만 append가능하게 할 수 있음.
+   *
+   * - hdfs에 append하면 파일이 많아지는데, 파일이 너무 많아지면, driver program의 메모리 증가하여, OOM발생할 수 있고, spark.driver.maxResultSize 가 부족해지는 현상 발생
+   * - hdfs에 append는 적절한 방법이 아닌듯. 또는 delta 사용하기
    */
   def writeAppend(spark: SparkSession) = {
     //write stream to console
@@ -148,6 +151,9 @@ class Streaming {
    * 싱크가 저수준 업데이트를 지원해야 한다고함.
    * 집계 후, 변경된 row만 싱크에 출력됨.
    * 집계를 안하면, append와 동일
+   *
+   * - hdfs에 append하면 파일이 많아지는데, 파일이 너무 많아지면, driver program의 메모리 증가하여, OOM발생할 수 있고, spark.driver.maxResultSize 가 부족해지는 현상 발생
+   * - hdfs에 append는 적절한 방법이 아닌듯. 또는 delta 사용하기
    */
   def writeUpdate(spark: SparkSession) = {
     //write stream to console

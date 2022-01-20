@@ -165,6 +165,8 @@ Incremental하게 업데이트하므로 write overhead는 적지만, 반대로 �
 
   /**
    * https://docs.delta.io/latest/best-practices.html#compact-files
+   * * - hdfs에 append하면 파일이 많아지는데, 파일이 너무 많아지면, driver program의 메모리 증가하여, OOM발생할 수 있고, spark.driver.maxResultSize 가 부족해지는 현상 발생
+   * - 따라서, 주기적으로 파일 갯수를 줄이는 작업이 필요함.
    */
   def makeCompactFile() = {
     val path = "..."
