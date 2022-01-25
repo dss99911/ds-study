@@ -74,6 +74,10 @@ object Read {
     val list = (1 to 100).map(i => (i, s"val_$i"))
     list.toDF()
 
+    // 컬럼이 하나인 경우.
+    Seq((1,), (2,), (3,)).toDF("value") //버전에 따라 에러 나는듯?
+    Seq(Tuple1(1), Tuple1(2), Tuple1(3))
+
     //or
     val rows = Seq(Row(1), Row(2), Row(3))
     val rdd = spark.sparkContext.parallelize(rows)

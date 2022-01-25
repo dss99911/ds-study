@@ -21,7 +21,7 @@ def get_argv(index):
     return sys.argv[index] if(index < len(sys.argv)) else None
 
 
-def create_spark_session(name, use_delta=True):
+def create_spark_session(name, use_delta=False):
     builder = SparkSession.builder \
         .appName(name) \
         .enableHiveSupport() \
