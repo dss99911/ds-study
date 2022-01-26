@@ -19,7 +19,7 @@ def get_sympy_subplots(plot: Plot):
     return backend.fig, backend.ax[0]
 
 
-def points(tuple_list:list[tuple]):
+def points(*tuple_list: tuple):
     return [
         [t[0] for t in tuple_list],
         [t[1] for t in tuple_list]
