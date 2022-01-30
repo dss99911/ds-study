@@ -20,10 +20,19 @@ def get_sympy_subplots(plot: Plot):
 
 
 def points(*tuple_list: tuple):
-    return [
-        [t[0] for t in tuple_list],
-        [t[1] for t in tuple_list]
-    ]
+    if len(tuple_list[0]) == 2:
+        return [
+            [t[0] for t in tuple_list],
+            [t[1] for t in tuple_list]
+        ]
+    elif len(tuple_list[0]) == 3:
+        return [
+            [t[0] for t in tuple_list],
+            [t[1] for t in tuple_list],
+            [t[2] for t in tuple_list]
+        ]
+    else:
+        raise ValueError("not supported dimention : ", len(tuple_list[0]))
 
 
 def lim(x, y=None):
