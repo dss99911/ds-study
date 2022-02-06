@@ -45,4 +45,5 @@ dict_count_word = make_count_word_dict()
 
 #%%
 
-result = find_word_list("miakna", 6, dict_count_word)
+result = find_word_list("nibuta", 4, dict_count_word)
+
