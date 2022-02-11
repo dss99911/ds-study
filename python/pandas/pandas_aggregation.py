@@ -10,11 +10,26 @@ df = pd.DataFrame(
     {
         "A": ["foo", "bar", "foo", "bar", "foo", "bar", "foo", "foo", "food"],
         "B": ["one", "one", "two", "three", "two", "two", "one", "three", None],
-        "C": np.random.randn(9),
+        "C": [0, 1, 1, 2, 3, 3, 4, 4, 5],
         "D": np.random.randn(9),
     }
 )
+#%%
+
+# groupBy를 하면, 해당 컬럼이 index가 됨
 df_groupby_sum_count = df.groupby(["A", "B"])["C"].agg(["sum", "count"])
+
+df_groupby_sum_count_dict = df.groupby(["A", "B"]).agg({
+        "C": ["sum", "count"],
+        "D": [pd.Series.nunique]
+})
+
+# index를 column으로 변환 pivot과 동일. groupBy("A").pivot("B").agg(sum("C"), count("C")) 와 동일
+df_groupby_sum_count_dict2 = df_groupby_sum_count_dict.unstack("B")
+
+# agg시, agg function name과 column name이 tuple로 되어 있는 듯
+for col_name, agg_name in df_groupby_sum_count_dict.columns.values:
+    print(col_name, agg_name)
 
 #%%
 
@@ -76,11 +91,16 @@ a = df.set_index(["A", "B"]).groupby(level=0).count()
 #%% Windows
 
 # rank
+
 df_groupby_sum_count["rank"] = df_groupby_sum_count\
                                    .reset_index()\
                                    .groupby("A")["sum"]\
                                    .rank(ascending=False)\
                                    .values.astype(np.int64) - 1
+
+# 숫자가 같으면, 공동 1위. rank가 1로시작하여, -1해줌
+df["rank"] = df.set_index("A").loc[:, "C"].groupby("A").rank(ascending=False) \
+            .values.astype(np.int64) - 1
 
 #%% Rolling
 # 해당 row 및 앞 4개 row의 평균

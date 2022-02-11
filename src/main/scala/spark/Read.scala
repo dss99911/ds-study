@@ -8,7 +8,14 @@ object Read {
   import spark.implicits._
 
   def getParquetDataFrame(): DataFrame = {
-    spark.read.parquet("s3://text")
+
+//    spark.read.parquet("s3://text")
+    spark.read.parquet("data/activity-data")
+  }
+
+  def getJsonDataFrame(spark: SparkSession): DataFrame = {
+    //Arrival_Time, Creation_Time Device, Index, Model, User, gt, x, y, z
+    spark.read.json("data/activity-data")
   }
 
   def getGlobPatternParquetDatFrame(): DataFrame = {
@@ -75,7 +82,7 @@ object Read {
     list.toDF()
 
     // 컬럼이 하나인 경우.
-    Seq((1,), (2,), (3,)).toDF("value") //버전에 따라 에러 나는듯?
+//    Seq((1,), (2,), (3,)).toDF("value") //버전에 따라 에러 나는듯?
     Seq(Tuple1(1), Tuple1(2), Tuple1(3))
 
     //or

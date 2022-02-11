@@ -7,12 +7,17 @@ import spark.Read.Person
 
 import scala.collection.mutable
 
-class AggregationAndGrouping {
-  private val spark: SparkSession = SparkSessions.createSparkSession()
+class AggregationAndGrouping(spark: SparkSession) {
   import spark.implicits._
-  private val df: DataFrame = Read.getParquetDataFrame()
 
-  def onSelect() = {
+  def agg() = {
+    //column name : sum(value)
+    Seq(("a", 1), ("a", 2), ("b", 3)).toDF("name", "value")
+      .groupBy("name").agg(sum("value"))
+      .show(100, false)
+  }
+
+  def onSelect(df: DataFrame) = {
     df.select(count($"code"))//if code is null then it's not counted. if use '*' then count all rows
       .select(countDistinct("code"))//select count(distinct code) from some_table
       .select(approx_count_distinct("code", 0.1))//대략적인 count. 데이터가 클 경우, 정확하지 않지만, 빠르게 근사치를 얻고 싶을 때
@@ -25,7 +30,7 @@ class AggregationAndGrouping {
       .select(sum('count), expr("avg(count)"), expr("count(distinct(age))"))//able to use aggregation function
   }
 
-  def withAgg() = {
+  def withAgg(df: DataFrame) = {
     df.agg(collect_list("value").as("list"))
     df.agg(collect_set("value").as("set"))
     df.agg(count("value").as("count"), expr("count(value)").as("count2"))
@@ -36,7 +41,7 @@ class AggregationAndGrouping {
 
   }
 
-  def makeListPerGroup = {
+  def makeListPerGroup(df: DataFrame) = {
     //if you want to handle list by groups which is handled by each partition.
     //this may be best way to handle.
     //other ways may not be handled by each node per group.
@@ -85,7 +90,7 @@ class AggregationAndGrouping {
       .show(100)
   }
 
-  def group() = {
+  def group(df: DataFrame) = {
     df.groupBy("age").count()// (age, count), count()'s column name is 'count'
     df.groupBy().min("age")// agg for all rows.
     df.agg(min("age"), collect_set("age"))// same with `groupBy().min("age")`
@@ -95,7 +100,7 @@ class AggregationAndGrouping {
    * grouping set
    * - https://www.sqlservertutorial.net/sql-server-basics/sql-server-grouping-sets/
    */
-  def groupingSet() = {
+  def groupingSet(df: DataFrame) = {
     //this is supported by sql only
     val dfNoNull = df.na.drop()
     dfNoNull.createOrReplaceTempView("dfNoNull")
@@ -107,7 +112,7 @@ class AggregationAndGrouping {
   /**
    * this is for grouping set
    */
-  def rollUp() = {
+  def rollUp(df: DataFrame) = {
     val dfNoNull = df.na.drop()
     dfNoNull
       .rollup("date", "country")
@@ -118,7 +123,7 @@ class AggregationAndGrouping {
     //date+country별, date별, 전체에 대한 총양을 구하기
   }
 
-  def cube() = {
+  def cube(df: DataFrame) = {
     val dfNoNull = df.na.drop()
     dfNoNull
       .cube("date", "country")
@@ -170,7 +175,7 @@ null	SELECT COUNT(*) FROM table
    * 트랜젝션 테이블에서, 각유저의 트랜젝션 카테고리별 aggregation 데이터를 볼때
    * groupBy(userId).pivot(category).agg(agg1,agg2,agg3)
    */
-  def pivot() = {
+  def pivot(df: DataFrame) = {
     df
       .groupBy("date")
       .pivot("country")

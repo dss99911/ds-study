@@ -68,4 +68,5 @@ corr_by_zipcode = grouped.apply(lambda x: x.corrwith(x['TaxAssessedValue']))
 df_loan = pd.read_csv("data/lc_loans.csv")
 crosstab = df_loan.pivot_table(index='grade', columns='status',
                                 aggfunc=lambda x: len(x), margins=True)
+
 print(crosstab)

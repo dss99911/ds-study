@@ -7,6 +7,7 @@ from pyspark.sql.functions import *
 from pyspark.sql.types import *
 from pyspark.sql.window import Window
 from slackclient import SlackClient
+import builtins as B
 
 import spark.res.resource_dev as res_dev
 import spark.res.resource_live as res_live
@@ -24,8 +25,7 @@ def get_argv(index):
 def create_spark_session(name, use_delta=False):
     builder = SparkSession.builder \
         .appName(name) \
-        .enableHiveSupport() \
-        .config("spark.sql.hive.manageFilesourcePartitions", True)
+        .enableHiveSupport()
 
     if use_delta:
         builder = builder.config("spark.jars.packages", "io.delta:delta-core_2.12:0.8.0") \
@@ -71,3 +71,32 @@ def show_hist(df, value_col, digit_count=2):
         .select("key", value_col) \
         .sort("key")
     z.show(res)
+
+
+def agg_by_dict(agg_df, agg_dict, rename_column=False, prefix=None, postfix=None) -> DataFrame:
+    """
+    percentile_approx(val, 0.5) is not supported
+    """
+    agg_list = []
+
+    def make_expr(f, c):
+        if type(f) == str:
+            f_name = f
+            e = expr(f"{f}({c})")
+        else:
+            f_name = f.__name__
+            e = f(c)
+
+        if rename_column:
+            col_name = "_".join(list(B.filter(lambda n: n is not None, [prefix, c, f_name, postfix])))
+            e = e.alias(col_name)
+        return e
+
+    for k in agg_dict:
+        if type(agg_dict[k]) == list:
+            for f in agg_dict[k]:
+                agg_list.append(make_expr(f, k))
+        else:
+            agg_list.append(make_expr(agg_dict[k], k))
+
+    return agg_df.agg(*agg_list)

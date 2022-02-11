@@ -1,11 +1,10 @@
 package spark
 
 import org.apache.spark.ml.functions.vector_to_array
-import org.apache.spark.sql.{Row, SparkSession}
+import org.apache.spark.sql.{DataFrame, Row, SparkSession}
 import org.apache.spark.sql.functions._
 
 class Statistics {
-  val df = Read.getListDataFrame()
 
   /**
    * 두 컬럼 사이의 영향도 비교
@@ -14,7 +13,7 @@ class Statistics {
    *  - 모공분산(population covariance)
    * 상관 계수(Correlation coefficient) : 두 값의 관계를 알고 싶을 때 사용.
    */
-  def correlationCoefficient() = {
+  def correlationCoefficient(df: DataFrame) = {
 
 
     //갯수와 가격과의 상관 관계를 알고 싶을 때
@@ -24,7 +23,7 @@ class Statistics {
     df.select(covar_samp("quantity", "unitPrice"))
   }
 
-  def describe() = {
+  def describe(df: DataFrame) = {
     df.describe("id", "uniform", "normal").show()
     /*
 +-------+------------------+-------------------+--------------------+
@@ -68,7 +67,7 @@ class Statistics {
    * - 모표준편차(population standard deviation)
    * todo check what is the difference
    */
-  def standardDeviation() = {
+  def standardDeviation(df: DataFrame) = {
     df.select(var_pop("dd"), var_samp("dd"))
       .select(stddev_pop("dd"), stddev_samp("dd"))
       .select(stddev("dd"), variance("dd")) //use sample standard deviation
@@ -80,17 +79,17 @@ class Statistics {
    *
    * 확률변수(random variable)의 확률분포(probability distribution)로 데이터 모델링할 때 특히 중요
    */
-  def skewnessKurtosis() = {
+  def skewnessKurtosis(df: DataFrame) = {
     df.select(skewness("dd"), kurtosis("dd"))
   }
 
-  def approxQuantile() = {
+  def approxQuantile(df: DataFrame) = {
     df.stat.approxQuantile("value", Array(0.25, 0.5, 0.75), 0.1)
     //    Seq(3,1,5).toDF() => 1, 3, 5 해당 값의 중위값, 25% 의 값. 등을 구하는 것, relativeError는 오차 허용 값.
     //만약 quantile의 값에 해당 하는 row를 찾고 싶다면, 찾은 quantile 의 값으로 필터링해서, 다시 query하면 됨
   }
 
-  def crosstab() = {
+  def crosstab(df: DataFrame) = {
     /**
 +-----+-------+
 | name|   item|
@@ -124,11 +123,17 @@ class Statistics {
      */
   }
 
-  def pivot() = {
-    df.groupBy("A", "B").pivot("C").sum("D")
-    df.groupBy("i_category")
-      .pivot("qoy")
-      .agg(round(sum("ss_sales_price")/1000000,2))
+  /**
+   * 피벗이란, 컬럼이 pivot column과, groupby column, agg column으로 나뉘는데
+   * 1차적으로, pivot + groupby column으로 group by한 후, agg 를 하고나서,
+   * 2차적으로, pivot column을 없애고, pivot column의 값 * agg column 만큼 컬럼의 수를 늘려서 표현
+   */
+  def pivot(spark: SparkSession) = {
+
+//    df.groupBy("A", "B").pivot("C").sum("D")
+//    df.groupBy("i_category")
+//      .pivot("qoy")
+//      .agg(round(sum("ss_sales_price")/1000000,2))
 
     /**
 +-----------+----+----+----+----+
@@ -146,6 +151,28 @@ class Statistics {
 |       Home|1.57|1.51|2.79|4.60|
 |        Men|1.60|1.54|2.86|4.71|
 +-----------+----+----+----+----+
+     */
+    val df = Read.getJsonDataFrame(spark)
+      .groupBy("User")
+      .pivot("Device")
+      .agg(mean("x").as("x_mean"), mean("y"), mean("z"))
+      .show()
+
+    /**
++----+--------------------+--------------------+--------------------+--------------------+--------------------+--------------------+
+|User|     nexus4_1_x_mean|     nexus4_1_avg(y)|     nexus4_1_avg(z)|     nexus4_2_x_mean|     nexus4_2_avg(y)|     nexus4_2_avg(z)|
++----+--------------------+--------------------+--------------------+--------------------+--------------------+--------------------+
+|   a|0.003599388097819...|-0.01101592275727...|-0.01294094049487...|-1.99824861345699...|-0.01179157475498...| -0.0134396594929291|
+|   b|0.005725377455290168|-0.01002688442186...| 0.00301379168606245|0.003871362451145...|-0.00457738337577...|0.004047036385482...|
+|   g|-0.00208632560193...|-0.00458886436661...|-0.01359292073636...|-0.00915738772685...|-0.00674707920018...|-8.58561385894742...|
+|   h|-0.00550125460978...|-0.01629924664220...|-0.01514300812328...|-0.00812230581684151|-0.00334332692963...|-0.01013436852453...|
+|   c|-0.01031501807637...|-0.01126438007684...|0.005435273286384981|-0.00314085422213...|-0.00843141042762...| 7.44572477560036E-4|
+|   f|5.218046479539427E-4|0.001307288067977916|-0.00214763700341581|0.001665551849316...|-0.00293695204561...|-0.00813034041972...|
+|   e|0.005279993953300105|-0.00328142709653...|-0.01477646526443...|0.002328937919791...|-0.00873569839349...|-0.00929037744580688|
+|   i|0.005543884501249...|7.770937977789401E-4|-0.01902953802691...|0.006655974396658514|0.003165126311478...|-0.02074983958154...|
+|   d|0.007489964376762028|-0.01616286103086...|-0.01526198680015...|  0.0120939639176969|-0.00294628113406...|-0.01053154644331...|
++----+--------------------+--------------------+--------------------+--------------------+--------------------+--------------------+
+
      */
   }
 

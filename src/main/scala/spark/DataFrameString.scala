@@ -14,6 +14,7 @@ class DataFrameString {
       .withColumn("pattern", lower($"pattern"))
       .withColumn("pattern", substring($"pattern", 0, 4)) //first 4 digit
       .withColumn("pattern", $"pattern".substr(length($"pattern") - 3, lit(4))) //last 4 digit. start from index 1
+      .withColumn("pattern", $"pattern".substr(-4, 4)) //last 4 digit. start from index 1
       .withColumn("number", regexp_extract($"number", "(\\w+)", 1)) //take only word
       .withColumn("number", regexp_replace($"sms_body", "\n", " "))
       .withColumn("concats", concat($"number", $"name")) // concat string

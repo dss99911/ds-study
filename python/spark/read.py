@@ -5,14 +5,18 @@ spark = SparkSession.builder.getOrCreate()
 
 
 def create():
-    spark.createDataFrame([
+    return spark.createDataFrame([
         (1, 2., 'string1', 1, 2),
-        (2, 3., 'string2', 1, 2),
+        (1, 2., 'string1', 1, 2),
+        (2, 3., 'string1', 4, 5),
+        (2, 4., 'string2', 1, 3),
         (3, 4., 'string3', 1, 2)
     ], ['a', 'b', 'c', 'd', 'e'])
 
+
+def create_single():
     # single column
-    spark.createDataFrame([
+    return spark.createDataFrame([
         (1,),
         (2,),
         (3,)
