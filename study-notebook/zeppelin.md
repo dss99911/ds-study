@@ -100,3 +100,9 @@ order by age
       이게 양이 너무 많다보니 행이 걸리는 것으로 보입니다. 
       일단 job manager 기능을 비활성화하였습니다
     - intellij big data tools에서 job정보를 지속적으로 갱신하거나 해서, 문제가 발새하는 것으로 추정.
+
+
+## Cluster mode
+- 제플린에서 spark돌릴 때, cluster모드로 설정할 수 있음
+- driver node 메모리 부족시 고려
+- https://zeppelin.apache.org/docs/0.7.0/install/spark_cluster_mode.html
