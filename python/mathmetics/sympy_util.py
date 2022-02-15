@@ -57,7 +57,7 @@ def is_bijective_function(f, x=x, y=y, i=-1):
     return g.subs(x, f).equals(x) == True
 
 
-def plot_function(f, xlim=(-10, 10), ylim=(-10, 10), is_dot=False, dot_count=1000, ax=None, show=True):
+def plot_function(f, xlim=(-10, 10), ylim=(-10, 10), is_dot=False, dot_count=1000, ax=None, show=True, label=None):
     if isinstance(f, Expr):
         f = lambdify(x, f) # support only 'x' variable
 
@@ -66,7 +66,7 @@ def plot_function(f, xlim=(-10, 10), ylim=(-10, 10), is_dot=False, dot_count=100
     call = lambda x_value: f.eval(x_value) if isinstance(f, type) and issubclass(f, Function) else f(x_value)
 
     y = np.array([call(ix) for ix in x_value])
-    _show_graph(x_value, y, xlim, ylim, is_dot, ax, show)
+    return _show_graph(x_value, y, xlim, ylim, is_dot, ax, show, label)
 
 
 def diff_line(f, x_symbol, x_value):
@@ -104,15 +104,21 @@ def _set_axes(ax, xlim, ylim):
     ax.yaxis.set_ticks_position('left')
 
 
-def _show_graph(x, y, xlim, ylim, is_dot=False, ax=None, show=True):
+def _show_graph(x, y, xlim, ylim, is_dot=False, ax=None, show=True, label=None):
+    fig = None
+
     if ax is None:
         fig, ax = plt.subplots()
         _set_axes(ax, xlim, ylim)
 
     if is_dot:
-        ax.plot(x, y, "o", markersize=0.3)
+        ax.plot(x, y, "o", markersize=0.3, label=label)
     else:
-        ax.plot(x, y)
+        ax.plot(x, y, label=label)
+
+    if label:
+        ax.legend()
 
     if show:
         plt.show()
+    return fig, ax
