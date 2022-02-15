@@ -22,7 +22,7 @@ class DataFrameTimestamp {
     //milliseconds timestamp to seconds timestamp
     .withColumn("transactionAt", current_timestamp().cast(LongType).cast(TimestampType)) //change timestamp to long make it seconds
     //formatting to string
-    .withColumn("transactionAt", date_format(current_timestamp(),"yyyy MM dd"))
+    .withColumn("transactionAt", date_format(current_timestamp(), "yyyy MM dd"))
     //string to timestamp
     .withColumn("transactionAt", to_date(lit("2016-01-01")))
     .withColumn("transactionAt", to_date(lit("2016-01-01"), "yyyy-MM-dd"))
