@@ -45,3 +45,7 @@ Filter_df  = df[df.index.isin("1", "2")]
 df_filter_nan = df_has_nan.dropna(how="any")
 df_fill_nan = df_has_nan.fillna(value=5)
 df_is_nan = df_has_nan.isna()
+
+#%% filter duplication
+
+df3 = df[~df.index.duplicated(keep='first')]

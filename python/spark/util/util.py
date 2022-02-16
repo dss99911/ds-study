@@ -1,7 +1,7 @@
 import sys
 from pyspark.ml.functions import *
 
-from pyspark.sql import DataFrame
+from pyspark.sql import DataFrame, Row
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import *
 from pyspark.sql.types import *
@@ -40,6 +40,21 @@ def window_filter(df: DataFrame, window):
     df = df.filter(col("seq") == 1)
     df = df.drop("seq")
     return df
+
+
+def rename_columns_by_name(df: DataFrame, func_new_col, exclude=[]):
+    for c in df.columns:
+        if c in exclude:
+            continue
+        df = df.withColumnRenamed(c, func_new_col(c))
+    return df
+
+
+def rename_columns_by_list(df: DataFrame, new_cols: list):
+    for i, c in enumerate(df.columns):
+        df = df.withColumnRenamed(c, new_cols[i])
+    return df
+
 
 def rename_agg(df):
     for c in df.columns:

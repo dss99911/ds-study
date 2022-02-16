@@ -5,8 +5,15 @@ from pyspark.sql.types import FloatType, StructType, StringType, StructField, Do
 
 from spark.read import create_by_row
 
-x2 = udf(lambda x: x * 2, StringType())
-create_by_row().withColumn("x2", x2("x"))  # make x2 column from x column
+def udf_by_lambda():
+    x2 = udf(lambda x: x * 2, StringType())
+    create_by_row().withColumn("a2", x2("a"))
+
+
+def udf_by_func():
+    def add_1(x):
+        return x + 1
+    create_by_row().withColumn("a1", udf(add_1)("a")).show()
 
 # %%
 
@@ -54,30 +61,33 @@ def getSentenceDiffRatio(stc1, stc2):
     finally:
         return result
 
+def udf_with_schema():
+    diffRatioSchema = StructType([ \
+        StructField('ratio', FloatType(), False) \
+        , StructField('status', StringType(), False) \
+        , StructField('sentence1', StringType(), False) \
+        , StructField('sentence2', StringType(), False) \
+        , StructField('errorMessage', StringType(), True) \
+        ])
 
-diffRatioSchema = StructType([ \
-    StructField('ratio', FloatType(), False) \
-    , StructField('status', StringType(), False) \
-    , StructField('sentence1', StringType(), False) \
-    , StructField('sentence2', StringType(), False) \
-    , StructField('errorMessage', StringType(), True) \
-    ])
+    getSentenceDiffRatioUDF = udf(lambda x, y: getSentenceDiffRatio(x, y), diffRatioSchema)
 
-getSentenceDiffRatioUDF = udf(lambda x, y: getSentenceDiffRatio(x, y), diffRatioSchema)
-
-spark = SparkSession.builder.appName("acs_tx_extractor").getOrCreate()
-spark.udf.register('getSentenceDiffRatioUDF', getSentenceDiffRatio, diffRatioSchema)
+    # use on sql
+    spark = SparkSession.builder.appName("acs_tx_extractor").getOrCreate()
+    spark.udf.register('getSentenceDiffRatioUDF', getSentenceDiffRatio, diffRatioSchema)
 
 #%% pandas udf : pandas의 기능을 쓰고 싶을 때 쓰는듯.
 from pyspark.sql.functions import pandas_udf
 import pandas as pd
 import numpy as np
 
-def func(pdf: pd.DataFrame) -> pd.Series:
-    out = pdf.apply(lambda x: np.dot(x["target_vector"].toArray(), x["right_vector"].toArray()), axis=1)
-    return out
 
-my_udf = pandas_udf(func, returnType=DoubleType())
+def process_pandas_udf(spark):
+    def func(pdf: pd.DataFrame) -> pd.Series:
+        out = pdf.apply(lambda x: np.dot(x["target_vector"].toArray(), x["right_vector"].toArray()), axis=1)
+        return out
 
-out = spark.read.parquet("some")\
-    .select(my_udf("two_vectors").alias("cosine_similarity"))
+    my_udf = pandas_udf(func, returnType=DoubleType())
+
+    out = spark.read.parquet("some")\
+        .select(my_udf("two_vectors").alias("cosine_similarity"))
