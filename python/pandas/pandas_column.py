@@ -17,6 +17,7 @@ s = pd.Series([1, 3, 5, np.nan, 6, 8], index=dates).shift(2)
 # %%
 # Select
 df_select_column = df["a"]  # get index and column 'a'
+# df_select_column2 = df.loc[:, ["f", "b"]] # index나 없는 컬럼 참조시 에러남. Passing list-likes to .loc or [] with any missing labels is no longer supported.
 df_select_column = df.a  # get index and column 'a'
 df_select_columns = df[["a", "b"]]  # get index and column 'a'
 df_select_multiple_column_by_column_index = df[0:3]
@@ -24,6 +25,8 @@ df_select_multiple_column_by_column_index = df[0:3]
 df_select_by_filter_columns = df.filter(items=['a', 'b']) # same with df[["a", "b"]]
 df_select_by_filter_regex = df.filter(regex='[a-c]') # axis=1 is column
 df_select_by_filter_regex2 = df.filter('a') # axis=1 is column
+
+df_select_by_filter_regex2.columns.values.tolist()
 
 # %%
 # New column
@@ -33,8 +36,8 @@ df['new_column'] = df.c.str.lower()
 # delete column
 del df['a']
 
-df.drop(df.columns[0], axis=1, inplace=True)  # delete column, inplace True return None
-df_drop = df.drop(['c'], axis=1)  # return all columns except for the column
+df.drop(df.columns[0], axis=1, inplace=True)  # 기존 df를 변경. delete column, inplace True return None.
+df_drop = df.drop(['c'], axis=1)  # 신규 df를 만듬. return all columns except for the column
 
 # %% Rename column
 
