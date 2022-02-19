@@ -70,3 +70,10 @@ crosstab = df_loan.pivot_table(index='grade', columns='status',
                                 aggfunc=lambda x: len(x), margins=True)
 
 print(crosstab)
+
+#%% dummis
+# 특정 컬럼의 값별로 컬럼을 분리해서, 값이 있는지 유무를 0,1로 나타냄
+# pivot과 비슷하지만, groupby를 안하고, pivot 컬럼의 값 유무
+df_loan = pd.read_csv("data/lc_loans.csv")
+
+df_loan_dummies = pd.get_dummies(df_loan, columns=["grade"], dummy_na=False)

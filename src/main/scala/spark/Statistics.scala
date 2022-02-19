@@ -127,6 +127,7 @@ class Statistics {
    * 피벗이란, 컬럼이 pivot column과, groupby column, agg column으로 나뉘는데
    * 1차적으로, pivot + groupby column으로 group by한 후, agg 를 하고나서,
    * 2차적으로, pivot column을 없애고, pivot column의 값 * agg column 만큼 컬럼의 수를 늘려서 표현
+   * groupby column이 행, pivot * agg 이 컬럼이 됨
    */
   def pivot(spark: SparkSession) = {
 

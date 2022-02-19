@@ -1,6 +1,5 @@
-from pyspark import Row
-from pyspark.sql import SparkSession
 from datetime import datetime, date
+from spark.util.util import *
 
 spark = SparkSession.builder.getOrCreate()
 
@@ -23,3 +22,17 @@ spark_df.summary().show()
 #|    75%|                 4|               5.0|   null|
 #|    max|                 4|               5.0|string3|
 #+-------+------------------+------------------+-------+
+
+
+# get_dummies
+def get_dummies(df: DataFrame, columns):
+    for c in columns:
+        category = df.select(c).distinct().rdd.flatMap(lambda x: x).collect()
+        for cat in category:
+            df = df.withColumn(f"{c}_{cat}", when(col(c) == cat, 1).otherwise(0))
+        df = df.drop(c)
+
+    return df
+
+
+get_dummies(spark_df, ['b', 'c']).show()
