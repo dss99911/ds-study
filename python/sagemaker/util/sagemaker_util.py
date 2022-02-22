@@ -1,0 +1,139 @@
+import boto3
+import sagemaker
+from sagemaker import get_execution_role
+from sagemaker.sklearn import SKLearnProcessor
+from sagemaker.spark import PySparkProcessor
+from sagemaker.workflow.pipeline import Pipeline
+from sagemaker.workflow.steps import ProcessingStep
+
+_local_role = None
+_is_local = True
+_is_debug = False
+_region_name = None
+_profile_name = None
+_sess = None
+_bucket = None
+_role = ""
+_zip_s3_path = ""
+
+
+def set_environment(local_role, is_local, is_debug, region_name, profile_name, zip_s3_path):
+    """
+    :param local_role: set to the iam role on `aws iam list-roles | grep SageMaker-Execution`
+    :param is_local: run on local or sageMaker jupyter lab
+    :param is_debug: if running on local instance or aws instance type
+    :param region_name:
+    :param profile_name: local awscli profile name
+    :param zip_s3_path: s3 path to upload python.zip
+    """
+    global _local_role, _is_local, _is_debug, _region_name, _profile_name, _sess, _bucket, _role, _zip_s3_path
+    _local_role = local_role
+    _is_local = is_local
+    _is_debug = is_debug
+    _region_name = region_name
+    _profile_name = profile_name
+    _zip_s3_path = zip_s3_path
+
+    _profile_name = profile_name if is_local else None
+    _sess = sagemaker.Session(boto3.session.Session(region_name=_region_name, profile_name=_profile_name))
+    boto3.setup_default_session(region_name=_region_name, profile_name=_profile_name)
+    dummy_iam_role = 'arn:aws:iam::111111111111:role/service-role/AmazonSageMaker-ExecutionRole-20200101T000001'
+    _bucket = _sess.default_bucket()
+
+    if _is_local:
+        _role = _local_role
+    elif is_debug:
+        _role = dummy_iam_role
+    else:
+        _role = get_execution_role()
+
+    print(boto3.__version__)
+    print(sagemaker.__version__)
+    print(_role)
+    print(_bucket)
+
+
+def is_local():
+    return _is_local
+
+
+def upload_pyfiles(excludes=[]):
+    """
+    :param excludes: if it's folder  .idea/\*
+    """
+    import os
+    os.system(f'zip -r python.zip . -x {" ".join(excludes)}')
+    os.system(f'aws s3 cp python.zip "{_zip_s3_path}" --profile {_profile_name}')
+    os.remove("python.zip")
+
+
+def param(instancetype=None):
+    param_ = {
+        'role': _role,
+    }
+    if not _is_debug:
+        param_['sagemaker_session'] = _sess
+
+    if instancetype is not None:
+        param_['instance_type'] = instance_type(instancetype)
+    return param_
+
+
+def instance_type(instancetype):
+    return 'local' if _is_debug else instancetype
+
+
+def get_pyspark_step(name, submit_app, instance_type_, instance_count, arguments=None, inputs=None, configuration=None, submit_jars=None, volume_size=30):
+    pyspark_processor = PySparkProcessor(
+        base_job_name="pyspark-process",
+        framework_version="3.0",
+        instance_count=instance_count,
+        volume_size_in_gb=volume_size,
+        **param(instance_type_)
+    )
+
+    run_args = pyspark_processor.get_run_args(
+        submit_app=submit_app,
+        submit_py_files=[_zip_s3_path],
+        submit_jars=submit_jars,
+        arguments=arguments,
+        inputs=inputs,
+        configuration=configuration,
+    )
+
+    return ProcessingStep(
+        name=name,
+        processor=pyspark_processor,
+        inputs=run_args.inputs,
+        job_arguments=run_args.arguments,
+        code=run_args.code
+    )
+
+
+def get_sklearn_preprocess_step(name, script, inputs, outputs, instance_type="ml.r5.large"):
+    framework_version = "0.23-1"
+
+    sklearn_processor = SKLearnProcessor(
+        framework_version=framework_version,
+        instance_count=1,
+        base_job_name="sklearn-processor",
+        volume_size_in_gb=512,
+        max_runtime_in_seconds=7200,
+        **param(instance_type)
+    )
+
+    step_sklearn_preprocess = ProcessingStep(
+        name=name,
+        processor=sklearn_processor,
+        inputs=inputs,
+        outputs=outputs,
+        code=script
+    )
+
+    return step_sklearn_preprocess
+
+
+def run_single_step(step):
+    pipeline = Pipeline(name="hyun-test", steps=[step])
+    pipeline.upsert(role_arn=_role)
+    pipeline.start()
