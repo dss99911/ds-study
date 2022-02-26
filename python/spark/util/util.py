@@ -115,3 +115,11 @@ def agg_by_dict(agg_df, agg_dict, rename_column=False, prefix=None, postfix=None
             agg_list.append(make_expr(agg_dict[k], k))
 
     return agg_df.agg(*agg_list)
+
+
+def get_cols(df, exclude_cols, types):
+    return list(B.filter(lambda c: c.name not in exclude_cols and c.dataType in types, df.schema.fields))
+
+
+def get_numeric_cols(df, exclude_cols):
+    return get_cols(df, exclude_cols, [LongType(), DoubleType(), IntegerType(), FloatType(), DecimalType(), ShortType(), ByteType()])

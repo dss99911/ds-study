@@ -1,10 +1,12 @@
 import boto3
 import sagemaker
 from sagemaker import get_execution_role
+from sagemaker.processing import ProcessingInput, ProcessingOutput
 from sagemaker.sklearn import SKLearnProcessor
 from sagemaker.spark import PySparkProcessor
 from sagemaker.workflow.pipeline import Pipeline
 from sagemaker.workflow.steps import ProcessingStep
+from util.common import *
 
 _local_role = None
 _is_local = True
@@ -15,9 +17,11 @@ _sess = None
 _bucket = None
 _role = ""
 _zip_s3_path = ""
+_schema = "hyun"
+_schema_path = "s3://hyun/hyun"
 
 
-def set_environment(local_role, is_local, is_debug, region_name, profile_name, zip_s3_path):
+def set_environment(local_role=_local_role, is_local=_is_local, is_debug=_is_debug, region_name=_region_name, schema=_schema, schema_path=_schema_path, profile_name=_profile_name, zip_s3_path=_zip_s3_path):
     """
     :param local_role: set to the iam role on `aws iam list-roles | grep SageMaker-Execution`
     :param is_local: run on local or sageMaker jupyter lab
@@ -26,13 +30,15 @@ def set_environment(local_role, is_local, is_debug, region_name, profile_name, z
     :param profile_name: local awscli profile name
     :param zip_s3_path: s3 path to upload python.zip
     """
-    global _local_role, _is_local, _is_debug, _region_name, _profile_name, _sess, _bucket, _role, _zip_s3_path
+    global _local_role, _is_local, _is_debug, _region_name, _schema, _schema_path, _profile_name, _sess, _bucket, _role, _zip_s3_path
     _local_role = local_role
     _is_local = is_local
     _is_debug = is_debug
     _region_name = region_name
     _profile_name = profile_name
     _zip_s3_path = zip_s3_path
+    _schema = schema
+    _schema_path = schema_path
 
     _profile_name = profile_name if is_local else None
     _sess = sagemaker.Session(boto3.session.Session(region_name=_region_name, profile_name=_profile_name))
@@ -57,7 +63,7 @@ def is_local():
     return _is_local
 
 
-def upload_pyfiles(excludes=[]):
+def upload_pyfiles(excludes=[".idea/\*", "jars/\*", "\*.ipynb", "\*.sh", "\*.json"]):
     """
     :param excludes: if it's folder  .idea/\*
     """
@@ -83,7 +89,10 @@ def instance_type(instancetype):
     return 'local' if _is_debug else instancetype
 
 
-def get_pyspark_step(name, submit_app, instance_type_, instance_count, arguments=None, inputs=None, configuration=None, submit_jars=None, volume_size=30):
+def get_pyspark_step(name, submit_app, instance_type_, instance_count, arguments=None, configuration=None, submit_jars=None, volume_size=30):
+    if arguments is None:
+        arguments = ["--schema", _schema, "--schema_path", _schema_path]
+
     pyspark_processor = PySparkProcessor(
         base_job_name="pyspark-process",
         framework_version="3.0",
@@ -97,7 +106,6 @@ def get_pyspark_step(name, submit_app, instance_type_, instance_count, arguments
         submit_py_files=[_zip_s3_path],
         submit_jars=submit_jars,
         arguments=arguments,
-        inputs=inputs,
         configuration=configuration,
     )
 
@@ -125,7 +133,7 @@ def get_sklearn_preprocess_step(name, script, inputs, outputs, instance_type="ml
     step_sklearn_preprocess = ProcessingStep(
         name=name,
         processor=sklearn_processor,
-        inputs=inputs,
+        inputs=inputs + _get_dependency_inputs("."),
         outputs=outputs,
         code=script
     )
@@ -133,7 +141,39 @@ def get_sklearn_preprocess_step(name, script, inputs, outputs, instance_type="ml
     return step_sklearn_preprocess
 
 
+def _get_dependency_inputs(root_path):
+    # only 10 inputs are allowed
+    from os import listdir, path
+
+    output = []
+    for f in listdir(root_path):
+        if f.startswith('.'):
+            continue
+
+        file_path = path.join(root_path, f)
+        # root path is not supported because, only directory can bo copied.
+        if path.isdir(file_path):
+            output.append(ProcessingInput(source=file_path, destination=get_input_path(f"code/{file_path}")))
+    return output
+
+
 def run_single_step(step):
     pipeline = Pipeline(name="hyun-test", steps=[step])
     pipeline.upsert(role_arn=_role)
     pipeline.start()
+
+
+def processing_input(name):
+    return ProcessingInput(
+        source=f"{_schema_path}/{name}",
+        destination=get_input_path(name),
+        input_name=name
+    )
+
+
+def processing_output(name):
+    return ProcessingOutput(
+        source=get_output_path(name),
+        s3_upload_mode='EndOfJob',
+        output_name=name,
+        destination=f"{_schema_path}/{name}")

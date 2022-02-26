@@ -59,6 +59,7 @@ class DataFrames {
   def dedup() = {
     val s = Read.getParquetDataFrame()
     //만약 partition이 어느정도 나눠져 있다면(aid-prefix로 나눠져 있는 등), 셔플 없이, dedup이 빠르게 처리됨.
+    // 중복중 마지막을 남기고, 앞에 거를 없앰. 하지만, 순서가 중요하다면, windows로 필터링하는게 명시적으로 좋을듯.
     s.dropDuplicates(Seq("aid", "mrt", "msg"))
   }
 

@@ -14,6 +14,7 @@ df = pd.DataFrame(
         "D": np.random.randn(9),
     }
 )
+
 #%%
 
 # groupBy를 하면, 해당 컬럼이 index가 됨
@@ -92,15 +93,21 @@ a = df.set_index(["A", "B"]).groupby(level=0).count()
 
 # rank
 
-df_groupby_sum_count["rank"] = df_groupby_sum_count\
-                                   .reset_index()\
-                                   .groupby("A")["sum"]\
-                                   .rank(ascending=False)\
-                                   .values.astype(np.int64) - 1
+# df_groupby_sum_count["rank"] = (
+#         df_groupby_sum_count
+#         .reset_index()
+#         .groupby("A")["sum"]
+#         .rank(ascending=False, method="min")  # method 기본값은 average. 동일한 값이 여러개 있을 때, 맨앞과 맨 뒤 rank의 평균을 구함
+#         # .rank(ascending=False, method="first")  # row_number와 동일
+#         .values.astype(np.int64) - 1
+# )
 
-# 숫자가 같으면, 공동 1위. rank가 1로시작하여, -1해줌
-df["rank"] = df.set_index("A").loc[:, "C"].groupby("A").rank(ascending=False) \
-            .values.astype(np.int64) - 1
+# rank sort by C, D
+df["rank"] = (
+        df.sort_values(['D', 'B'])
+        .groupby("A").C
+        .rank(ascending=False, method="first").astype(int) - 1
+)
 
 #%% Rolling
 # 해당 row 및 앞 4개 row의 평균

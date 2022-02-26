@@ -2,7 +2,7 @@ package spark
 
 import org.apache.spark.sql.{DataFrame, SparkSession}
 import org.apache.spark.sql.functions.{add_months, current_date, current_timestamp, date_add, date_format, date_sub, datediff, expr, from_utc_timestamp, lit, months_between, to_date, to_timestamp, when, window}
-import org.apache.spark.sql.types.{LongType, TimestampType}
+import org.apache.spark.sql.types.{LongType, TimestampType, DoubleType}
 
 class DataFrameTimestamp {
   private val spark: SparkSession = SparkSessions.createSparkSession()
@@ -17,7 +17,8 @@ class DataFrameTimestamp {
     //change timezone
     .withColumn("transactionAt", from_utc_timestamp($"transactionAt", "+05:30"))
     //timestamp to long
-    .withColumn("transactionAt", $"transactionAt" cast LongType) //change timestamp to long
+    .withColumn("transactionAt", $"transactionAt" cast LongType) //change timestamp to long (ms는 짤림)
+    .withColumn("transactionAt", $"transactionAt" cast DoubleType) //change timestamp to double (ms도 살아있음)
     .withColumn("transactionAt", expr("unix_timestamp(transactionAt)")) //change timestamp to long
     //milliseconds timestamp to seconds timestamp
     .withColumn("transactionAt", current_timestamp().cast(LongType).cast(TimestampType)) //change timestamp to long make it seconds
@@ -32,8 +33,10 @@ class DataFrameTimestamp {
     .withColumn("today", current_date())
     .withColumn("now", current_timestamp())
     //plus, minus the date
-    .select(date_sub('now, 5), date_add('now, 5))
+    .select(date_sub('now, 5), date_add('now, 5))//타입이 date형식으로 바뀌어, 시간 값이 없음
+    .select($"now" + expr("INTERVAL 1 day")) //시간 값이 존재.
     .select($"now" + expr("INTERVAL 330 minutes"))//plus minutes
+    .select($"now" + expr("INTERVAL 1 week"))
     .select(add_months('now, 5))
     //diff
     .select(datediff('date1, 'date2))

@@ -1,12 +1,15 @@
 # %%
 from pyspark.sql.functions import udf
 from pyspark.sql.functions import col, asc, desc
-from pyspark.sql.types import FloatType, StructType, StringType, StructField, DoubleType
+from pyspark.sql.types import FloatType, StructType, StringType, StructField, DoubleType, ArrayType
 
 from spark.read import create_by_row
 
 def udf_by_lambda():
+    # udf에 type을 정의 안하면, StringType()
+    x2 = udf(lambda x: x * 2)
     x2 = udf(lambda x: x * 2, StringType())
+    x2 = udf(lambda x: ["a","b"], ArrayType(StringType()))
     create_by_row().withColumn("a2", x2("a"))
 
 
