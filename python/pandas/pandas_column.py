@@ -43,7 +43,7 @@ df_drop = df.drop(['c'], axis=1)  # 신규 df를 만듬. return all columns exce
 
 df_changed_columns = df.copy()
 # change whole columns
-df_changed_columns.columns = ["A", "B", "C", "D", "E"]
+df_changed_columns.columns = list(map(lambda c: c + "1", df_changed_columns.columns.values))
 #%%
 #특정 이름의 컬럼이 존재하는지.
 exists_a = 'a' in df.columns

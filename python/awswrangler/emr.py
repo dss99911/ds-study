@@ -48,6 +48,26 @@ while wr.emr.get_step_state(cluster_id, step_id) != "COMPLETED":
     pass
 
 
+#%% check cluster state
+import time
+
+def check_status(cluster_id):
+    while True:
+        time.sleep(30)
+        status = wr.emr.get_cluster_state(cluster_id)
+        if status not in ["STARTING", "BOOTSTRAPPING", "RUNNING"]:
+            break
+    # some cases, cluster state is terminated, but step is failed.
+    # so, need to check all steps is completed or not
+    return check_all_steps_completed(cluster_id)
+
+
+def check_all_steps_completed(cluster_id):
+    client = boto3.client('emr')
+    states = set([s["Status"]["State"] for s in client.list_steps(ClusterId=cluster_id)["Steps"]])
+    return states == set(['COMPLETED'])
+
+
 #%% terminate cluster
 wr.emr.terminate_cluster(cluster_id)
 

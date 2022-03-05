@@ -6,7 +6,8 @@ spark = SparkSession.builder.getOrCreate()
 spark_df = spark.createDataFrame([
     Row(a=1, b=2., c='string1', d=date(2000, 1, 1), e=datetime(2000, 1, 1, 12, 0)),
     Row(a=2, b=3., c='string2', d=date(2000, 2, 1), e=datetime(2000, 1, 2, 12, 0)),
-    Row(a=4, b=5., c='string3', d=date(2000, 3, 1), e=datetime(2000, 1, 3, 12, 0))
+    Row(a=4, b=5., c='string3', d=date(2000, 3, 1), e=datetime(2000, 1, 3, 12, 0)),
+    Row(a=4, b=5., c='String3', d=date(2000, 3, 1), e=datetime(2000, 1, 3, 12, 0))
 ])
 spark_df.summary().show()
 
@@ -26,13 +27,18 @@ spark_df.summary().show()
 
 # get_dummies
 def get_dummies(df: DataFrame, columns):
+    other_cols = list(map(lambda c: col(c), set(df.columns) - set(columns)))
+    new_cols = []
+    categories = df.agg(*[collect_set(clean_column_name(c)).alias(c) for c in columns]).collect()[0].asDict()
     for c in columns:
-        category = df.select(c).distinct().rdd.flatMap(lambda x: x).collect()
-        for cat in category:
-            df = df.withColumn(f"{c}_{cat}", when(col(c) == cat, 1).otherwise(0))
-        df = df.drop(c)
-
+        for cat in categories[c]:
+            new_cols.append(when(clean_column_name(c) == cat, 1).otherwise(0).alias(f"{c}_{cat}"))
+    df = df.select(other_cols + new_cols)
     return df
 
+
+def clean_column_name(c):
+    """저장할 때, 컬럼명 제약이 있음. 대소문자는 구분 안하므로 소문자로"""
+    return regexp_replace(lower(c), "[\\. ,;\\{\\}\\(\\)\n\t=]", "_")
 
 get_dummies(spark_df, ['b', 'c']).show()

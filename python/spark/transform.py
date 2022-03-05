@@ -16,7 +16,8 @@ df.withColumn('upper_c', upper(df.c)).show()
 df.filter(df.a == 1).show()
 
 # 컬럼이 많은 경우, 타입 변환할 때 withColumn이 많으면, 성능 문제가 발생함. 이 경우, select를 사용하기.
-# withColumn할 때마다. DataFrame이 새로 생겨서, driver에 부담을 주는듯..?
+# withColumn할 때마다. Catalyst analysis를 매번하게되어, 시간이 오래 걸린다는 듯.
+# https://medium.com/@manuzhang/the-hidden-cost-of-spark-withcolumn-8ffea517c015
 cols = [col(f.name).cast(DoubleType()) if (f.dataType != DoubleType()) else col(f.name) for f in df.schema.fields]
 df.select(cols)
 

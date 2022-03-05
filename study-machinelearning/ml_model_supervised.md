@@ -30,6 +30,9 @@ random forest나 gradient boosted tree를 쓰면 이러한 어려움을 완화 �
 - 비선형적
 - 여러 피쳐를 조합하여 feature importance가 높아 지는 경우도 찾을 수 있음
 
+## XGBoost
+label이 특정 범위인 경우
+- https://xgboost.readthedocs.io/en/stable/tutorials/aft_survival_analysis.html
 
 # 사용 케이스
 ## 분류 회귀 문제

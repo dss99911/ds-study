@@ -19,6 +19,6 @@ ProcessingInput(
 
 #만약 pipeline에서 중간부터 실행하고 싶다고 하면, s3위치를 고정시키고, 고정된 s3위치를 정의해야 함
 ProcessingInput(
-    source="s3://bucket/path/to/file",
+    source="s3://bucket/path/to/file/",  # folder라면, /를 추가해야 함. 그러지 않으면, prefix로 조회하기 때문에, prefix가 일치하는 모든 파일이 복사됨.
     destination="/opt/ml/processing/test"
 )

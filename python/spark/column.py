@@ -14,6 +14,7 @@ def remove_column(df):
 
 
 #select column
+#컬럼명은 대소문자 구분 안함
 def select_column(df):
     c = ["b", "c"]
     d = ["d", "e"]

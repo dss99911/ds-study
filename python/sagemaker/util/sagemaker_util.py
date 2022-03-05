@@ -1,11 +1,16 @@
+import time
+
 import boto3
 import sagemaker
 from sagemaker import get_execution_role
+# noinspection PyUnresolvedReferences
+from sagemaker.inputs import TrainingInput
 from sagemaker.processing import ProcessingInput, ProcessingOutput
 from sagemaker.sklearn import SKLearnProcessor
 from sagemaker.spark import PySparkProcessor
 from sagemaker.workflow.pipeline import Pipeline
-from sagemaker.workflow.steps import ProcessingStep
+from sagemaker.workflow.steps import ProcessingStep, TrainingStep
+from sagemaker.xgboost import XGBoost
 from util.common import *
 
 _local_role = None
@@ -21,7 +26,8 @@ _schema = "hyun"
 _schema_path = "s3://hyun/hyun"
 
 
-def set_environment(local_role=_local_role, is_local=_is_local, is_debug=_is_debug, region_name=_region_name, schema=_schema, schema_path=_schema_path, profile_name=_profile_name, zip_s3_path=_zip_s3_path):
+def set_environment(local_role=_local_role, is_local=_is_local, is_debug=_is_debug, region_name=_region_name, schema=_schema, schema_path=_schema_path, profile_name=_profile_name,
+                    zip_s3_path=_zip_s3_path):
     """
     :param local_role: set to the iam role on `aws iam list-roles | grep SageMaker-Execution`
     :param is_local: run on local or sageMaker jupyter lab
@@ -118,8 +124,9 @@ def get_pyspark_step(name, submit_app, instance_type_, instance_count, arguments
     )
 
 
-def get_sklearn_preprocess_step(name, script, inputs, outputs, instance_type="ml.r5.large"):
+def get_sklearn_preprocess_step(name, script, inputs=[], outputs=[], instance_type="ml.r5.large"):
     framework_version = "0.23-1"
+    arguments = ["--schema", _schema, "--schema_path", _schema_path]
 
     sklearn_processor = SKLearnProcessor(
         framework_version=framework_version,
@@ -135,10 +142,28 @@ def get_sklearn_preprocess_step(name, script, inputs, outputs, instance_type="ml
         processor=sklearn_processor,
         inputs=inputs + _get_dependency_inputs("."),
         outputs=outputs,
+        job_arguments=arguments,
         code=script
     )
 
     return step_sklearn_preprocess
+
+
+def get_xgboost_train_step(entry_point: str, instance_type, inputs):
+    xgb_train = XGBoost(
+        entry_point=entry_point,
+        framework_version='1.2-1',
+        instance_count=1,
+        **param(instance_type)
+    )
+
+    name = entry_point.split("/")[-1].split(".")[0].replace("_", "-")
+
+    return TrainingStep(
+        name=name,
+        estimator=xgb_train,
+        inputs=inputs
+    )
 
 
 def _get_dependency_inputs(root_path):
@@ -157,10 +182,38 @@ def _get_dependency_inputs(root_path):
     return output
 
 
-def run_single_step(step):
-    pipeline = Pipeline(name="hyun-test", steps=[step])
+def run_steps_sequentially(*steps):
+    for i, step in enumerate(steps):
+        if (i + 1) >= len(steps):
+            break
+        steps[i + 1].add_depends_on([step.name])
+
+    pipeline = Pipeline(name="hyun-test", steps=steps)
     pipeline.upsert(role_arn=_role)
     pipeline.start()
+
+
+def run_pipeline(name: str, steps_depends_on):
+    steps = [s[0] for s in steps_depends_on]
+
+    for step, depends_on in steps_depends_on:
+        step.add_depends_on([d.name for d in depends_on if d in steps])
+
+    return Pipeline(
+        name=name,
+        steps=steps
+    )
+
+
+def notify_completed(execution, slack_webhook_url=None):
+    status = None
+
+    while status != "Completed" and status != "Failed":
+        time.sleep(30)
+        status = execution.describe()["PipelineExecutionStatus"]
+
+    step_name = execution.list_steps()[0]["StepName"]
+    # send_slack_message_to_url(f"SageMaker Step {step_name} is {status}", slack_webhook_url)
 
 
 def processing_input(name):

@@ -100,6 +100,9 @@ class Partition {
    * 기본설정은 true, false로 놓으면 partition prunning이 안됨.
    * 사용 이유는 테이블들의 파티션 컬럼이 key 일 경우, key가 glue metastore에서 예약어로 쓰이고 있어서 에러가 발생해서.
    * 그래서, key 컬럼이 없는 테이블에 한해서 spark.conf.set("spark.sql.hive.manageFilesourcePartitions", true) 를 사용
+   * 아래와 같은 에러가 났는데, 관련이 있는지는 확실하지 않음
+   * org.apache.hadoop.hive.metastore.api.InvalidObjectException: null (Service: AWSGlue; Status Code: 400; Error Code: InvalidInputException
+
    */
   spark.conf.set("spark.sql.hive.manageFilesourcePartitions", false)
 
