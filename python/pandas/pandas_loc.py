@@ -2,6 +2,7 @@ from datetime import date, datetime
 
 import numpy as np
 import pandas as pd
+from pandas import Series
 
 df = pd.DataFrame({
     'a': [1, 2, 3],
@@ -51,3 +52,14 @@ df_number.loc[dates[0] : dates[1], "E"] = 1
 df_minus = -df_number
 
 df_number[df_number > 0] = -df_number  # change sign of number for positive number only
+
+#%% loc returns series for 1 row and dataframe for multiple rows
+# make it always dataframe
+
+def get_dataframe(df, index):
+    result = df.loc[index] if index in df.index else df.head(0)
+    if type(result) is Series:
+        result = result.to_frame().T
+    return result
+
+df_result = get_dataframe(df.set_index("a"), 3)

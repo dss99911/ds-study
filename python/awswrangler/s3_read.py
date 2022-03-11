@@ -27,12 +27,23 @@ df_read_parse_dates = wr.s3.read_csv(dir_csv, parse_dates=["dt", "obs_time"])
 
 
 #%% download
-import os
-import getpass
-local_file_dir = getpass.getpass()
-path1 = f"{dir_csv}/file1.csv"
-local_file = os.path.join(local_file_dir, "file1.csv")
-wr.s3.download(path=path1, local_file=local_file)
 
-pd.read_csv(local_file)
+def get_objects(s3_prefix, file_postfix=""):
+    list_dpd = wr.s3.list_objects(s3_prefix)
+    return [f for f in list_dpd if f.endswith(file_postfix)]
+
+
+def download_file(s3_path, local_path):
+    wr.s3.download(path=s3_path, local_file=local_path)
+    return local_path
+
+
+def download_files(s3_path, local_path, file_postfix=""):
+    import os
+    os.mkdir(local_path)
+    for o in get_objects(s3_path, file_postfix):
+        print(o, s3_path, o.split(s3_path)[1])
+        download_file(o, local_path + o.split(s3_path)[1])
+
+download_files("s3://some_dir", "some_local_dir", ".parquet")
 

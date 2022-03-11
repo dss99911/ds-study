@@ -18,6 +18,9 @@ df_right = pd.DataFrame({"key": ["foo2", "foo"], "rval": [4, 5]})
 df_right1 = pd.DataFrame({"key": ["foo"], "rval": [5]})
 df_right2 = pd.DataFrame({"key": ["foo", "foo"], "rval": [4, 5]})
 
+#%% append
+df_left.append({"key": "foo3", "lval": 1}, ignore_index=True)
+
 # %% Merge
 df_merge = pd.merge(df_left, df_right, on="key")
 # df_merge = pd.merge(df_left, df_right, on=["key","lval"]) #2개 컬럼 조인
