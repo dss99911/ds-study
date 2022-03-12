@@ -26,7 +26,7 @@ df_select_by_filter_columns = df.filter(items=['a', 'b']) # same with df[["a", "
 df_select_by_filter_regex = df.filter(regex='[a-c]') # axis=1 is column
 df_select_by_filter_regex2 = df.filter('a') # axis=1 is column
 
-df_select_by_filter_regex2.columns.values.tolist()
+df_select_by_filter_regex2.columns.to_numpy().tolist()
 
 # %%
 # New column
