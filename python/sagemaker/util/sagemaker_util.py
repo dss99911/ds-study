@@ -1,4 +1,6 @@
+import os
 import time
+import zipfile
 
 import boto3
 import sagemaker
@@ -74,8 +76,13 @@ def upload_pyfiles(excludes=[".idea/\*", "jars/\*", "\*.ipynb", "\*.sh", "\*.jso
     :param excludes: if it's folder  .idea/\*
     """
     import os
-    os.system(f'zip -r python.zip . -x {" ".join(excludes)}')
-    os.system(f'aws s3 cp python.zip "{_zip_s3_path}" --profile {_profile_name}')
+    # os.system(f'zip -r python.zip . -x {" ".join(excludes)}')
+    zip_py_files(".", "python.zip")
+    upload_command = f'aws s3 cp python.zip "{_zip_s3_path}"'
+    if _is_local:
+        upload_command += f" --profile {_profile_name}"
+
+    os.system(upload_command)
     os.remove("python.zip")
 
 
@@ -197,7 +204,7 @@ def run_pipeline(name: str, steps_depends_on):
     steps = [s[0] for s in steps_depends_on]
 
     for step, depends_on in steps_depends_on:
-        step.add_depends_on([d.name for d in depends_on if d in steps])
+        step.depends_on = [d.name for d in depends_on if d in steps]
 
     return Pipeline(
         name=name,
@@ -230,3 +237,22 @@ def processing_output(name):
         s3_upload_mode='EndOfJob',
         output_name=name,
         destination=f"{_schema_path}/{name}")
+
+
+def zip_py_files(dir_path, zip_path):
+    """zipfile로 하면, __init__.py를 추가하지 않으면, 인식을 못함.
+        bash의 zip -r로 하면 인식 함. 차이를 잘 모르겠지만,
+        sagemaker studio에서 돌릴 때, zip이 설치되어 있지 않아. 이렇게 처리
+    """
+    zipf = zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED)
+
+    for root, dirs, files in os.walk(dir_path):
+        for file in files:
+            apath = os.path.join(root, file)
+            if not apath.endswith(".py"):
+                continue
+            relpath = os.path.relpath(apath, dir_path)
+            print(apath)
+            zipf.write(apath, f"{relpath}")
+
+    zipf.close()
