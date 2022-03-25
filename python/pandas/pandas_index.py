@@ -17,7 +17,7 @@ s = pd.Series([1, 3, 5, np.nan, 6, 8], index=dates).shift(2)
 #%%
 
 #인덱스 설정
-df_index = df.set_index("a") # a 컬럼을 인덱스로 씀
+df_index = df.set_index("a")  # a 컬럼을 인덱스로 씀
 
 df_index.index = ["r1", "r2", "r3"] # 각 row의 index명을 바꿈
 

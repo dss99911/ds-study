@@ -13,6 +13,7 @@ df = pd.DataFrame({
 dates = pd.date_range("20130101", periods=6)
 df_number = pd.DataFrame(np.random.randn(6, 4), index=dates, columns=list("ABCD"))
 s = pd.Series([1, 3, 5, np.nan, 6, 8], index=dates).shift(2)
+
 #%%
 s_dtypes = df.dtypes
 field_index = df.index

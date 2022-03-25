@@ -1,3 +1,4 @@
+
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -25,4 +26,7 @@ ax.set_ylabel('Count')
 
 plt.show()
 
+#%%
 
+ax = df.hist(column='num', bins=25, grid=False, figsize=(12,8), color='#86bf91', zorder=2, rwidth=0.9)
+plt.show()

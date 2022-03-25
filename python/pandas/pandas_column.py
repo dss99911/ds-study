@@ -36,8 +36,8 @@ df['new_column'] = df.c.str.lower()
 # delete column
 del df['a']
 
-df.drop(df.columns[0], axis=1, inplace=True)  # 기존 df를 변경. delete column, inplace True return None.
-df_drop = df.drop(['c'], axis=1)  # 신규 df를 만듬. return all columns except for the column
+df.drop(columns=df.columns[0], inplace=True)  # 기존 df를 변경. delete column, inplace True return None.
+df_drop = df.drop(columns=['c'])  # 신규 df를 만듬. return all columns except for the column
 
 # %% Rename column
 

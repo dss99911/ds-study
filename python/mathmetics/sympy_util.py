@@ -35,6 +35,10 @@ def points(*tuple_list: tuple):
         raise ValueError("not supported dimention : ", len(tuple_list[0]))
 
 
+def pt(*tuple_list: tuple):
+    return points(*tuple_list)
+
+
 def lim(x, y=None):
     if y is None:
         y = x
