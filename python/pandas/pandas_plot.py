@@ -27,6 +27,6 @@ ax.set_ylabel('Count')
 plt.show()
 
 #%%
-
+import matplotlib.pyplot as plt
 ax = df.hist(column='num', bins=25, grid=False, figsize=(12,8), color='#86bf91', zorder=2, rwidth=0.9)
 plt.show()

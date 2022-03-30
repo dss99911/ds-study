@@ -22,7 +22,7 @@ df_from_csv = pd.read_csv("path")
 
 #%% excel
 # pip install -U openpyxl
-df_from_excel: DataFrame = pd.read_excel("path", index_col=0)
+df_from_excel: DataFrame = pd.read_excel("path", index_col=0, sheet_name='Sheet3')
 
 #%% set index
 df_index = pd.read_csv("data/SP500_NOV2019_Hist.csv", index_col=0)

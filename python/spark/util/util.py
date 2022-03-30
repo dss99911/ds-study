@@ -39,7 +39,7 @@ def create_spark_session(name, use_delta=False, configs={}):
     return builder.getOrCreate()
 
 
-def window_filter(df: DataFrame, window):
+def window_filter(df: DataFrame, window: Union[Window, WindowSpec]) -> DataFrame:
     df = df.withColumn("seq", row_number().over(window))
     df = df.filter(col("seq") == 1)
     df = df.drop("seq")

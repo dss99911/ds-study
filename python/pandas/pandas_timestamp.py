@@ -39,3 +39,6 @@ timestamp_data = pd.to_datetime("11/1/2019")
 
 #%% long to datetime
 df['time'] = pd.to_datetime(df['time'], unit='ms')
+
+#%% datetime to str
+df['year_month'] = df['event_time'].dt.strftime('%Y-%m')
