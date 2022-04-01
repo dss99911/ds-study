@@ -24,7 +24,7 @@ object Utils {
     }
 
 
-    def flattenColumns(df: DataFrame): Seq[Column] = {
+    def flattenColumns(): DataFrame = {
       def recurColumns(prefix: String, prefixRename: String, schema: StructField): Seq[Column] = {
         schema match {
           case StructField(name, dtype: StructType, _, _) =>
@@ -34,8 +34,15 @@ object Utils {
             Seq(df.col(prefix + name).as(prefixRename + name))
         }
       }
-      df.schema.fields.flatMap(recurColumns("", "", _))
+      df.select(df.schema.fields.flatMap(recurColumns("", "", _)):_*)
+
     }
+
   }
 
+  implicit class ColExtensions(c: Column) {
+    def isNullOrEmpty: Column = {
+      c.isNull or (c === lit(""))
+    }
+  }
 }
