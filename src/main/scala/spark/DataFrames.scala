@@ -110,6 +110,9 @@ class DataFrames {
     df.unionByName(df2)
     //no need same order. if other dataframe contains columns which not exist on other dataframe. the columns' value is null
     df.unionByName(df2, true)
+
+    val dfs = Seq(df, df, df)
+    dfs.reduce(_ union _)
   }
 
   def underscoreToCamelDataFrame(df: DataFrame): DataFrame = {

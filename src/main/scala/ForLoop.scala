@@ -1,6 +1,8 @@
+
 object ForLoop {
   val args = List("apple", "banana", "lime", "orange")
   val names = List("apple", "banana", "lime", "orange")
+  val tuples = List(("apple","apple"), ("apple","apple"))
 
   for (arg <- args) println(arg)
 
@@ -23,5 +25,9 @@ object ForLoop {
     val nameWithoutUnderscore = name.drop(1)
     val capName = nameWithoutUnderscore.capitalize
     capName
+  }
+
+  tuples.foreach{
+    case (x,y) => println(x + " " + y)
   }
 }

@@ -1,6 +1,8 @@
 package spark.ml
 
+import org.apache.spark.ml.functions.vector_to_array
 import org.apache.spark.ml.linalg.Vectors
+import org.apache.spark.sql.functions.col
 
 class VectorSample {
   def sparse() = {
@@ -11,5 +13,9 @@ class VectorSample {
 
     sparseVector.toDense
     denseVector.toSparse
+  }
+
+  def vector2array() = {
+    vector_to_array(col("column"))
   }
 }

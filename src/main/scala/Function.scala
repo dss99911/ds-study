@@ -5,6 +5,18 @@ object Functions {
   def varArgs(text: String*) = {
 
   }
+
+  def returnArray(): Array[String] = {
+    Array("a", "b")
+  }
+
+  def returnTuple(): (String, Int) = {
+    ("a", 1)
+  }
+
+  val Array(a, b) = returnArray()
+  val (c: String, d) = returnTuple()
+
 }
 
 

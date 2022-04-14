@@ -43,9 +43,10 @@ object Lists {
     nums.foldLeft("Start : ")((d, v) => d + v + ", ")//결과 값이 입력값과 달라서, 초기 값이 필요한 경우.
     //Start : 0 ~ 10
 
-    var nums_inmutable = 1 +: nums //prepend 1. recommended to use 'prepend' on list
+    var nums_inmutable = 1 +: nums //prepend 1. recommended to use 'prepend' on list. +가 :앞에 있으므로 prepend
     nums_inmutable = nums :+ 1 //append 1. if need to use 'append' recommended to use vector
-    nums_inmutable = nums ++ Array(1,2) //append 1,2
+    val names3 = names ++ names // 뒤에 추가 [1,2,3] ++ [4,5] = [1,2,3,4,5]
+    val names4 = names ::: names // 앞에 추가 [1,2,3] ::: [4,5] = [4,5,1,2,3]
 
     // add one element
     nums4 += 4

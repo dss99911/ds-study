@@ -12,9 +12,14 @@ class AggregationAndGrouping(spark: SparkSession) {
 
   def agg() = {
     //column name : sum(value)
-    Seq(("a", 1), ("a", 2), ("b", 3)).toDF("name", "value")
+    val df = Seq(("a", 1), ("a", 2), ("b", 3)).toDF("name", "value")
+    df
       .groupBy("name").agg(sum("value"))
       .show(100, false)
+
+    //agg by list of columns
+    val exprs = df.columns.map(sum)
+    df.groupBy($"col1").agg(exprs.head, exprs.tail: _*)
   }
 
   def onSelect(df: DataFrame) = {

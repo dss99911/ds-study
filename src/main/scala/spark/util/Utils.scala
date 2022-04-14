@@ -1,5 +1,6 @@
 package spark.util
 
+import org.apache.spark.sql.functions.lit
 import org.apache.spark.sql.types.{StructField, StructType}
 import org.apache.spark.sql.{Column, DataFrame}
 

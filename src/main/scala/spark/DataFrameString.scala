@@ -1,6 +1,6 @@
 package spark
 
-import org.apache.spark.sql.functions.{concat, concat_ws, instr, length, lit, lower, regexp_extract, regexp_replace, substring}
+import org.apache.spark.sql.functions.{concat, concat_ws, expr, instr, length, lit, lower, regexp_extract, regexp_replace, substring}
 import org.apache.spark.sql.{DataFrame, SparkSession}
 
 class DataFrameString {
@@ -17,6 +17,7 @@ class DataFrameString {
       .withColumn("pattern", $"pattern".substr(-4, 4)) //last 4 digit. start from index 1
       .withColumn("number", regexp_extract($"number", "(\\w+)", 1)) //take only word
       .withColumn("number", regexp_replace($"sms_body", "\n", " "))
+      .withColumn("number", expr("col_name rlike '^.*$'"))
       .withColumn("concats", concat($"number", $"name")) // concat string
       .withColumn("concats", concat_ws("_", $"number", $"name")) // concat string with delimeter
       .filter($"text".rlike("regex"))

@@ -14,6 +14,14 @@ steps = [wr.emr.build_spark_step(path="submit_script",
                                  docker_image="docker-image"
                                  )
          ]
+class_name = "class_name"
+jar_path = f"s3://some.jar"
+p1 = "param1"
+p2 = "param2"
+steps = [wr.emr.build_spark_step(path=f"--driver-java-options -Dconfig.resource=application.conf --class {class_name} {jar_path} {p1} {p2}",
+                                 name="name",
+                                 )
+         ]
 
 cluster_id = wr.emr.create_cluster(subnet_id="subnet_id",
                                    docker=True,

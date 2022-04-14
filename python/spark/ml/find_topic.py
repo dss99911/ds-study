@@ -2,10 +2,15 @@ from spark.nlp.annotator import *
 from pyspark.ml.feature import CountVectorizer, IDF
 from pyspark.ml.clustering import LDA
 
+#%%
+
+
+
 #%% CountVectorizer (Term Frequency)
 # bag-of-words 단어가방. 단어별로 가방이 있고, 가방은 단어의 수를 의미
 # 단어를 숫자로 변환. 총 단어 수 및, 각 단어 별, 갯수 리턴
 # - 전처리를 안했을 경우, HashingTF가 CounterVectorizer보다 더 좋다고 함
+#   HashingTF().setNumFeatures(1000)
 tf = CountVectorizer(inputCol='terms', outputCol='tf')
 # tf = CountVectorizer(inputCol='terms', outputCol='tf', minDF=10)
 

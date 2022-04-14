@@ -6,4 +6,10 @@ class System {
 
   //show current path
   System.getProperty("user.dir")
+
+  def execute(command: String): Unit = {
+    import scala.sys.process._
+    command.!  //print output
+    command.!!  //return output
+  }
 }

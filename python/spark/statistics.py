@@ -38,7 +38,8 @@ def get_dummies(df: DataFrame, columns):
 
 
 def clean_column_name(c):
-    """저장할 때, 컬럼명 제약이 있음. 대소문자는 구분 안하므로 소문자로"""
+    """저장할 때, 컬럼명 제약이 있음. 대소문자는 구분 안하므로 편의상 소문자로 처리 (spark.sql.caseSensitive default가 False)
+    같은 값인데, 대소문자가 다른 경우에 동일하게 처리할지 여부는 get_dummies이전 처리에서 결정하는게 좋음. 이 경우, lower()없애기"""
     return regexp_replace(lower(c), "[\\. ,;\\{\\}\\(\\)\n\t=]", "_")
 
 get_dummies(spark_df, ['b', 'c']).show()

@@ -5,7 +5,7 @@ https://community.cloud.databricks.com/
 2시간 사용 안하면 자동으로 꺼짐.
 
 ## 특징
-- spark job 및 stage정보가 실행할 때 뜸.
+- spark job 및 stage정보가 실행할 때 떠서, 어디에서 지연 되는지 쉽게 파악 가능
 ![img.png](img/img.png)
 - Sagemaker와 비슷한 역할을 하는 ML기능들이 있음
 - spark에서 분산처리하여 ML tunning을 하고, tunning관련된 시각화를 제공함

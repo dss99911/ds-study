@@ -15,6 +15,7 @@ class DataFrameConvert {
     .select($"age" + 1) //able to use expr
     .select(expr("age + 1"))
     .na.fill("this is null") //change null to some value
+    .na.fill(Map("age" -> 0, "name" -> "unknown")) //change null to some value
     .na.replace("age", Map(10 -> 20, 11 -> 21)) //이건 null과 관련 없이 값 변환
 
   def whenOther() = {

@@ -15,7 +15,7 @@ import org.apache.spark.sql.{Row, SparkSession}
  * - Thinking : train과 test를 나눠서 테스트하는 것을 효과적으로 하려면, train에 비슷한 결과를 내는 데이터의 중복을 줄여서 과적합을 줄여야 하지 않을까?
  *
  */
-class CrossValidation {
+class ParameterTuning {
 
   def validate(spark: SparkSession) = {
     import spark.implicits._

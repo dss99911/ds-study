@@ -34,6 +34,29 @@ random forest나 gradient boosted tree를 쓰면 이러한 어려움을 완화 �
 label이 특정 범위인 경우
 - https://xgboost.readthedocs.io/en/stable/tutorials/aft_survival_analysis.html
 
+과적합시
+- learning_rate을 낮추고 n_estimators를 높여줍니다. (이 둘은 같이 움직입니다)
+- max_depth 값을 낮춥니다.
+- min_child_weight 값을 높입니다.
+- gamma 값을 높입니다.
+- subsample, colsample_bytree 값을 조정합니다.
+
+파라미터
+- https://hwi-doc.tistory.com/entry/%EC%9D%B4%ED%95%B4%ED%95%98%EA%B3%A0-%EC%82%AC%EC%9A%A9%ED%95%98%EC%9E%90-XGBoost
+- num_boost_round (10): 해당 횟수만큼 반복
+- early_stopping_rounds: 이 횟수 만큼 반복을 해도 성능향상이 없으면 중단. 
+  - 사용하려면 eval 데이터 셋을 입력해야함.
+  - 과적합을 방지할 수 있음, n_estimators 가 높을때 주로 사용.
+  - https://machinelearningmastery.com/avoid-overfitting-by-early-stopping-with-xgboost-in-python/
+- n_estimators (100): 트리 갯수
+- learning_rate (0.1)
+
+## Light GBM
+https://assaeunji.github.io/machine%20learning/2021-01-07-xgboost/
+- 학습시간이 짧음
+- 비대칭 트리 : 트리의 균형을 유지하지 않고, 최대 손실값을 갖는 리프 노드를 지속적 분할
+- 과적합 : 손길 값이 큰데에는 이유가 있을 텐데, 지속적으로 리프 노드를 지속 분할하여, 과적합이 쉽게 발생할 수 있음. max_depth를 설정하여, 과적합 방지 가능
+
 # 사용 케이스
 ## 분류 회귀 문제
 로지스틱 회귀, 나이브 베이즈, 의사결정 트리가 인기 있다고 함.

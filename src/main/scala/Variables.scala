@@ -12,6 +12,11 @@ object Variables {
   var b2 = BigInt(1234567890)
   var b3 = BigDecimal(123456.789)
   val c = 'a'
+  val e = {
+    val x = 1
+    val y = 2
+    x + y
+  }
 
   //with type
   val s: String = "a string"

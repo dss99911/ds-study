@@ -3,7 +3,7 @@
 https://towardsdatascience.com/accuracy-precision-recall-or-f1-331fb37c5cb9
 https://blog.naver.com/PostView.nhn?blogId=wideeyed&logNo=221531940245
 
-일반적으로 문제가 되는 경우를 postive로 설정함
+일반적으로 문제가 되는 경우를 positive로 설정함
 - 연체(positive) 상환(negative)
 - 감염(positive) 미감염(negative)
 
@@ -18,7 +18,7 @@ https://blog.naver.com/PostView.nhn?blogId=wideeyed&logNo=221531940245
   - false postive가 false negative보다 더 크게 문제되는 경우, 다르게 말해서, 양성 예측은 정확해야 하는 경우
     - 예: 상환(상환1, 연체0)으로 예측한 대출이 정확한게 중요함(예를 들기위해 상환을 postive로 놓았지만, negative로 설정하는게 더 좋음)
 
-### Recall : 재현율. 실제 positive의 정답율
+### Recall : 재현율. 실양성 중 진양성을 재현한 비율
   - true positive / (true positive + false negative)
   - TPR(true positive rate), Sensitivity 라고도 함
   - (실제 양성을) 재현 하는것. 실제 양성인 케이스들을 양성으로 재현할 확율
@@ -32,8 +32,8 @@ https://blog.naver.com/PostView.nhn?blogId=wideeyed&logNo=221531940245
 
 ### Precision vs Recall
   - 어떤 경우를 양성으로 놓느냐에 따라, Precision이나 Recall이 더 중요한지 다름
-  - Precision은 양성 예측한 값이 모두 정확한게 중요한 경우 확인
-  - Recall은 실제 양성을 모두 재현하는게 중요한 경우 확인
+  - Precision은 양성 예측한 값이 모두 정확한게 더 중요한 경우 확인
+  - Recall은 실제 양성을 모두 재현하는게 더 중요한 경우 확인
 
 
 ### F1 score : Precision과 Recall의 조화 평균
@@ -58,19 +58,20 @@ https://blog.naver.com/PostView.nhn?blogId=wideeyed&logNo=221531940245
 
 
 ### TPR, FPR
-- True Positive Rate = TP / (TP + FN) (recall)
-- False Negative Rate = FN / (TP + FN) : 실제 양성 중 오음성의 비율. 1 - TPR = FNR
-- True Negative Rate = TN / (TN + FP) : 실제 음성 중 얼마나 맞는지
-- False Positive Rate = FP / (TN + FP) : 실제 음성 중 얼마나 틀리는지
+- True Positive Rate = TP / (TP + FN) (recall) 실 양성 중 진 양성의 비율
+- False Negative Rate = FN / (TP + FN) : 실제 양성 중 위음성의 비율. 1 - TPR = FNR
+- True Negative Rate = TN / (TN + FP) : 실 음성 중 진음성 비율
+- False Positive Rate = FP / (TN + FP) : 실 음성 중 위양성의 비율
 
 
 ### ROC, AUC
 - Receiver Operator Characteristic
-- threshold 0~1 사이 변환시의 TPR, FPR사이의 그래프
-- threshold가 0이면, 
+- threshold 0~1 사이 변화에 따른, TPR, FPR사이의 그래프
+- threshold가 0이면, 전부 양성 예측하여, TPR은 좋아지고, FPR은 나빠짐
+- threshold가 1이면, 전부 음성 예측하여, TPR은 나빠지고, FPR은 좋아짐
 
 ### 대출 성능 지표
-- 대출은 시간이 흐름에 따라, 데이터의 편향이 지속적으로 발새하게 됨(연체로 예측된 경우 대출을 안주기 때문에, TN, FN 의 데이터만 지속적으로 쌓이고, 점차 범위가 TN으로 좁아짐)
+- 대출은 시간이 흐름에 따라, 데이터의 편향이 지속적으로 발생하게 됨(연체로 예측된 경우 대출을 안주기 때문에, TN, FN 의 데이터만 지속적으로 쌓이고, 점차 범위가 TN으로 좁아짐)
   - 따라서, recall이나 precision은 정답을 알 수 없기때문에, 의미가 없는 수치
 - 연체율 = 연체 수 / 전체 대출 수 =  false negative / (true negative + false negative)
 - 승인율 = 상환 예측 수 / 전체 신청 수 = (TN + FN) / (TN + FN + TP + FP)
