@@ -8,7 +8,7 @@ class Metrics {
 
     new BinaryClassificationEvaluator()
       .setLabelCol("label")
-      .setRawPredictionCol("prediction")
+      .setRawPredictionCol("rawPrediction")
       .setMetricName("areaUnderROC")
       .evaluate(result)
   }

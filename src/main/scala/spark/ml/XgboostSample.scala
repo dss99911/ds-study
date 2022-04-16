@@ -55,9 +55,15 @@ object XgboostSample {
     val xgbClassifier = new XGBoostClassifier(xgbParam)
       .setFeaturesCol("features")
       .setLabelCol("classIndex")
+      .setRawPredictionCol("raw") //binary인 경우, [num, num2] 의 값이 존재. num과 num2는 값은 같고 부호가 반대. prediction 이 1인 경우, num2가 양수. 0인 경우 음수. 숫자가 클 수록 confidence가 높음.
+      .setProbabilityCol("prob") //binary인 경우,  [num, num2] 의 값이 존재. num2 + num = 1. num2가 0.5 아래면, 0이고, 0.5 위이면, 1이다.
+      .setPredictionCol("pred")
     val xgbClassificationModel = xgbClassifier.fit(train)
+
+    xgbClassificationModel.write.overwrite().save("some_path")
     val results = xgbClassificationModel.transform(test)
     results.show()
+//    xgbClassificationModel.nativeBooster.saveModel(nativeModelPath)  // 싱글머신에서 돌릴 때, 라이브러리가 없어서,
 
   }
 }

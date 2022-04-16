@@ -14,15 +14,19 @@ resolvers += "confluent" at "https://packages.confluent.io/maven/"
 libraryDependencies ++={
   val sparkVer = "3.1.2"
   Seq(
-    "org.apache.spark" %% "spark-core" % sparkVer % "provided",
+    "org.apache.spark" %% "spark-core" % sparkVer % "provided",// provided추가하면, assembly를 해도, 추가를 안함
     "org.apache.spark" %% "spark-sql" % sparkVer % "provided",
     "org.apache.spark" %% "spark-mllib" % sparkVer % "provided",
     "org.scalaj" %% "scalaj-http" % "2.4.2",
     "com.typesafe" % "config" % "1.4.1",
     "com.fasterxml.jackson.core" % "jackson-databind" % "2.11.3",
 
-    //xgboost
-    "ml.dmlc" %% "xgboost4j-spark" % "1.5.2",
+    //xgboost https://mvnrepository.com/artifact/com.nvidia/xgboost4j-spark_3.0
+    //여기에 emr버전별 사용 jar가 있음 : https://nvidia.github.io/spark-rapids/docs/get-started/getting-started-aws-emr.html
+    //scala 3.0만 있어서, maven에서 직접 참고하면 에러남.
+    // lib폴더에 jar파일 추가만 하면 아래 추가 안해도 자동으로 인식함
+    // todo 1.6.0이 emr등에서 잘 작동하면 변경
+    //"com.nvidia" %% "xgboost4j-spark" % "1.2.0-0.1.0" from "file:///Users/hyun.kim/xgboost4j-spark_3.0-1.2.0-0.1.0.jar",
     //Spark NLP
     "com.johnsnowlabs.nlp" %% "spark-nlp" % "3.4.2",
 

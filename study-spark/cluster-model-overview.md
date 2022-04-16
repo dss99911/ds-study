@@ -15,12 +15,15 @@
 - sparkContext는 driver program에만 존재한다(cluster manager와 통신하는 용도이므로 당연)
 - Spark는 cluster manager를 agnostic(인지하지 못하는)하다.
 - application은 hadoop 및 spark library등을 내장하지 않고, runtime에서 받음 (dependency에 provided로 정의)
-
+- worker node 중 하나는 처리에 사용 안되는 것 같은데, cluster manager를 위한 것인듯..?
 
 ## Executor and Core
-- 각 executor는 한 worker node의 전체 core를 가질 수도 있고, 일부만 가질 수 있음. 일부만 가질 경우, 한 worker node에 여러 executor가 생성됨
-Executor : driver한테서 application code를 받아서, 각 core에 task를 할당함.
-Core : 노드의 cpu core와 일치하는 개념. executor 가 각 core를 담당.
+- excutor : node = n : 1 (각 executor는 한 worker node의 전체 core를 가질 수도 있고, 일부만 가질 수 있음. 일부만 가질 경우, 한 worker node에 여러 executor가 생성됨)
+  - 한 노드에 core가 24개 있는 경우, `spark.executor.cores=6` 와 같이 설정하면, 4개의 executor가 생성되고, 한 executor가 6개의 core를 가지고, 6개의 task를 동시에 수행
+  - `spark.task.cpus=1` 하나의 task가 하나의 core에 대응되는게 기본값, 변경은 가능
+
+- Executor : driver한테서 application code를 받아서, 각 core에 task를 할당함.
+- Core : 노드의 cpu core와 일치하는 개념. executor 가 각 core를 담당.
 
 - executor당 core갯수가 작으면, executor수가 많아지고, I/O operation 양이 많아짐(셔플등에서 executor수만큼 I/O가 발생)
 - executor당 core갯수를 크게 설정하면, executor갯수가 작아지고, 병렬성이 낮아짐(task들을 각 executor들이 처리하는데, 동시에 처리하는 task갯수가 줄어듬. 대신에, core를 여러개 쓰므로,하나의 task를 완료하는 시간은 더 빠를 듯)

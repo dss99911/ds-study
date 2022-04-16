@@ -1,10 +1,11 @@
+# conda install xgboost
 
 from numpy import loadtxt
 from xgboost import XGBClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 # load data
-dataset = loadtxt('pima-indians-diabetes.csv', delimiter=",")
+dataset = loadtxt('data/pima-indians-diabetes.csv', delimiter=",")
 # split data into X and y
 X = dataset[:,0:8]
 Y = dataset[:,8]
@@ -22,3 +23,20 @@ accuracy = accuracy_score(y_test, predictions)
 print("Accuracy: %.2f%%" % (accuracy * 100.0))
 
 #%%
+#  pip install graphviz
+
+from numpy import loadtxt
+from xgboost import XGBClassifier
+from xgboost import plot_tree
+import matplotlib.pyplot as plt
+# load data
+dataset = loadtxt('data/pima-indians-diabetes.csv', delimiter=",")
+# split data into X and y
+X = dataset[:,0:8]
+y = dataset[:,8]
+# fit model no training data
+model = XGBClassifier()
+model.fit(X, y)
+# plot single tree
+plot_tree(model)
+plt.show()

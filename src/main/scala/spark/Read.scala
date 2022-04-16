@@ -192,4 +192,10 @@ dir1/
       .parquet("path")
   }
 
+  /**
+   * 전체 컬럼을 withColumnRenamed 등으로 바꾸게 되면, plan생성할 때 비용이 많이 듦
+   */
+  def changeAllColumnName(df: DataFrame) = {
+    df.toDF("new_col1", "new_col2")
+  }
 }
