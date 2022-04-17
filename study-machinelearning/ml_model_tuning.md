@@ -10,7 +10,8 @@
 3. parameter 선정
    1. 풀고자 하는 문제에 적합한 파리미터를 선정한다.
    2. 예측하려는 데이터가 학습한 데이터와 전혀 다를 수 있는 경우, 보수적으로 과적합을 줄이는게 좋다.
-   3. grid search등으로 parameter 찾기.  
+   3. grid search로 큰 범주의 parameter 찾기.
+   4. 각각의 parameter들을 하강 경사법과 비슷한 방식으로 미세 조정
 4. 검증
    1. 과적합 체크
       1. train, eval metric의 round별 분포를 보고, train 점수는 올라가는데, eval점수는 안 올라간다면, 과적합 의심.
@@ -22,6 +23,9 @@
    4. test set 체크
       1. confusion metrix로 어떤 케이스에 많이 틀리는지 확인
       2. 잘못 예측한 케이스들 하나 하나 원인 분석 후 전처리 개선
+         1. 도움이 될만한 피쳐를 추가 개발도 고려
+   5. probability threshold 정하기. 어떤 메트릭이 중요하냐에 따라, 정한다.
+      1. 트랜젝션 여부는 리콜이 중요함
 
 
 ## Parameter Tuning
