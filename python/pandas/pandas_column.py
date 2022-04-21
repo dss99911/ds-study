@@ -70,3 +70,6 @@ df.loc[df["test2"] == 2, "test4"] = df["test2"]
 
 #%% pop : df에서 column을 제거하고, 해당 column만 있는 dataframe을 리턴한다.
 s_a = df.pop("A") # series 리턴
+
+#%% concat column
+df_concat2 = pd.concat([df, df], axis=1)

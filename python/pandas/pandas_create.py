@@ -28,6 +28,11 @@ df_create_dataframe_by_dict2 = pd.DataFrame(
         "F": "foo",
     }
 )
+# by row list
+df_create_dataframe_by_row_list = pd.DataFrame.from_dict([
+    {'a': 1, 'b': 2, 'c': 3},
+    {'a': 4, 'b': None, 'c': None},
+])
 
 date_time_index = pd.date_range("20130101", periods=6)
 np_dataframe_random = np.random.randn(6, 4) # 6rows, 4 columns

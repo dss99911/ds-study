@@ -44,3 +44,6 @@ df_plus = pd.concat([df, df])
 # index가 중복될 경우 에러 발생.
 # ValueError: Shape of passed values is (3, 2), indices imply (2, 2)
 df_concat2 = pd.concat([df_left.set_index("key"), df_right1.set_index("key")], axis=1)
+
+#%%
+combine = df["a"].combine_first(df["b"])  # 첫 df에 null인 값이 있으면, 두번째 df의 값을 사용.

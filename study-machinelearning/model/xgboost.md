@@ -66,3 +66,6 @@ boosting
     - https://machinelearningmastery.com/avoid-overfitting-by-early-stopping-with-xgboost-in-python/
 - n_estimators (100): 트리 갯수
 
+
+## 참조
+- https://towardsdatascience.com/binary-classification-xgboost-hyperparameter-tuning-scenarios-by-non-exhaustive-grid-search-and-c261f4ce098d

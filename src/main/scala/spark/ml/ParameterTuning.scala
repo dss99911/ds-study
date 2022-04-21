@@ -5,7 +5,8 @@ import org.apache.spark.ml.classification.{LogisticRegression, LogisticRegressio
 import org.apache.spark.ml.evaluation.BinaryClassificationEvaluator
 import org.apache.spark.ml.feature.{HashingTF, Tokenizer}
 import org.apache.spark.ml.linalg.Vector
-import org.apache.spark.ml.tuning.{CrossValidator, ParamGridBuilder}
+import org.apache.spark.ml.param.ParamMap
+import org.apache.spark.ml.tuning.{CrossValidator, CrossValidatorModel, ParamGridBuilder}
 import org.apache.spark.sql.{Row, SparkSession}
 
 /**
@@ -60,6 +61,7 @@ class ParameterTuning {
     //(train, test)셋(2:1로 나눔)을 folding 갯수만큼 나눠서 fit한 후, metric의 평균을 구한다.
     //folding 갯수(2) * grid의 갯수(3*2) = 총 학습 횟수(12)
     //bestParam으로 전체 데이터를 다시 학습한다
+    //pipeline의 뒤에 있는 것들의 파라미터만 변경한다면, 앞 스텝의 경우, 매 파라미터 테스트할 때마다 재학습하진 않고, 학습된 것을 사용하는 것 같음(skip이 뜸)
     val cv = new CrossValidator()
       .setEstimator(pipeline)
 
@@ -67,14 +69,16 @@ class ParameterTuning {
       //label과 rawPredictionCol명을 변경한 경우, setLableCol, setRawPredictionCol 설정 필요.
       .setEvaluator(new BinaryClassificationEvaluator)
       .setEstimatorParamMaps(paramGrid)
-      .setNumFolds(2)  // Use 3+ in practice.
-      .setParallelism(2)  // Evaluate up to 2 parameter settings in parallel
+      .setNumFolds(3)  // Use 3+ in practice.
+      .setParallelism(3)  // Evaluate up to 2 parameter settings in parallel
 
     // Run cross-validation, and choose the best set of parameters.
     val cvModel = cv.fit(training)
     val bestModel = cvModel.bestModel.asInstanceOf[PipelineModel].stages(2)
       .asInstanceOf[LogisticRegressionModel]
-    bestModel.extractParamMap()
+    val modelParams = bestModel.extractParamMap()
+
+    val bestParams = cvModel.bestEstimatorParamMap
 
     // Prepare test documents, which are unlabeled (id, text) tuples.
     val test = spark.createDataFrame(Seq(
@@ -91,5 +95,21 @@ class ParameterTuning {
       .foreach { case Row(id: Long, text: String, prob: Vector, prediction: Double) =>
         println(s"($id, $text) --> prob=$prob, prediction=$prediction")
       }
+  }
+
+  implicit class BestParamMapCrossValidatorModel(cvModel: CrossValidatorModel) {
+    def bestEstimatorParamMap: ParamMap = {
+      if (cvModel.getEvaluator.isLargerBetter) {
+        cvModel.getEstimatorParamMaps
+          .zip(cvModel.avgMetrics)
+          .maxBy(_._2)
+          ._1
+      } else {
+        cvModel.getEstimatorParamMaps
+          .zip(cvModel.avgMetrics)
+          .minBy(_._2)
+          ._1
+      }
+    }
   }
 }
