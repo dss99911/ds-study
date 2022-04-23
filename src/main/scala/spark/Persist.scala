@@ -36,4 +36,5 @@ class Persist {
   StorageLevel.MEMORY_AND_DISK // 메모리 공간을 벗어난 크기이면, 디스크에 저장
   StorageLevel.MEMORY_ONLY_SER // Serialize해서 메모리 공간을 절약 해줌, 하지만 Deserialize를 다시 해야 하기 때문에, 처리량은 늘어남
 
+  spark.catalog.clearCache()
 }
