@@ -8,7 +8,12 @@ Build Your Own Processing Container
 - https://docs.aws.amazon.com/sagemaker/latest/dg/build-your-own-processing-container.html
 
 
-
+## Sagemaker Project
+- pipeline CI/CD 자동화
+- 정교한 프로세스가 요구되는 경우
+- 파이프라인들을 하나의 프로젝트로 관리하고 싶은 경우
+- endpoint, pipeline, ML model, experiments, repository를 하나로 관리하고 싶은 경우
+- 그런데, 이런 것을 하기 위해서, 추가적인 학습이 필요. 
 
 ## Error
 

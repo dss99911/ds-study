@@ -21,6 +21,8 @@ sklearn_processor = SKLearnProcessor(
 )
 # image docker
 # https://github.com/aws/sagemaker-scikit-learn-container/blob/master/docker/0.23-1/base/Dockerfile.cpu
+# deeplearning containers
+# https://github.com/aws/deep-learning-containers/blob/master/available_images.md
 
 # docker를 이용해서, dependency를 추가하는 방법도 있지만, 매번 실행할 때마다, 설치하는 방법도 있음
 def install_dependency():

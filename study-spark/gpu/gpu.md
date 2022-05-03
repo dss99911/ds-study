@@ -38,6 +38,19 @@
 ## TODO
 - spark.conf.set('spark.rapids.sql.enabled','true')
 
+## 직접설치
+- https://nvidia.github.io/spark-rapids/docs/get-started/getting-started-on-prem.html
+- cuda 설치
+  - GPU 하드웨어 관련,
+  - 재시작 필요
+- cudf 설치
+  - cuda버전에 맞춰야 함
+- rapids 설치
+  - cudf버전에 맞춰야 함
+- Install the GPU Discovery Script
+- setting Yarn config
+- 
+
 ## [Qualification profiling tool](https://nvidia.github.io/spark-rapids/docs/get-started/getting-started-workload-qualification.html)
 - gpu로 migration하기 이전에, 어떤 작업들을 gpu로 수행가능한지 확인가능
 

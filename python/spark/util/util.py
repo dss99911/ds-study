@@ -1,4 +1,6 @@
 import sys
+from typing import List
+
 from pyspark.ml.functions import *
 
 from pyspark.sql import DataFrame, Row
@@ -127,3 +129,10 @@ def get_cols(df, exclude_cols, types):
 
 def get_numeric_cols(df, exclude_cols):
     return get_cols(df, exclude_cols, [LongType(), DoubleType(), IntegerType(), FloatType(), DecimalType(), ShortType(), ByteType()])
+
+
+def rename_columns(df: DataFrame, old_cols: List[str], new_cols: List[str]):
+    cols = df.columns
+    old_new_cols = dict(zip(old_cols, new_cols))
+    cols = [(col(c).alias(old_new_cols.get(c)) if old_new_cols.get(c) else col(c)) for c in cols]
+    return df.select(cols)

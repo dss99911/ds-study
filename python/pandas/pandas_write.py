@@ -1,6 +1,7 @@
 from datetime import date, datetime
 
 import pandas as pd
+from pandas import DataFrame
 
 df = pd.DataFrame({
     'a': [1, 2, 3],
@@ -36,3 +37,9 @@ def to_csv(df):
     df.to_csv("path")
     # append
     df.to_csv("path", mode='a', header=False)
+
+
+#%%
+# pip install pyarrow
+def to_parquet(df: DataFrame):
+    df.to_parquet("path", partition_cols=["dt"])
