@@ -16,6 +16,7 @@ object Exception {
   def toInt(s: String): Try[Int] = Try {
     Integer.parseInt(s.trim)
   }
+  toInt("dd").toOption
   toInt("dd") match {
     case Success(i) => println(i)
     case Failure(s) => println(s"Failed. Reason: $s")
