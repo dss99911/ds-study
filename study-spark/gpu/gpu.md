@@ -49,7 +49,10 @@
   - cudf버전에 맞춰야 함
 - Install the GPU Discovery Script
 - setting Yarn config
-- 
+
+## EMR에 최신버전 설치
+- http://www.openkb.info/2021/04/how-to-use-latest-version-of-rapids.html
+- Install CUDA Toolkit 11.0 and cuda-compat-11-0
 
 ## [Qualification profiling tool](https://nvidia.github.io/spark-rapids/docs/get-started/getting-started-workload-qualification.html)
 - gpu로 migration하기 이전에, 어떤 작업들을 gpu로 수행가능한지 확인가능

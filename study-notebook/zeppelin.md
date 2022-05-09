@@ -65,9 +65,16 @@ sudo service zeppelin start
 ```
 
 ## Zeppelin Configuration
+conf/zeppelin-env.sh 에 conf폴더가 정의되어 있음
 ```
 vim /etc/zeppelin/conf/zeppelin-site.xml
 ```
+
+## Zeppelin interpreter
+```shell
+/etc/zeppelin/conf/interpreter.json
+```
+
 
 ## run other note
 - https://docs.qubole.com/en/latest/user-guide/notebooks-and-dashboards/notebooks/zep-notebooks/running-notebooks.html#:~:text=From%20a%20notebook%2C%20you%20can,%2C%20paragraphId)%20functions%2C%20respectively.&text=This%20option%20is%20available%20in%20Zeppelin%200.8%20and%20later%20versions.
