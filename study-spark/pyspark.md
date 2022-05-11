@@ -26,6 +26,8 @@ conda env create -f environment.yml
 - use conf `spark.submit.pyFiles` or `spark.archives`
 - archives방식은 시도해봤지만, 무슨 이유에선가 안됨
   - 가상 환경을 pack한 것을 executor에서 사용할 때, 사용하는 것 같음. https://spark.apache.org/docs/3.1.1/api/python/user_guide/python_packaging.html#using-conda
+  - 가상환경 생성 -> activate -> pack -> export추가 -> --archives와 함께 실행(가상환경 activate된 상태에서 실행해야함)
+  - 위의 방법으로 client모드에서는되는데, cluster모드에서는 에러남. 모든 노드에서 다 설치해야 하는 건 아닐 것 같은데..
 - site-packages 를 zip으로 압축하여(project py파일의 경우 setuptools의 bdist_egg를 사용해도 되고, 직접 압축해도 됨), pyFiles에 추가하는 방식으로 처리. spark-defaults.conf에 추가하면 별도로 추가할 필요가 없음. 하지만 별도의 python file을 추가할 경우. --py-files {a-path},{b-path} 와 같은 식으로, 둘다 추가해줘야 함. conf파일에 등록되어 있어도 --py-files를 추가하면, overwrite됨.
 - 다른 방법 : EMR Bootstrap Actions에 설정해놓으면, 전체 클러스터에 설치해준다.
     - 단점 : 처음 cluster설정시에만 설정가능하고, 추가 설치를 못한다.

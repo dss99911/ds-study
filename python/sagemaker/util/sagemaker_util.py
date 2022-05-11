@@ -1,54 +1,65 @@
 import os
+import subprocess
+from os import path
 import time
 import zipfile
-
+import json
 import boto3
 import sagemaker
+# noinspection PyUnresolvedReferences
 from sagemaker import get_execution_role
 # noinspection PyUnresolvedReferences
-from sagemaker.inputs import TrainingInput
-from sagemaker.processing import ProcessingInput, ProcessingOutput
-from sagemaker.sklearn import SKLearnProcessor
-from sagemaker.spark import PySparkProcessor
+from sagemaker.processing import ProcessingInput, ProcessingOutput, ScriptProcessor
+from sagemaker.spark.processing import PySparkProcessor
 from sagemaker.workflow.pipeline import Pipeline
-from sagemaker.workflow.steps import ProcessingStep, TrainingStep
-from sagemaker.xgboost import XGBoost
-from util.common import *
+from sagemaker.workflow.parameters import ParameterString
+from sagemaker.workflow.functions import Join
+from sagemaker.workflow.step_collections import StepCollection
+from sagemaker.workflow.steps import ProcessingStep, Step
+from sagemaker.workflow.steps import TrainingStep
+from sagemaker.xgboost.estimator import XGBoost
+# noinspection PyUnresolvedReferences
+from sagemaker import TrainingInput
+from typing import Union, List
+import datetime
+from sagemaker.sklearn import SKLearnProcessor
 
-_local_role = None
+# todo modify path properly.
+# from util.common import *
+from common import *
+
+# todo need to change _local_role, _region_name for using
+# change to the iam role on `aws iam list-roles | grep SageMaker-Execution`
+_local_role = "arn:aws:iam::111111111111:role/service-role/AmazonSageMaker-ExecutionRole-20200101T000001"
 _is_local = True
 _is_debug = False
-_region_name = None
-_profile_name = None
+_region_name = "ap-south-1"
+_profile_name = "default"
 _sess = None
 _bucket = None
 _role = ""
-_zip_s3_path = ""
+
 _schema = "hyun"
 _schema_path = "s3://hyun/hyun"
+_zip_s3_path = f"{_schema_path}/code/pipeline.zip"
+_slack_webhook_url = None
 
-
-def set_environment(local_role=_local_role, is_local=_is_local, is_debug=_is_debug, region_name=_region_name, schema=_schema, schema_path=_schema_path, profile_name=_profile_name,
-                    zip_s3_path=_zip_s3_path):
+def set_environment(is_local=True, is_debug=False, schema="hyun", schema_path="s3://hyun/hyun", profile_name="default", slack_webhook_url=None, is_upload_pyfiles=True):
     """
-    :param local_role: set to the iam role on `aws iam list-roles | grep SageMaker-Execution`
     :param is_local: run on local or sageMaker jupyter lab
     :param is_debug: if running on local instance or aws instance type
-    :param region_name:
     :param profile_name: local awscli profile name
-    :param zip_s3_path: s3 path to upload python.zip
     """
-    global _local_role, _is_local, _is_debug, _region_name, _schema, _schema_path, _profile_name, _sess, _bucket, _role, _zip_s3_path
-    _local_role = local_role
+    global _is_local, _is_debug, _region_name, _profile_name, _sess, _bucket, _role, _schema, _schema_path, _zip_s3_path, _slack_webhook_url
     _is_local = is_local
     _is_debug = is_debug
-    _region_name = region_name
     _profile_name = profile_name
-    _zip_s3_path = zip_s3_path
     _schema = schema
     _schema_path = schema_path
+    _zip_s3_path = f"{_schema_path}/code/pipeline.zip"
+    _slack_webhook_url = slack_webhook_url
 
-    _profile_name = profile_name if is_local else None
+    _profile_name = _profile_name if _is_local else None
     _sess = sagemaker.Session(boto3.session.Session(region_name=_region_name, profile_name=_profile_name))
     boto3.setup_default_session(region_name=_region_name, profile_name=_profile_name)
     dummy_iam_role = 'arn:aws:iam::111111111111:role/service-role/AmazonSageMaker-ExecutionRole-20200101T000001'
@@ -56,28 +67,29 @@ def set_environment(local_role=_local_role, is_local=_is_local, is_debug=_is_deb
 
     if _is_local:
         _role = _local_role
-    elif is_debug:
+    elif _is_debug:
         _role = dummy_iam_role
     else:
         _role = get_execution_role()
 
-    print(boto3.__version__)
-    print(sagemaker.__version__)
-    print(_role)
-    print(_bucket)
+    print("boto3:", boto3.__version__)
+    print("sagemaker:", sagemaker.__version__)
+    print("role:", _role)
+    print("bucket:", _bucket)
+    print("schema:", _schema)
+
+    if is_upload_pyfiles:
+        upload_pyfiles()
 
 
-def is_local():
-    return _is_local
 
+def upload_pyfiles():
 
-def upload_pyfiles(excludes=[".idea/\*", "jars/\*", "\*.ipynb", "\*.sh", "\*.json"]):
-    """
-    :param excludes: if it's folder  .idea/\*
-    """
-    import os
+    #zip을 통한 방식, sagemaker에서는 zip이 없어서 안됨.
+    # excludes=[".idea/\*", "jars/\*", "\*.ipynb", "\*.sh", "\*.json"]
+    # import os
     # os.system(f'zip -r python.zip . -x {" ".join(excludes)}')
-    zip_py_files(".", "python.zip")
+    _zip_py_files(".", "python.zip")
     upload_command = f'aws s3 cp python.zip "{_zip_s3_path}"'
     if _is_local:
         upload_command += f" --profile {_profile_name}"
@@ -98,11 +110,7 @@ def param(instancetype=None):
     return param_
 
 
-def instance_type(instancetype):
-    return 'local' if _is_debug else instancetype
-
-
-def get_pyspark_step(name, submit_app, instance_type_, instance_count, arguments=None, configuration=None, submit_jars=None, volume_size=30):
+def get_pyspark_step(submit_app, instance_type="ml.r5.large", instance_count=1, arguments=None, configuration=None, submit_jars=None, volume_size=30, depends_on=[]):
     if arguments is None:
         arguments = ["--schema", _schema, "--schema_path", _schema_path]
 
@@ -111,7 +119,7 @@ def get_pyspark_step(name, submit_app, instance_type_, instance_count, arguments
         framework_version="3.0",
         instance_count=instance_count,
         volume_size_in_gb=volume_size,
-        **param(instance_type_)
+        **param(instance_type)
     )
 
     run_args = pyspark_processor.get_run_args(
@@ -122,16 +130,19 @@ def get_pyspark_step(name, submit_app, instance_type_, instance_count, arguments
         configuration=configuration,
     )
 
+    name = submit_app.split("/")[-1].split(".")[0].replace("_", "-")
+
     return ProcessingStep(
         name=name,
         processor=pyspark_processor,
         inputs=run_args.inputs,
         job_arguments=run_args.arguments,
-        code=run_args.code
+        code=run_args.code,
+        depends_on=[d.name for d in depends_on]
     )
 
 
-def get_sklearn_preprocess_step(name, script, inputs=[], outputs=[], instance_type="ml.r5.large"):
+def get_sklearn_preprocess_step(script, inputs=[], outputs=[], instance_type="ml.r5.large", max_runtime_in_seconds=7200, depends_on=[]):
     framework_version = "0.23-1"
     arguments = ["--schema", _schema, "--schema_path", _schema_path]
 
@@ -140,23 +151,25 @@ def get_sklearn_preprocess_step(name, script, inputs=[], outputs=[], instance_ty
         instance_count=1,
         base_job_name="sklearn-processor",
         volume_size_in_gb=512,
-        max_runtime_in_seconds=7200,
+        max_runtime_in_seconds=max_runtime_in_seconds,
         **param(instance_type)
     )
 
+    name = script.split("/")[-1].split(".")[0].replace("_", "-")
     step_sklearn_preprocess = ProcessingStep(
         name=name,
         processor=sklearn_processor,
         inputs=inputs + _get_dependency_inputs("."),
         outputs=outputs,
         job_arguments=arguments,
-        code=script
+        code=f"{script}",
+        depends_on=[d.name for d in depends_on]
     )
 
     return step_sklearn_preprocess
 
 
-def get_xgboost_train_step(entry_point: str, instance_type, inputs):
+def get_xgboost_train_step(entry_point: str, instance_type, inputs, depends_on=[]):
     xgb_train = XGBoost(
         entry_point=entry_point,
         framework_version='1.2-1',
@@ -169,12 +182,13 @@ def get_xgboost_train_step(entry_point: str, instance_type, inputs):
     return TrainingStep(
         name=name,
         estimator=xgb_train,
-        inputs=inputs
+        inputs=inputs,
+        depends_on=[d.name for d in depends_on],
     )
 
 
 def _get_dependency_inputs(root_path):
-    # only 10 inputs are allowed
+    # only 10 inputs are allowed. select the python folders which is required if input is more than 10
     from os import listdir, path
 
     output = []
@@ -188,58 +202,92 @@ def _get_dependency_inputs(root_path):
             output.append(ProcessingInput(source=file_path, destination=get_input_path(f"code/{file_path}")))
     return output
 
-
-def run_steps_sequentially(*steps):
-    for i, step in enumerate(steps):
-        if (i + 1) >= len(steps):
-            break
-        steps[i + 1].add_depends_on([step.name])
-
-    pipeline = Pipeline(name="hyun-test", steps=steps)
-    pipeline.upsert(role_arn=_role)
-    pipeline.start()
+def instance_type(type):
+    return 'local' if _is_debug else type
 
 
-def run_pipeline(name: str, steps_depends_on):
-    steps = [s[0] for s in steps_depends_on]
+def make_pipeline(name: str, steps_depends_on, parameters=[]):
+    steps = [(s[0] if type(s) is tuple else s) for s in steps_depends_on]
+    depends_ons = [(s[1] if type(s) is tuple else []) for s in steps_depends_on]
 
-    for step, depends_on in steps_depends_on:
+    for step, depends_on in zip(steps, depends_ons):
         step.depends_on = [d.name for d in depends_on if d in steps]
 
-    return Pipeline(
+    pipeline = Pipeline(
         name=name,
+        parameters=parameters,
         steps=steps
     )
+    print("making pipeline")
+    parsed = json.loads(pipeline.definition())
+    print(json.dumps(parsed, indent=2, sort_keys=True))
+    pipeline.upsert(role_arn=role())
+    return pipeline
 
 
-def notify_completed(execution, slack_webhook_url=None):
+def notify_completed(pipeline, execution):
     status = None
 
-    while status != "Completed" and status != "Failed":
+    step_status_failed = None
+    while status != "Succeeded" and status != "Completed" and status != "Failed" and status != "Stopping" and status != "Stopped":
         time.sleep(30)
         status = execution.describe()["PipelineExecutionStatus"]
+        step_status = {s["StepName"]: (s["StepStatus"], s["Metadata"]["ProcessingJob"]["Arn"].split("/")[-1]) for s in execution.list_steps()}
+        step_status_running = [(k, v) for k, v in step_status.items() if v[0] in ["Starting", "Executing"]]
+        step_status_failed = [(k, v) for k, v in step_status.items() if v[0] in ["Failed", "Stopping", "Stopped"]]
+        print(f"========Status==========\n"
+              f"Pipeline status: {status}\n"
+              f"Step status running: {step_status_running}\n"
+              f"Step status failed: {step_status_failed}\n"
+              f"========================")
 
-    step_name = execution.list_steps()[0]["StepName"]
-    # send_slack_message_to_url(f"SageMaker Step {step_name} is {status}", slack_webhook_url)
+    if step_status_failed:
+        for k, v in step_status_failed:
+            save_logs(pipeline.name, v[1])
+    send_slack_message_to_url(f"SageMaker pipeline {pipeline.name} is {status}")
 
 
-def processing_input(name):
+def schema_path():
+    return _schema_path
+
+
+def schema():
+    return _schema
+
+
+def role():
+    return _role
+
+
+def processing_input(name, source=None):
     return ProcessingInput(
-        source=f"{_schema_path}/{name}",
+        source=f"{_schema_path}/{name}" if source is None else source,
         destination=get_input_path(name),
         input_name=name
     )
 
 
-def processing_output(name):
+def processing_output(name, destination=None):
     return ProcessingOutput(
         source=get_output_path(name),
         s3_upload_mode='EndOfJob',
         output_name=name,
-        destination=f"{_schema_path}/{name}")
+        destination=f"{_schema_path}/{name}" if destination is None else destination)
 
 
-def zip_py_files(dir_path, zip_path):
+def send_slack_message_to_url(text):
+    import requests
+    payload = {
+        "text": text
+    }
+    if _slack_webhook_url is None:
+        print("slack_webhook_url is not configured")
+        return
+    # noinspection PyTypeChecker
+    requests.post(_slack_webhook_url, json=payload)
+
+
+def _zip_py_files(dir_path, zip_path):
     """zipfile로 하면, __init__.py를 추가하지 않으면, 인식을 못함.
         bash의 zip -r로 하면 인식 함. 차이를 잘 모르겠지만,
         sagemaker studio에서 돌릴 때, zip이 설치되어 있지 않아. 이렇게 처리
@@ -256,3 +304,79 @@ def zip_py_files(dir_path, zip_path):
             zipf.write(apath, f"{relpath}")
 
     zipf.close()
+
+
+def save_logs(pipeline_name, job_name: str, repeat_count: int = 3):
+    print("job_name:", job_name)
+    job_prefix = "-".join(job_name.split('-')[0:-1])
+    # suffix is lower case. but for accessing log, original case is needed.
+    job_suffix = job_name.split('-')[-1]
+    cmd_get_log_strema_name = (
+        "aws logs describe-log-streams"
+        " --log-group-name '/aws/sagemaker/ProcessingJobs'"
+        f" --log-stream-name-prefix '{job_prefix}'"
+        f" --region '{_region_name}'"
+    )
+    cmd_get_log_strema_name += f" --profile {_profile_name}"
+    result = subprocess.check_output(cmd_get_log_strema_name, shell=True)
+    stream_name_times = [(l["logStreamName"], l["lastIngestionTime"]) for l in json.loads(result)["logStreams"] if ("algo-1" in l["logStreamName"] and job_suffix in l["logStreamName"].lower())]
+    if not stream_name_times:
+        print("can't find logs for", job_name)
+        return
+    stream_name, last_ingestion_time = stream_name_times[0]
+    print("stream_name:", stream_name)
+
+    next_token = None
+    current_time_str = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
+    log_dir = f"logs/{pipeline_name}-{current_time_str}"
+    file_path = f"{log_dir}/{job_name}.log"
+    if not path.exists(log_dir):
+        os.makedirs(log_dir)
+
+    print("file_path:", file_path)
+    for i in range(repeat_count):
+        next_token = _save_log_stream_name(file_path, stream_name, last_ingestion_time, next_token)
+    print("logs saved")
+
+
+def _save_log_stream_name(file_path, stream_name, last_ingestion_time, next_token=None):
+    cmd_get_log = (
+        f"aws logs get-log-events"
+        " --log-group-name '/aws/sagemaker/ProcessingJobs'"
+        f" --log-stream-name '{stream_name}'"
+        f" --end-time {last_ingestion_time}"
+        f" --limit 10000"
+        f" --region '{_region_name}'"
+    )
+    if next_token:
+        cmd_get_log += f" --next-token {next_token}"
+    cmd_get_log += f" --profile {_profile_name}"
+
+    result = subprocess.check_output(cmd_get_log, shell=True)
+    obj = json.loads(result)
+    events = obj["events"]
+
+    output = "\n".join([_long_to_date(e['timestamp']) + "\t" + e["message"] for e in events])
+
+    _prepend_text_to_file(file_path, output)
+    next_forward_token = obj["nextForwardToken"]
+    return next_forward_token
+
+
+def _long_to_date(long_time: int):
+    import datetime
+    return datetime.datetime.fromtimestamp(long_time / 1000).strftime("%Y-%m-%d %H:%M:%S")
+
+
+def _prepend_text_to_file(file_path: str, text: str):
+    lines = []
+    if path.exists(file_path):
+        with open(file_path, "r") as f:
+            lines = f.readlines()
+    with open(file_path, "w") as f:
+        f.write(text)
+        f.write("".join(lines))
+
+
+def is_local():
+    return _is_local
