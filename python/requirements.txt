@@ -1,4 +1,4 @@
-# install by script/install_librairies.sh
+# install by script/install_requirements.sh
 joblib==1.0.1
 matplotlib==3.5.2
 mplfinance==0.12.7a17
