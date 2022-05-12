@@ -6,6 +6,7 @@ import zipfile
 import json
 import boto3
 import sagemaker
+from collections import defaultdict
 # noinspection PyUnresolvedReferences
 from sagemaker import get_execution_role
 # noinspection PyUnresolvedReferences
@@ -226,21 +227,22 @@ def make_pipeline(name: str, steps_depends_on, parameters=[]):
 
 
 def notify_completed(pipeline, execution):
-    status = None
+    previous_status_steps = defaultdict(set)
 
-    step_status_failed = None
-    while status != "Succeeded" and status != "Completed" and status != "Failed" and status != "Stopping" and status != "Stopped":
-        time.sleep(30)
+    while True:
         status = execution.describe()["PipelineExecutionStatus"]
         step_status = {s["StepName"]: (s["StepStatus"], s["Metadata"]["ProcessingJob"]["Arn"].split("/")[-1]) for s in execution.list_steps()}
-        step_status_running = [(k, v) for k, v in step_status.items() if v[0] in ["Starting", "Executing"]]
-        step_status_failed = [(k, v) for k, v in step_status.items() if v[0] in ["Failed", "Stopping", "Stopped"]]
-        print(f"========Status==========\n"
-              f"Pipeline status: {status}\n"
-              f"Step status running: {step_status_running}\n"
-              f"Step status failed: {step_status_failed}\n"
-              f"========================")
+        for k, v in step_status.items():
+            now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            if k not in previous_status_steps[v[0]]:
+                previous_status_steps[v[0]].add(k)
+                print(f"{now} [{k}] status={v[0]}, arn={v[1]}")
 
+        if status == "Succeeded" or status == "Completed" or status == "Failed" or status == "Stopping" or status == "Stopped":
+            break
+        time.sleep(30)
+
+    step_status_failed = [(k, v) for k, v in step_status.items() if v[0] in ["Failed", "Stopping", "Stopped"]]
     if step_status_failed:
         for k, v in step_status_failed:
             save_logs(pipeline.name, v[1])
