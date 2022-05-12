@@ -9,3 +9,6 @@ try:
     spark: SparkSession = spark
 except:
     pass
+
+spark.conf.set("spark.sql.repl.eagerEval.enabled", True)
+sc = spark.sparkContext
