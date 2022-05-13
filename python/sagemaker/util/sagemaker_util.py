@@ -262,7 +262,7 @@ def notify_completed(pipeline, execution):
     if step_status_failed:
         for k, v in step_status_failed:
             save_logs(pipeline.name, v[1], cur_time=cur_time)
-    send_slack_message_to_url(f"SageMaker pipeline {pipeline.name} is {status}")
+    send_slack_message_to_url(f"SageMaker pipeline {pipeline.name} is {status} by {[k for k, v in step_status_failed]}")
 
 
 def schema_path():
