@@ -6,6 +6,7 @@ import zipfile
 import json
 import boto3
 import sagemaker
+import platform
 from collections import defaultdict
 # noinspection PyUnresolvedReferences
 from sagemaker import get_execution_role
@@ -32,7 +33,7 @@ from common import *
 # todo need to change _local_role, _region_name for using
 # change to the iam role on `aws iam list-roles | grep SageMaker-Execution`
 _local_role = "arn:aws:iam::111111111111:role/service-role/AmazonSageMaker-ExecutionRole-20200101T000001"
-_is_local = True
+_is_local = platform.system() != "Linux"
 _is_debug = False
 _region_name = "ap-south-1"
 _profile_name = "default"
@@ -45,14 +46,12 @@ _schema_path = "s3://hyun/hyun"
 _zip_s3_path = f"{_schema_path}/code/pipeline.zip"
 _slack_webhook_url = None
 
-def set_environment(is_local=True, is_debug=False, schema="hyun", schema_path="s3://hyun/hyun", profile_name="default", slack_webhook_url=None, is_upload_pyfiles=True):
+def set_environment(is_debug=False, schema="hyun", schema_path="s3://hyun/hyun", profile_name="default", slack_webhook_url=None, is_upload_pyfiles=True):
     """
-    :param is_local: run on local or sageMaker jupyter lab
     :param is_debug: if running on local instance or aws instance type
     :param profile_name: local awscli profile name
     """
-    global _is_local, _is_debug, _region_name, _profile_name, _sess, _bucket, _role, _schema, _schema_path, _zip_s3_path, _slack_webhook_url
-    _is_local = is_local
+    global _is_debug, _region_name, _profile_name, _sess, _bucket, _role, _schema, _schema_path, _zip_s3_path, _slack_webhook_url
     _is_debug = is_debug
     _profile_name = profile_name
     _schema = schema
@@ -111,9 +110,16 @@ def param(instancetype=None):
     return param_
 
 
-def get_pyspark_step(submit_app, instance_type="ml.r5.large", instance_count=1, arguments=None, configuration=None, submit_jars=None, volume_size=30, depends_on=[]):
-    if arguments is None:
-        arguments = ["--schema", _schema, "--schema_path", _schema_path]
+def get_pyspark_step(submit_app, instance_type="ml.r5.large", instance_count=1, arguments={}, configuration=None, submit_jars=None, volume_size=30, depends_on=[]):
+    arguments.update({
+        "schema": _schema,
+        "schema_path": _schema_path,
+    })
+
+    arg_list = []
+    for k, v in arguments.items():
+        arg_list.append(f"--{k}")
+        arg_list.append(v)
 
     pyspark_processor = PySparkProcessor(
         base_job_name="pyspark-process",
@@ -127,7 +133,7 @@ def get_pyspark_step(submit_app, instance_type="ml.r5.large", instance_count=1, 
         submit_app=submit_app,
         submit_py_files=[_zip_s3_path],
         submit_jars=submit_jars,
-        arguments=arguments,
+        arguments=arg_list,
         configuration=configuration,
     )
 
@@ -143,9 +149,18 @@ def get_pyspark_step(submit_app, instance_type="ml.r5.large", instance_count=1, 
     )
 
 
-def get_sklearn_preprocess_step(script, inputs=[], outputs=[], instance_type="ml.r5.large", max_runtime_in_seconds=7200, depends_on=[]):
+def get_sklearn_preprocess_step(script, inputs=[], outputs=[], instance_type="ml.r5.large", arguments={}, max_runtime_in_seconds=7200, depends_on=[]):
     framework_version = "0.23-1"
-    arguments = ["--schema", _schema, "--schema_path", _schema_path]
+    arguments.update({
+        "schema": _schema,
+        "schema_path": _schema_path,
+    })
+
+    arg_list = []
+    for k, v in arguments.items():
+        arg_list.append(f"--{k}")
+        arg_list.append(v)
+
 
     sklearn_processor = SKLearnProcessor(
         framework_version=framework_version,
@@ -162,7 +177,7 @@ def get_sklearn_preprocess_step(script, inputs=[], outputs=[], instance_type="ml
         processor=sklearn_processor,
         inputs=inputs + _get_dependency_inputs("."),
         outputs=outputs,
-        job_arguments=arguments,
+        job_arguments=arg_list,
         code=f"{script}",
         depends_on=[d.name for d in depends_on]
     )
