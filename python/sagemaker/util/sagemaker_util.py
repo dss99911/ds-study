@@ -258,9 +258,10 @@ def notify_completed(pipeline, execution):
         time.sleep(30)
 
     step_status_failed = [(k, v) for k, v in step_status.items() if v[0] in ["Failed", "Stopping", "Stopped"]]
+    cur_time = datetime.datetime.now()
     if step_status_failed:
         for k, v in step_status_failed:
-            save_logs(pipeline.name, v[1])
+            save_logs(pipeline.name, v[1], cur_time=cur_time)
     send_slack_message_to_url(f"SageMaker pipeline {pipeline.name} is {status}")
 
 
@@ -323,7 +324,7 @@ def _zip_py_files(dir_path, zip_path):
     zipf.close()
 
 
-def save_logs(pipeline_name, job_name: str, repeat_count: int = 3):
+def save_logs(pipeline_name, job_name: str, repeat_count: int = 3, cur_time=datetime.datetime.now()):
     print("job_name:", job_name)
     job_prefix = "-".join(job_name.split('-')[0:-1])
     # suffix is lower case. but for accessing log, original case is needed.
@@ -344,7 +345,7 @@ def save_logs(pipeline_name, job_name: str, repeat_count: int = 3):
     print("stream_name:", stream_name)
 
     next_token = None
-    current_time_str = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
+    current_time_str = cur_time.strftime("%Y-%m-%dT%H:%M:%S")
     log_dir = f"logs/{pipeline_name}-{current_time_str}"
     file_path = f"{log_dir}/{job_name}.log"
     if not path.exists(log_dir):
