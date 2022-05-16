@@ -12,7 +12,7 @@ from collections import defaultdict
 from sagemaker import get_execution_role
 # noinspection PyUnresolvedReferences
 from sagemaker.processing import ProcessingInput, ProcessingOutput, ScriptProcessor
-from sagemaker.spark.processing import PySparkProcessor
+from sagemaker.spark.processing import PySparkProcessor, SparkJarProcessor
 from sagemaker.workflow.pipeline import Pipeline
 from sagemaker.workflow.parameters import ParameterString
 from sagemaker.workflow.functions import Join
@@ -123,7 +123,7 @@ def get_pyspark_step(submit_app, instance_type="ml.r5.large", instance_count=1, 
 
     pyspark_processor = PySparkProcessor(
         base_job_name="pyspark-process",
-        framework_version="3.0",
+        framework_version="3.1",
         instance_count=instance_count,
         volume_size_in_gb=volume_size,
         **param(instance_type)
@@ -142,6 +142,36 @@ def get_pyspark_step(submit_app, instance_type="ml.r5.large", instance_count=1, 
     return ProcessingStep(
         name=name,
         processor=pyspark_processor,
+        inputs=run_args.inputs,
+        job_arguments=run_args.arguments,
+        code=run_args.code,
+        depends_on=[d.name for d in depends_on]
+    )
+
+
+def get_spark_jar_step(submit_app, submit_class, instance_type="ml.r5.large", instance_count=1, arguments=[], configuration=None, submit_jars=None, volume_size=30, depends_on=[]):
+
+    spark_processor = SparkJarProcessor(
+        base_job_name="spark-java",
+        framework_version="3.1",
+        instance_count=instance_count,
+        volume_size_in_gb=volume_size,
+        **param(instance_type)
+    )
+
+    run_args = spark_processor.get_run_args(
+        submit_app=submit_app,
+        submit_class=submit_class,
+        submit_jars=submit_jars,
+        arguments=arguments,
+        configuration=configuration,
+    )
+
+    name = submit_class.split(".")[-1].lower()  # for seeing log. upper character is not recognized.
+
+    return ProcessingStep(
+        name=name,
+        processor=spark_processor,
         inputs=run_args.inputs,
         job_arguments=run_args.arguments,
         code=run_args.code,
@@ -245,10 +275,15 @@ def notify_completed(pipeline, execution):
     previous_status_steps = defaultdict(set)
 
     while True:
+        now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         status = execution.describe()["PipelineExecutionStatus"]
-        step_status = {s["StepName"]: (s["StepStatus"], s["Metadata"]["ProcessingJob"]["Arn"].split("/")[-1]) for s in execution.list_steps()}
+        steps = execution.list_steps()
+        step_status = {s["StepName"]: (s["StepStatus"], s["Metadata"]["ProcessingJob"]["Arn"].split("/")[-1]) for s in steps if "ProcessingJob" in s["Metadata"]}
+        for s in steps:
+            if "ProcessingJob" not in s["Metadata"] and "FailureReason" in s:
+                print(f"{now} [{s['StepName']}] status={s['StepStatus']} reason={s['FailureReason']}")
+
         for k, v in step_status.items():
-            now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             if k not in previous_status_steps[v[0]]:
                 previous_status_steps[v[0]].add(k)
                 print(f"{now} [{k}] status={v[0]}, arn={v[1]}")

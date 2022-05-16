@@ -47,6 +47,14 @@
   - GC 설정
   - Yarn설정
 
+# read
+https://jaemunbro.medium.com/apache-spark-partition-pruning%EA%B3%BC-predicate-pushdown-bd3948dcb1b6
+https://dzone.com/articles/dynamic-partition-pruning-in-spark-30
+## Partition pruning
+- 데이터 파티션으로 나뉘어져있을 때, partition으로 filter를 하면, 메모리에 로딩전에 필터링 함
+## Predicate push down
+- 필터 조건에 따라, 데이터를 메모리에 로딩 자체를 안하게 하는 것. 보통 스캔 후, 필터링을 하는데, 필터를 스캔 밑으로 보내 수행한다고 해서, push down인듯?
+
 # Performance Advice
 - " "또는 "EMPTY" 보다는 null을 쓰는게 좋음. null은 spark가 데이터가 없다는 걸 인지해서, 최적화된 처리 방법을 찾을 수 있음
 
