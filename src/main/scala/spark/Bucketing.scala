@@ -55,6 +55,7 @@ class Bucketing {
     .write
     .bucketBy(16, "key")//partitionBy도 설정할 수 있음. 하지만, bucketBy의 컬럼과 겹치면 안됨. parition dynamic overwrite 사용하면 bucketBy의 컬럼에는 적용안됨.
     .sortBy("value")//생략 가능
+    .option("path", "s3://bucket/tmp/tmp1") //path를 지정안하면, managed table can't be created because of path already exists에러가 발생하는 경우도 있음.
     .saveAsTable("bucketed")
 
   val t3 = spark.table("bucketed")
@@ -88,5 +89,12 @@ class Bucketing {
             - 저장이 너무 오래 걸림.
         - cardinarity가 높은 컬럼으로 bucketing하는 경우. 일반 database사용 고려. index나, key value지원 되는 것.
      */
+  }
+
+  def get_bucket_count(df: DataFrame) = {
+     //https://jaceklaskowski.gitbooks.io/mastering-spark-sql/content/spark-sql-bucketing.html
+      df.rdd.getNumPartitions
+      //두 제플린에서 재시작 후 실행했는데도 때, 다른 결과값이 나오는 경우가 있음..
+      //desc extended에는 bucket수 정확히 나옴
   }
 }

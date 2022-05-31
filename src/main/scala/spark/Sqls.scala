@@ -33,6 +33,7 @@ class Sqls {
       .mode(SaveMode.Overwrite)
       .format("parquet")
       .option("path", "s3://bucket/tmp/tmp1")//저장 path 변경 가능. https://stackoverflow.com/questions/30874928/how-to-specify-the-path-where-saveastable-saves-files-to
+      //database의 위치 설정이 안되어 있는 경우. java.lang.IllegalArgumentException: Can not create a Path from an empty string 에러가 남. 이 경우 path설정 필요
       .saveAsTable("hyun.count")
   }
 

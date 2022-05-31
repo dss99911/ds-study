@@ -372,7 +372,7 @@ def save_logs(pipeline_name, job_name: str, repeat_count: int = 3, cur_time=date
     )
     cmd_get_log_strema_name += f" --profile {_profile_name}"
     result = subprocess.check_output(cmd_get_log_strema_name, shell=True)
-    stream_name_times = [(l["logStreamName"], l["lastIngestionTime"]) for l in json.loads(result)["logStreams"] if ("algo-1" in l["logStreamName"] and job_suffix in l["logStreamName"].lower())]
+    stream_name_times = [(l["logStreamName"], l["lastIngestionTime"]) for l in json.loads(result)["logStreams"] if ("algo-1" in l["logStreamName"] and job_suffix.lower() in l["logStreamName"].lower())]
     if not stream_name_times:
         print("can't find logs for", job_name)
         return

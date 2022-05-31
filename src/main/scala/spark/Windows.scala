@@ -154,4 +154,9 @@ class Windows {
     val windowSpec = Window.partitionBy('bucket).orderBy('id)
     df.withColumn("lead", lead('id, 1) over windowSpec).show
   }
+
+  def totalCount(df: DataFrame) = {
+    //전체 groupby내에서 전체 count를 구하기. 보통, df.count()를 가져와서, total을 구하는데, 이렇게 하면, 동일한 job내에서 처리 가능한 듯? 테스트 해보지 못했고, 성능이 괜찮은지는 잘 모름.
+    df.withColumn("total_count", sum($"count").over(Window.rowsBetween(Window.unboundedPreceding, Window.unboundedFollowing)))
+  }
 }
