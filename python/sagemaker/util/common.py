@@ -11,7 +11,6 @@ def get_output_path(name):
     return f"{base_dir}/output/{name}"
 
 
-
 def get_args(name, arg_type=str, default=None):
     parser = argparse.ArgumentParser()
     parser.add_argument("--" + name, type=arg_type, default=default)
@@ -33,3 +32,15 @@ def log_info(*message):
 
 def log_error(message):
     print(f"sage_maker_error : {message}")
+
+
+def get_code_url(schema_path, file_name):
+    return f"{schema_path}/code/{file_name}"
+
+
+def get_pipeline_zip_url(schema_path):
+    return get_code_url(schema_path, "acs_features.zip")
+
+
+# There is a case no log exist. so, when start, print log. so that, the task is processed
+log_info("Started")

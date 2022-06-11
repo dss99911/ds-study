@@ -55,6 +55,15 @@ https://dzone.com/articles/dynamic-partition-pruning-in-spark-30
 ## Predicate push down
 - 필터 조건에 따라, 데이터를 메모리에 로딩 자체를 안하게 하는 것. 보통 스캔 후, 필터링을 하는데, 필터를 스캔 밑으로 보내 수행한다고 해서, push down인듯?
 
+
+# cloud integration
+  - https://spark.apache.org/docs/latest/cloud-integration.html
+  - s3의 경우, 파일 move가 오랜 시간이 걸리는 작업이라서, 기존 방식으로 처리하면 안됨.
+  - emr의 경우, 자체 s3 connector를 사용하지만, sagemaker의 경우, spark에서 제공하는 cloud-integration을 사용함.
+  - 자동으로 적용되기 때문에, 별도로 신경 쓰지 않아도 되지만, sagemaker에서 s3접근시 간혹, 에러가 나는 경우가 있음(emr에서는 정상 작동)
+  - https://docs.amazonaws.cn/en_us/emr/latest/ReleaseGuide/emr-spark-s3select.html
+    - pushdown for json, csv on emr
+
 # Performance Advice
 - " "또는 "EMPTY" 보다는 null을 쓰는게 좋음. null은 spark가 데이터가 없다는 걸 인지해서, 최적화된 처리 방법을 찾을 수 있음
 

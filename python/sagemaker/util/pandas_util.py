@@ -1,4 +1,7 @@
-from util.common import *
+# todo modify path properly.
+# from util.common import *
+from common import *
+import awswrangler as wr
 import joblib
 import pandas as pd
 import numpy as np
@@ -19,6 +22,7 @@ def run_emr_spark_job(
         name: str,
         steps: list,
         subnet_id: str,
+        logging_s3_path: str,
         instance_type_master="m5.2xlarge",
         instance_type_core="m5.2xlarge",
         instance_type_task="m5.2xlarge",
@@ -40,8 +44,8 @@ def run_emr_spark_job(
     cluster_id = wr.emr.create_cluster(
         subnet_id=subnet_id,
         cluster_name=name,
-        logging_s3_path=f"s3://hyun/log/{name}",
-        emr_release="emr-6.4.0",
+        logging_s3_path=logging_s3_path,
+        emr_release="emr-6.6.0",
         instance_type_master=instance_type_master,
         instance_type_core=instance_type_core,
         instance_type_task=instance_type_task,
@@ -61,16 +65,19 @@ def run_emr_spark_job(
         }
     )
 
+    log_info(cluster_id)
+
     if not check_emr_cluster_status(cluster_id):
         raise Exception(f"cluster {cluster_id} is failed")
 
 
-def create_emr_acs_sms_parser_step(jar_path, class_name, resource="application.conf", args=[]):
+def create_emr_pyspark_step(schema_path, py_path: str, args=[]):
     import awswrangler as wr
+    py_files = ",".join([get_pipeline_zip_url(schema_path)])
 
     return wr.emr.build_spark_step(
-        path=f"--driver-java-options -Dconfig.resource={resource} --class {class_name} {jar_path} {' '.join(args)}",
-        name=f"{class_name}"
+        path=f"--py-files {py_files} {py_path} {' '.join(args)}",
+        name=f"{py_path.split('/')[-1].split('.py')[0]}",
     )
 
 
@@ -81,6 +88,7 @@ def check_emr_cluster_status(cluster_id):
     while True:
         time.sleep(30)
         status = wr.emr.get_cluster_state(cluster_id)
+        log_info(cluster_id, status)
         if status not in ["STARTING", "BOOTSTRAPPING", "RUNNING"]:
             break
     # some cases, cluster state is terminated, but step is failed.
@@ -92,4 +100,4 @@ def check_emr_all_steps_completed(cluster_id):
     import boto3
     client = boto3.client('emr')
     states = set([s["Status"]["State"] for s in client.list_steps(ClusterId=cluster_id)["Steps"]])
-    return states == set(['COMPLETED'])
+    return states == {'COMPLETED'}

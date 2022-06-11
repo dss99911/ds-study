@@ -1,7 +1,10 @@
 import argparse
 
 from pyspark.sql import SparkSession
-from util.common import *
+
+# todo modify path properly.
+# from util.common import *
+from common import *
 
 
 def get_spark(configs={}) -> SparkSession:

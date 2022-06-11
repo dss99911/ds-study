@@ -14,15 +14,20 @@ from sagemaker import get_execution_role
 from sagemaker.processing import ProcessingInput, ProcessingOutput, ScriptProcessor
 from sagemaker.spark.processing import PySparkProcessor, SparkJarProcessor
 from sagemaker.workflow.pipeline import Pipeline
+# noinspection PyUnresolvedReferences
 from sagemaker.workflow.parameters import ParameterString
+# noinspection PyUnresolvedReferences
 from sagemaker.workflow.functions import Join
+# noinspection PyUnresolvedReferences
 from sagemaker.workflow.step_collections import StepCollection
+# noinspection PyUnresolvedReferences
 from sagemaker.workflow.steps import ProcessingStep, Step
 from sagemaker.workflow.steps import TrainingStep
 from sagemaker.xgboost.estimator import XGBoost
 # noinspection PyUnresolvedReferences
 from sagemaker import TrainingInput
-from typing import Union, List
+# noinspection PyUnresolvedReferences
+from typing import Union, List, Optional
 import datetime
 from sagemaker.sklearn import SKLearnProcessor
 
@@ -40,24 +45,24 @@ _profile_name = "default"
 _sess = None
 _bucket = None
 _role = ""
-
+_zip_s3_path = f"{_schema_path}/code/pipeline.zip"
 _schema = "hyun"
 _schema_path = "s3://hyun/hyun"
-_zip_s3_path = f"{_schema_path}/code/pipeline.zip"
-_slack_webhook_url = None
+_slack_channel: Optional[str] = None
+_slack_token = None
 
-def set_environment(is_debug=False, schema="hyun", schema_path="s3://hyun/hyun", profile_name="default", slack_webhook_url=None, is_upload_pyfiles=True):
+def set_environment(is_debug=False, schema="hyun", schema_path=None, profile_name="default", slack_channel=None, is_upload_pyfiles=True):
     """
     :param is_debug: if running on local instance or aws instance type
     :param profile_name: local awscli profile name
     """
-    global _is_debug, _region_name, _profile_name, _sess, _bucket, _role, _schema, _schema_path, _zip_s3_path, _slack_webhook_url
+    global _is_debug, _region_name, _profile_name, _sess, _bucket, _role, _schema, _schema_path, _zip_s3_path, _slack_channel
     _is_debug = is_debug
     _profile_name = profile_name
     _schema = schema
-    _schema_path = schema_path
-    _zip_s3_path = f"{_schema_path}/code/pipeline.zip"
-    _slack_webhook_url = slack_webhook_url
+    _schema_path = schema_path if schema_path is not None else f"s3://hyun/{schema}"
+    _zip_s3_path = get_pipeline_zip_url(_schema_path)
+    _slack_channel = slack_channel
 
     _profile_name = _profile_name if _is_local else None
     _sess = sagemaker.Session(boto3.session.Session(region_name=_region_name, profile_name=_profile_name))
@@ -82,20 +87,23 @@ def set_environment(is_debug=False, schema="hyun", schema_path="s3://hyun/hyun",
         upload_pyfiles()
 
 
-
 def upload_pyfiles():
-
     #zip을 통한 방식, sagemaker에서는 zip이 없어서 안됨.
     # excludes=[".idea/\*", "jars/\*", "\*.ipynb", "\*.sh", "\*.json"]
     # import os
     # os.system(f'zip -r python.zip . -x {" ".join(excludes)}')
+
     _zip_py_files(".", "python.zip")
-    upload_command = f'aws s3 cp python.zip "{_zip_s3_path}"'
+    upload_file("python.zip", _zip_s3_path)
+    os.remove("python.zip")
+
+
+def upload_file(file_path, s3_path):
+    upload_command = f'aws s3 cp "{file_path}" "{s3_path}"'
     if _is_local:
         upload_command += f" --profile {_profile_name}"
 
     os.system(upload_command)
-    os.remove("python.zip")
 
 
 def param(instancetype=None):
@@ -119,7 +127,7 @@ def get_pyspark_step(submit_app, instance_type="ml.r5.large", instance_count=1, 
     arg_list = []
     for k, v in arguments.items():
         arg_list.append(f"--{k}")
-        arg_list.append(v)
+        arg_list.append(str(v))
 
     pyspark_processor = PySparkProcessor(
         base_job_name="pyspark-process",
@@ -134,7 +142,7 @@ def get_pyspark_step(submit_app, instance_type="ml.r5.large", instance_count=1, 
         submit_py_files=[_zip_s3_path],
         submit_jars=submit_jars,
         arguments=arg_list,
-        configuration=configuration,
+        configuration=configuration
     )
 
     name = submit_app.split("/")[-1].split(".")[0].replace("_", "-")
@@ -179,8 +187,26 @@ def get_spark_jar_step(submit_app, submit_class, instance_type="ml.r5.large", in
     )
 
 
-def get_sklearn_preprocess_step(script, inputs=[], outputs=[], instance_type="ml.r5.large", arguments={}, max_runtime_in_seconds=7200, depends_on=[]):
-    framework_version = "0.23-1"
+def get_pyspark_emr_step(script, emr_instance_type="ml.r5.large", emr_instance_count=1, arguments={}, volume_size=128, max_runtime_in_seconds=None, depends_on=[]):
+    py_path = get_code_url(schema_path(), script)
+    upload_file(script, py_path)
+
+    arguments.update({
+        "py_path": py_path,
+        "instance_type": emr_instance_type,
+        "instance_count": emr_instance_count,
+        "volume_size": volume_size
+    })
+
+    return get_sklearn_preprocess_step(
+        "util/pyspark_emr_process.py",
+        name=script.split("/")[-1].split(".")[0].replace("_", "-"),
+        max_runtime_in_seconds=max_runtime_in_seconds,
+        arguments=arguments,
+        depends_on=depends_on
+    )
+
+def get_sklearn_preprocess_step(script, name=None, inputs=[], outputs=[], arguments={}, instance_type="ml.r5.large", max_runtime_in_seconds=7200, depends_on=[]):
     arguments.update({
         "schema": _schema,
         "schema_path": _schema_path,
@@ -189,22 +215,22 @@ def get_sklearn_preprocess_step(script, inputs=[], outputs=[], instance_type="ml
     arg_list = []
     for k, v in arguments.items():
         arg_list.append(f"--{k}")
-        arg_list.append(v)
+        arg_list.append(str(v))
 
-
-    sklearn_processor = SKLearnProcessor(
-        framework_version=framework_version,
-        instance_count=1,
+    script_processor = SKLearnProcessor(
         base_job_name="sklearn-processor",
+        framework_version="0.23-1",
+        instance_count=1,
         volume_size_in_gb=512,
         max_runtime_in_seconds=max_runtime_in_seconds,
         **param(instance_type)
     )
+    if name is None:
+        name = script.split("/")[-1].split(".")[0].replace("_", "-")
 
-    name = script.split("/")[-1].split(".")[0].replace("_", "-")
     step_sklearn_preprocess = ProcessingStep(
         name=name,
-        processor=sklearn_processor,
+        processor=script_processor,
         inputs=inputs + _get_dependency_inputs("."),
         outputs=outputs,
         job_arguments=arg_list,
@@ -271,33 +297,56 @@ def make_pipeline(name: str, steps_depends_on, parameters=[]):
     return pipeline
 
 
-def notify_completed(pipeline, execution):
-    previous_status_steps = defaultdict(set)
+def start_pipeline(pipeline):
+    execution = pipeline.start()
+    thread = send_slack_message(f"SageMaker pipeline *{pipeline.name}* get started")
+    notify_completed(pipeline, execution, thread)
 
+
+def notify_completed(pipeline, execution, thread=None):
+    previous_status_steps = defaultdict(set)
+    step_start_time = {}
     while True:
-        now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        now = datetime.datetime.now()
         status = execution.describe()["PipelineExecutionStatus"]
         steps = execution.list_steps()
         step_status = {s["StepName"]: (s["StepStatus"], s["Metadata"]["ProcessingJob"]["Arn"].split("/")[-1]) for s in steps if "ProcessingJob" in s["Metadata"]}
         for s in steps:
             if "ProcessingJob" not in s["Metadata"] and "FailureReason" in s:
-                print(f"{now} [{s['StepName']}] status={s['StepStatus']} reason={s['FailureReason']}")
+                log_text = f"[{s['StepName']}] status={s['StepStatus']} reason={s['FailureReason']}"
+                print(f"{now} {log_text}")
+                send_slack_message(log_text, thread)
 
         for k, v in step_status.items():
-            if k not in previous_status_steps[v[0]]:
-                previous_status_steps[v[0]].add(k)
-                print(f"{now} [{k}] status={v[0]}, arn={v[1]}")
+            if v[0] == "Executing" and step_start_time.get(k) is None:
+                step_start_time[k] = now
 
-        if status == "Succeeded" or status == "Completed" or status == "Failed" or status == "Stopping" or status == "Stopped":
+            if v[0] not in ["Succeeded", "Failed", "Stopping", "Stopped"]:
+                continue
+
+            if k in previous_status_steps[v[0]]:
+                continue
+
+            previous_status_steps[v[0]].add(k)
+            duration = str(now - step_start_time.get(k)) if step_start_time.get(k) is not None else ""
+
+            log_text = f"[{k}] status={v[0]}, duration={duration}"
+            print(f"{now} {log_text}, arn={v[1]}")
+            send_slack_message(log_text, thread)
+
+        if status in ["Succeeded", "Completed", "Failed", "Stopping", "Stopped"]:
             break
         time.sleep(30)
 
     step_status_failed = [(k, v) for k, v in step_status.items() if v[0] in ["Failed", "Stopping", "Stopped"]]
+
+    send_slack_message(f"SageMaker pipeline *{pipeline.name}* is *{status}* {[k for k, v in step_status_failed]}", thread)
+
     cur_time = datetime.datetime.now()
     if step_status_failed:
         for k, v in step_status_failed:
-            save_logs(pipeline.name, v[1], cur_time=cur_time)
-    send_slack_message_to_url(f"SageMaker pipeline {pipeline.name} is {status} by {[k for k, v in step_status_failed]}")
+            log_path = save_logs(pipeline.name, v[1], cur_time=cur_time)
+            send_slack_file(v[1], log_path, thread)
 
 
 def schema_path():
@@ -328,16 +377,62 @@ def processing_output(name, destination=None):
         destination=f"{_schema_path}/{name}" if destination is None else destination)
 
 
-def send_slack_message_to_url(text):
-    import requests
-    payload = {
-        "text": text
-    }
-    if _slack_webhook_url is None:
-        print("slack_webhook_url is not configured")
+def send_slack_file(comment, file_path: str, thread=None):
+    if _slack_channel is None:
+        print("slack channel is not configured")
         return
+
+    import requests
+    files = {
+        'file': (file_path, open(file_path, 'rb'), 'text')
+    }
+
+    payload = {
+        "title": file_path.split("/")[-1],
+        "token": _slack_token,
+        "channels": "#sagemaker_log",
+        "initial_comment": comment
+    }
+
+    response_json = requests.post("https://slack.com/api/files.upload", params=payload, files=files).json()
+    if response_json is None or not response_json["ok"]:
+        print("can't upload file to slack")
+
+    file_link = response_json["file"]["permalink"]
+
+    send_slack_message(f"<{file_link}|error log of *{comment}*>", thread)
+
+    return response_json
+
+
+def send_slack_message(text, thread=None):
+    if _slack_channel is None:
+        print("slack channel is not configured")
+        return
+
+    import requests
+
+    headers = {
+        'Content-Type': 'application/json; charset=utf-8',
+        'Authorization': 'Bearer ' + _slack_token
+    }
+
+    payload = {
+        "text": text,
+        "channel": _slack_channel
+    }
+
+    if thread is not None:
+        payload.update({
+            "thread_ts": thread
+        })
+
     # noinspection PyTypeChecker
-    requests.post(_slack_webhook_url, json=payload)
+    response_json = requests.post("https://slack.com/api/chat.postMessage", json=payload, headers=headers).json()
+    if response_json is None or not response_json["ok"]:
+        print("can't send slack message")
+    else:
+        return response_json["ts"]
 
 
 def _zip_py_files(dir_path, zip_path):
@@ -390,6 +485,7 @@ def save_logs(pipeline_name, job_name: str, repeat_count: int = 3, cur_time=date
     for i in range(repeat_count):
         next_token = _save_log_stream_name(file_path, stream_name, last_ingestion_time, next_token)
     print("logs saved")
+    return file_path
 
 
 def _save_log_stream_name(file_path, stream_name, last_ingestion_time, next_token=None):
@@ -429,7 +525,3 @@ def _prepend_text_to_file(file_path: str, text: str):
     with open(file_path, "w") as f:
         f.write(text)
         f.write("".join(lines))
-
-
-def is_local():
-    return _is_local
