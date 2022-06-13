@@ -7,13 +7,14 @@ import pandas as pd
 from functools import reduce
 
 
-def get_cheapest_instance_types(region, available_categories, max_frequency, min_ram, min_cores, min_saving_ratio, limit):
+def get_cheapest_instance_types(region, available_categories=None, max_frequency=None, min_ram=None, min_cores=None, max_cores=None, min_saving_ratio=None, limit=None):
     """
     :param region:
     :param available_categories: ["m", "c", "r", "p", "g", "i"] or etc. if None, doesn't filter by category
     :param max_frequency: 0: <5%, 1: 5-10%, 2: 10-15%, 3: 15-20%, 4: >20%
     :param min_ram: an instance's minimum memory in GB
     :param min_cores: an instance's minimum core
+    :param max_cores: an instance's maximum core
     :param min_saving_ratio:
     :param limit: instance limits
     :return:
@@ -21,29 +22,32 @@ def get_cheapest_instance_types(region, available_categories, max_frequency, min
     df_spot = get_spot_instance_data(region)
     df_spot = df_spot[
         df_spot["emr"]
-        & (df_spot["frequency_interrupt"] <= max_frequency) # average value in month
-        & (df_spot["ram_gb"] / df_spot["cores"] >= min_ram)
-        & (df_spot["cores"] >= min_cores)
-        & is_in_categories(df_spot, available_categories)
+        & ((df_spot["frequency_interrupt"] <= max_frequency) if max_frequency else True)  # average value in month
+        & ((df_spot["ram_gb"] / df_spot["cores"] >= min_ram) if min_ram else True)
+        & ((df_spot["cores"] >= min_cores) if min_cores else True)
+        & ((df_spot["cores"] <= max_cores) if max_cores else True)
+        & (is_in_categories(df_spot, available_categories) if available_categories else True)
         ]
     df_spot["recent_saving_ratio"] = get_recent_saving_ratio(df_spot, region)
-    df_spot = df_spot[df_spot["recent_saving_ratio"] >= min_saving_ratio]
+
+    if min_saving_ratio:
+        df_spot = df_spot[df_spot["recent_saving_ratio"] >= min_saving_ratio]
 
     # as max_frequency index increased by 5%
     df_spot["score"] = df_spot["recent_saving_ratio"] - df_spot["frequency_interrupt"] * 5
 
     # get the top n instances by score
-    df_spot = df_spot.sort_values("score", ascending=False).head(limit)
+    df_spot = df_spot.sort_values("score", ascending=False)
+
+    if limit:
+        df_spot = df_spot.head(limit)
 
     return df_spot
 
 
 def is_in_categories(df_spot, categories):
-    if categories:
-        conds = [df_spot.index.str.startswith(c) for c in categories]
-        return reduce(lambda a, b: a | b, conds, False)
-    else:
-        return True
+    conds = [df_spot.index.str.startswith(c) for c in categories]
+    return reduce(lambda a, b: a | b, conds, False)
 
 
 def get_recent_saving_ratio(df_spot, region):
@@ -113,10 +117,11 @@ def get_on_demand_prices(instance_types, region):
 if __name__ == '__main__':
     result = get_cheapest_instance_types(
         region="ap-south-1",
-        available_categories=["m"],
-        max_frequency=1,
-        min_ram=4,
+        available_categories=["r"],
+        max_frequency=3,
+        min_ram=7,
         min_cores=1,
-        min_saving_ratio=50,
-        limit=100
+        max_cores=32,
+        min_saving_ratio=70,
+        limit=10
     )
