@@ -7,6 +7,7 @@ import json
 import boto3
 import sagemaker
 import platform
+import requests
 from collections import defaultdict
 # noinspection PyUnresolvedReferences
 from sagemaker import get_execution_role
@@ -49,20 +50,30 @@ _zip_s3_path = f"{_schema_path}/code/pipeline.zip"
 _schema = "hyun"
 _schema_path = "s3://hyun/hyun"
 _slack_channel: Optional[str] = None
+_slack_user_name: Optional[str] = None
 _slack_token = None
 
-def set_environment(is_debug=False, schema="hyun", schema_path=None, profile_name="default", slack_channel=None, is_upload_pyfiles=True):
+def set_environment(
+        is_debug=False,
+        schema="hyun",
+        schema_path=None,
+        profile_name="default",
+        slack_channel=None,
+        slack_user_name=None,
+        is_upload_pyfiles=True
+):
     """
     :param is_debug: if running on local instance or aws instance type
     :param profile_name: local awscli profile name
     """
-    global _is_debug, _region_name, _profile_name, _sess, _bucket, _role, _schema, _schema_path, _zip_s3_path, _slack_channel
+    global _is_debug, _region_name, _profile_name, _sess, _bucket, _role, _schema, _schema_path, _zip_s3_path, _slack_channel, _slack_user_name
     _is_debug = is_debug
     _profile_name = profile_name
     _schema = schema
     _schema_path = schema_path if schema_path is not None else f"s3://hyun/{schema}"
     _zip_s3_path = get_pipeline_zip_url(_schema_path)
     _slack_channel = slack_channel
+    _slack_user_name = slack_user_name
 
     _profile_name = _profile_name if _is_local else None
     _sess = sagemaker.Session(boto3.session.Session(region_name=_region_name, profile_name=_profile_name))
@@ -118,7 +129,16 @@ def param(instancetype=None):
     return param_
 
 
-def get_pyspark_step(submit_app, instance_type="ml.r5.large", instance_count=1, arguments={}, configuration=None, submit_jars=None, volume_size=30, depends_on=[]):
+def get_pyspark_step(
+        submit_app,
+        instance_type="ml.r5.large",
+        instance_count=1,
+        arguments={},
+        configuration=None,
+        submit_jars=None,
+        volume_size=30,
+        depends_on=[]
+):
     arguments.update({
         "schema": _schema,
         "schema_path": _schema_path,
@@ -157,7 +177,17 @@ def get_pyspark_step(submit_app, instance_type="ml.r5.large", instance_count=1, 
     )
 
 
-def get_spark_jar_step(submit_app, submit_class, instance_type="ml.r5.large", instance_count=1, arguments=[], configuration=None, submit_jars=None, volume_size=30, depends_on=[]):
+def get_spark_jar_step(
+        submit_app,
+        submit_class,
+        instance_type="ml.r5.large",
+        instance_count=1,
+        arguments=[],
+        configuration=None,
+        submit_jars=None,
+        volume_size=30,
+        depends_on=[]
+):
 
     spark_processor = SparkJarProcessor(
         base_job_name="spark-java",
@@ -187,7 +217,15 @@ def get_spark_jar_step(submit_app, submit_class, instance_type="ml.r5.large", in
     )
 
 
-def get_pyspark_emr_step(script, emr_instance_type="ml.r5.large", emr_instance_count=1, arguments={}, volume_size=128, max_runtime_in_seconds=None, depends_on=[]):
+def get_pyspark_emr_step(
+        script,
+        emr_instance_type="ml.r5.large",
+        emr_instance_count=1,
+        arguments={},
+        volume_size=128,
+        max_runtime_in_seconds=None,
+        depends_on=[]
+):
     py_path = get_code_url(schema_path(), script)
     upload_file(script, py_path)
 
@@ -198,7 +236,7 @@ def get_pyspark_emr_step(script, emr_instance_type="ml.r5.large", emr_instance_c
         "volume_size": volume_size
     })
 
-    return get_sklearn_preprocess_step(
+    return get_emr_preprocess_step(
         "util/pyspark_emr_process.py",
         name=script.split("/")[-1].split(".")[0].replace("_", "-"),
         max_runtime_in_seconds=max_runtime_in_seconds,
@@ -206,7 +244,38 @@ def get_pyspark_emr_step(script, emr_instance_type="ml.r5.large", emr_instance_c
         depends_on=depends_on
     )
 
-def get_sklearn_preprocess_step(script, name=None, inputs=[], outputs=[], arguments={}, instance_type="ml.r5.large", max_runtime_in_seconds=7200, depends_on=[]):
+
+def get_emr_preprocess_step(script, name=None, arguments={}, max_runtime_in_seconds=None, depends_on=[]):
+    return get_sklearn_preprocess_step(
+        script,
+        name=name,
+        processing_image_uri=get_pandas_processing_container(),
+        max_runtime_in_seconds=max_runtime_in_seconds,
+        arguments=arguments,
+        depends_on=depends_on,
+        tags=[{
+            "Key": "for-use-with-amazon-emr-managed-policies",
+            "Value": 'true'
+        }]
+    )
+
+
+def get_pandas_processing_container():
+    return "111.dkr.ecr.ap-south-1.amazonaws.com/pandas_processing_container:latest"
+
+
+def get_sklearn_preprocess_step(
+        script,
+        name=None,
+        inputs=[],
+        outputs=[],
+        arguments={},
+        processing_image_uri=get_pandas_processing_container(),
+        instance_type="ml.r5.large",
+        max_runtime_in_seconds=7200,
+        tags=None,
+        depends_on=[]
+):
     arguments.update({
         "schema": _schema,
         "schema_path": _schema_path,
@@ -217,14 +286,26 @@ def get_sklearn_preprocess_step(script, name=None, inputs=[], outputs=[], argume
         arg_list.append(f"--{k}")
         arg_list.append(str(v))
 
-    script_processor = SKLearnProcessor(
-        base_job_name="sklearn-processor",
-        framework_version="0.23-1",
+    script_processor = ScriptProcessor(
+        base_job_name="pandas-preprocess",
+        command=["python3"],
+        image_uri=processing_image_uri,
         instance_count=1,
         volume_size_in_gb=512,
+        tags=tags,
         max_runtime_in_seconds=max_runtime_in_seconds,
         **param(instance_type)
     )
+
+    # script_processor = SKLearnProcessor(
+    #     base_job_name="sklearn-processor",
+    #     framework_version="0.23-1",
+    #     instance_count=1,
+    #     volume_size_in_gb=512,
+    #     tags=tags,
+    #     max_runtime_in_seconds=max_runtime_in_seconds,
+    #     **param(instance_type)
+    # )
     if name is None:
         name = script.split("/")[-1].split(".")[0].replace("_", "-")
 
@@ -274,6 +355,7 @@ def _get_dependency_inputs(root_path):
             output.append(ProcessingInput(source=file_path, destination=get_input_path(f"code/{file_path}")))
     return output
 
+
 def instance_type(type):
     return 'local' if _is_debug else type
 
@@ -299,7 +381,7 @@ def make_pipeline(name: str, steps_depends_on, parameters=[]):
 
 def start_pipeline(pipeline):
     execution = pipeline.start()
-    thread = send_slack_message(f"SageMaker pipeline *{pipeline.name}* get started")
+    thread = send_slack_message(f"SageMaker pipeline *{pipeline.name}* get started {('by <' + _slack_user_name + '>') if _slack_user_name else ''}")
     notify_completed(pipeline, execution, thread)
 
 
@@ -330,8 +412,10 @@ def notify_completed(pipeline, execution, thread=None):
             previous_status_steps[v[0]].add(k)
             duration = str(now - step_start_time.get(k)) if step_start_time.get(k) is not None else ""
 
-            log_text = f"[{k}] status={v[0]}, duration={duration}"
-            print(f"{now} {log_text}, arn={v[1]}")
+            arn = v[1]
+            cloudwatch_link = f"https://ap-south-1.console.aws.amazon.com/cloudwatch/home?region=ap-south-1#logsV2:log-groups/log-group/$252Faws$252Fsagemaker$252FProcessingJobs$3FlogStreamNameFilter$3D{arn}"
+            log_text = f"[<{cloudwatch_link}|{k}>] status={v[0]}, duration={duration}"
+            print(f"{now} {log_text}, arn={arn}")
             send_slack_message(log_text, thread)
 
         if status in ["Succeeded", "Completed", "Failed", "Stopping", "Stopped"]:
@@ -340,7 +424,8 @@ def notify_completed(pipeline, execution, thread=None):
 
     step_status_failed = [(k, v) for k, v in step_status.items() if v[0] in ["Failed", "Stopping", "Stopped"]]
 
-    send_slack_message(f"SageMaker pipeline *{pipeline.name}* is *{status}* {[k for k, v in step_status_failed]}", thread)
+    fail_message = (' by ' + str([k for k, v in step_status_failed])) if step_status_failed else ''
+    send_slack_message(f"SageMaker pipeline *{pipeline.name}* is *{status}*{fail_message}", thread)
 
     cur_time = datetime.datetime.now()
     if step_status_failed:
@@ -382,7 +467,6 @@ def send_slack_file(comment, file_path: str, thread=None):
         print("slack channel is not configured")
         return
 
-    import requests
     files = {
         'file': (file_path, open(file_path, 'rb'), 'text')
     }
@@ -409,8 +493,6 @@ def send_slack_message(text, thread=None):
     if _slack_channel is None:
         print("slack channel is not configured")
         return
-
-    import requests
 
     headers = {
         'Content-Type': 'application/json; charset=utf-8',
@@ -513,7 +595,6 @@ def _save_log_stream_name(file_path, stream_name, last_ingestion_time, next_toke
 
 
 def _long_to_date(long_time: int):
-    import datetime
     return datetime.datetime.fromtimestamp(long_time / 1000).strftime("%Y-%m-%d %H:%M:%S")
 
 

@@ -1,6 +1,16 @@
 import argparse
+import logging
 
 base_dir = "/opt/ml/processing"
+
+logger = logging.getLogger("acs_features")
+logger.setLevel(logging.INFO)
+
+formatter = logging.Formatter('acs_features %(message)s')
+
+stream_handler = logging.StreamHandler()
+stream_handler.setFormatter(formatter)
+logger.addHandler(stream_handler)
 
 
 def get_input_path(name):
@@ -27,11 +37,11 @@ def get_args_schema_path():
 
 
 def log_info(*message):
-    print(f"sage_maker_info : {message}")
+    logger.info(message)
 
 
-def log_error(message):
-    print(f"sage_maker_error : {message}")
+def log_exception(message):
+    logger.exception(message)
 
 
 def get_code_url(schema_path, file_name):
