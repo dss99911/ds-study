@@ -40,5 +40,5 @@
 
 ### Bayesian search
 build a probability model of the objective function and use it to select the most promising hyperparameters to evaluate in the true objective function
-
+https://data-scientist-brian-kim.tistory.com/m/88
 

@@ -58,9 +58,10 @@ class ParameterTuning {
       .build()
 
 
-    //(train, test)셋(2:1로 나눔)을 folding 갯수만큼 나눠서 fit한 후, metric의 평균을 구한다.
+    //(train, test)셋 ( fold-1 : 1로 나눔)
+    // 각 fold를 test셋으로 하는 학습을 fold갯수만큼 진행
     //folding 갯수(2) * grid의 갯수(3*2) = 총 학습 횟수(12)
-    //bestParam으로 전체 데이터를 다시 학습한다
+    //bestParam으로 전체 데이터를 다시 학습한다(fold별 모델 성능의 평균이 가장 좋은 parameter셋을 선정한다)
     //pipeline의 뒤에 있는 것들의 파라미터만 변경한다면, 앞 스텝의 경우, 매 파라미터 테스트할 때마다 재학습하진 않고, 학습된 것을 사용하는 것 같음(skip이 뜸)
     val cv = new CrossValidator()
       .setEstimator(pipeline)

@@ -34,6 +34,7 @@ boosting
 ## 파라미터
 - https://xgboost.readthedocs.io/en/latest/parameter.html
 - https://hwi-doc.tistory.com/entry/%EC%9D%B4%ED%95%B4%ED%95%98%EA%B3%A0-%EC%82%AC%EC%9A%A9%ED%95%98%EC%9E%90-XGBoost
+- https://brunch.co.kr/@snobberys/137
 ### 과적합
 - 트리의 가지가 많을 수록 과적합하기 쉬움(모든 데이터를 각각 구별하는 조건을 만들었을 때 가장큰 과적합이 되는 걸 생각하면 될듯.)
 - eta을 낮추고 n_estimators를 높여줍니다. (이 둘은 같이 움직입니다)
