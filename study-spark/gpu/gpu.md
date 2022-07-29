@@ -1,3 +1,36 @@
+# GPU 이해
+
+## 메모리
+https://blog.naver.com/julie_eun1014/221116312880
+
+### on-chip
+gpu칩 안에 있는 레지스터 메모리
+
+### off-chip
+DRAM
+글로벌/디바이스 메모리라고도 함
+
+#### 메모리 할당 방법
+GPU 포인터를 선언 -> cudaMalloc 명령으로 메모리 할당해주기 -> 메모리 해제(cudaFree)
+
+cudaMemcpy로 cpu메모리의 데이터를 gpu메모리로 전송. gpu처리 완료후, gpu메모리에서 cpu로 전송
+
+### Shared Memory
+off-chip은 시간이 오래 걸리므로, 캐시처럼 사용할 수 있는 메모리 공간
+cpu의 캐시공간과 달리, 개발자가 데이터를 캐시에 설정가능하다고 함. syncthreads()를 통해서 설정하고, 블록마다 공유 메모리가 있어, 블럭안의 스레드들에서 공유 가능함.
+
+### pinning memory
+cudaHostAlloc을 사용하면, GPU와 통신하는 CPU메모리 공간 강제 할당하여, 통신 속도 향상
+
+### Unified Memory
+CPU와 GPU가 동시에 같은 메모리 포인터를 사용할 수 있게 한 CUDA 6.0의 새로운 기능
+cudaMalloc이나 cudaMemcpy 대신에
+cudaMallocManaged 함수를 사용하여 쉽게 GPU 병렬화 작업을 할 수 있음
+
+
+
+
+
 # Spark with GPU
 
 ## Reference

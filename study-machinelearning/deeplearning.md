@@ -41,9 +41,12 @@
 ### 경사 하강법
 - 손실함수로 구한 손실값을 최소화 하는 w,b등 매개변수를 구하는 것으로 여러 optimizer가 있음
 
-#### 손실함수
+#### 손실함수 Loss function
 - 손실함수는 예측값과 실제값의 오차의 합을 구하는 것인데, 오차가 음수, 양수 모두 가능하므로 제곱을 해줌
 - 이진 분류의 경우, binary_crossentropy, logloss 라는 공식 사용
+- MSE(Mean Square Error): for regression task
+- NLL(Negative Log Likelihood): for classification
+- Cross Entropy: combine LogSoftmax and NLL
 
 #### optimizer
 - learning rate가 크면, 최소 지점을 초과하여, 최소 지점에 가기 어려울 수도 있을 듯
@@ -107,6 +110,13 @@ mini batch라고도 하는데,
 
 1 epoch = iteration * batch
 
+
+## Activation function
+![img_1.png](img_1.png)
+- sigmoid : 출력 범위 0~1 사이. 결과 값이 하나일 경우, 0~1사이의 확률 값을 리턴하고 싶은 경우 사용.
+- tanh : 출력 범위는 -1에서 1사이라는 점입니다. Sigmoid와 비교하여 tanh와는 출력 범위가 더 넓고 경사면이 큰 범위가 더 크기 때문에 더 빠르게 수렴하여 학습하는 특성
+- Softmax : 3-class 이상의 classification을 목적으로 하는 딥러닝 모델의 출력층에서 일반적으로 쓰이는 활성화 함수(activation function)
+- relu : 요즘에는 이걸 많이 쓴다고 함 (Rectified Linear Unit). 음수값을 0으로 변환.
 
 
 ## 생각
