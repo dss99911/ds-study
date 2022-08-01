@@ -73,6 +73,27 @@ class Partition {
       .withColumn("partitionId", spark_partition_id) // todo 125개로 리파티션해서, 0~124의 번호가 할당될 것으로 추정. 확인 필요
   }
 
+  def partitionByCol() = {
+    // 값범위가 파티션보다 많고, 값에 중복이 없는 경우
+    //  - 파티션별 값 수가 대략 10% 정도 차이를 보임.
+    
+    // 값범위가 파티션보다 많고, 값의 수가 균일한 경우
+    //  - 파티션별로 distinct한 값의 수가 다름. 수가 적은 경우와 많은 경우 차이가 3배 이상이 됨.
+
+    // 값범위가 파티션보다 많고, 값이 한쪽으로 편향된 경우
+    //  - 값이 편향되어 있다고 해서, 값이 적은 파티션에 더 많은 값이 할당되거나 하지 않음.
+    //  - 값의 수가 균일한 경우와 동일한 분포의 'distinct한 값의 수'가 파티션에 할당됨.
+    //  - 따라서, 편향되어 있는 값이 포함된 파티션에 데이터가 몰림
+
+    //파티션 수가 distinct한 값 수보다 크게 설정한 경우, distinct한 값 수 만큼의 파티션이 생성됨.
+    //동일 값이 여러 파티션으로 분리될 줄 알았는데, 그렇지 않음.
+
+    // 편향으로 인해, 시간이 오래걸린다면, 파티션을 더 많이 분할해서, 쉬는 core가 없게 한다.
+
+    spark.read.parquet("source_path")
+      .repartition(100, $"col_name")
+  }
+
   //The repartition algorithm does a full shuffle of the data and creates equal sized partitions of data.
   Read.getParquetDataFrame().repartition(Cluster.getCpuCount() * 4)// recommended count of partition is 2~4 https://stackoverflow.com/questions/35800795/number-of-partitions-in-rdd-and-performance-in-spark/35804407#35804407
   //각 파티션별로 데이터 차이가 크고(애초에 저장된 데이터가 파티션별로 차이가 있거나, 필터링등의 작업으로 차이가 생김) , 처리해야하는게 많다면, 처리전에 repartition해주는게 좋음.

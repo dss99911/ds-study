@@ -80,12 +80,16 @@ def udf_with_schema():
     spark.udf.register('getSentenceDiffRatioUDF', getSentenceDiffRatio, diffRatioSchema)
 
 #%% pandas udf : pandas의 기능을 쓰고 싶을 때 쓰는듯.
+# https://pizzathief.oopy.io/spark3-pandas-udf
+# https://spark.apache.org/docs/latest/api/python/user_guide/sql/arrow_pandas.html
 from pyspark.sql.functions import pandas_udf
 import pandas as pd
 import numpy as np
 
 
 def process_pandas_udf(spark):
+    spark.conf.set("spark.sql.execution.arrow.pyspark.enabled", "true")
+
     def func(pdf: pd.DataFrame) -> pd.Series:
         out = pdf.apply(lambda x: np.dot(x["target_vector"].toArray(), x["right_vector"].toArray()), axis=1)
         return out
@@ -94,3 +98,9 @@ def process_pandas_udf(spark):
 
     out = spark.read.parquet("some")\
         .select(my_udf("two_vectors").alias("cosine_similarity"))
+
+@pandas_udf("double")  # return type col type
+def mean_udf(v: pd.Series) -> float:
+    return v.mean()
+
+print(df.groupby("id").agg(mean_udf(df['v'])).collect())

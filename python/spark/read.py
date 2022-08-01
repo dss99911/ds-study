@@ -18,7 +18,7 @@ def create_single():
     # single column
     return spark.createDataFrame([
         [1], [2], [3]
-    ], "a")
+    ], ["a"])
 
 
 def create_by_row():
