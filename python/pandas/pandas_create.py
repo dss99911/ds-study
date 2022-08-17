@@ -29,7 +29,7 @@ df_create_dataframe_by_dict2 = pd.DataFrame(
     }
 )
 # by row list
-df_create_dataframe_by_row_list = pd.DataFrame.from_dict([
+df_create_dataframe_by_row_list = pd.DataFrame([
     {'a': 1, 'b': 2, 'c': 3},
     {'a': 4, 'b': None, 'c': None},
 ])

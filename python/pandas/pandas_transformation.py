@@ -17,8 +17,9 @@ s = pd.Series([1, 3, 5, np.nan, 6, 8], index=dates).shift(2)
 #%% transform each field
 df_number2 = df_number.transform(lambda s: s + 1)  # 전체 field transform. 하지만 s 는 각column의 series라서, 리턴도 s+1과 같이 series를 리턴
 df_number['a_type'] = df_number["A"].transform(lambda a: a + 1)  # series transform
-df_number['a_type2'] = df_number["A"].map(lambda a: a + 1)  # transform과 비슷한 듯??
+df_number['a_type2'] = df_number["A"].map(lambda a: a + 1, na_action='ignore')  # transform과 비슷한 듯??
 df_number['a_type3'] = df_number["A"].apply(lambda a: a + 1)  # transform과 비슷한 듯??
+df_new_df = df.apply(lambda x: pd.Series([x['a'], x['b']], index=['foo', 'bar']), axis=1)  #dataframe에서 다른 dataframe으로 변환
 
 #%% transform by all columns
 df["apply"] = df.apply(lambda r: r['a'] > 1, axis='columns')

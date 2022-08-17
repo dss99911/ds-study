@@ -1,6 +1,12 @@
 import pandas as pd
 
 
+def read_excel():
+    """
+    https://pandas.pydata.org/docs/reference/api/pandas.read_excel.html
+    """
+    pd.read_excel("aa.xlsx")
+
 def make_writer():
     # Create a Pandas Excel writer using XlsxWriter as the engine.
     return pd.ExcelWriter('pandas_simple.xlsx',
