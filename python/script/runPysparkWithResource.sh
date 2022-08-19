@@ -1,7 +1,7 @@
 set -e
 cd ..
 
-PY_NAME="$1" # python file path. ex) spark/read.py
+PY_NAME="$1" # python file path. ex) spark/read_pyspark.py
 
 zip -r -X "python.zip" *
 #aws s3 cp python.zip s3://hyun/python.zip

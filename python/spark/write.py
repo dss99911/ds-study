@@ -2,7 +2,7 @@ from datetime import datetime, date
 import pandas as pd
 from pyspark.sql import Row
 from pyspark.sql import SparkSession
-from read import *
+from read_pyspark import *
 spark = SparkSession.builder.getOrCreate()
 
 
