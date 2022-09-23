@@ -18,6 +18,15 @@ def udf_by_func():
         return x + 1
     create_by_row().withColumn("a1", udf(add_1)("a")).show()
 
+
+def udf_by_annotation():
+    # todo not yet tested
+    @udf(FloatType())
+    def add_1(x):
+        return x + 1
+
+    create_by_row().withColumn("a1", add_1("a")).show()
+
 # %%
 
 
