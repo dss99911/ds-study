@@ -21,5 +21,13 @@ df.filter(df.a == 1).show()
 cols = [col(f.name).cast(DoubleType()) if (f.dataType != DoubleType()) else col(f.name) for f in df.schema.fields]
 df.select(cols)
 
+# replace
+mapping = {
+    'string1': "1",
+    'string2': "2"
+}
+df.withColumn("c2", col("c"))\
+    .replace(mapping, subset=['c'])
+
 # Sort
 df.sort(col("count").desc())

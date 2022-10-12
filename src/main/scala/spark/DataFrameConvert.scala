@@ -38,4 +38,25 @@ class DataFrameConvert {
 
   }
 
+  def null_vaue(df: DataFrame) = {
+    // null을 가공해도 null이 됨
+    //
+    // |: 둘중 하나라도 true이면, true. 하나가 false이면, 다음 값을 따라감. 순서 상관 없음
+    //   - null | true => true
+    //   - null | false => null
+    // &: 하나라도 false이면 false. 하나가 true이면, 다음 값을 따라감. 순서 상관 없음.
+    //   - null & false => false
+    //   - null & true => null
+      .withColumn("null_1", F.col("null_value") + 1)
+      .withColumn("null_2", F.col("null_value") > 0)
+      .withColumn("true_1", (F.col("null_value") > 0) | F.lit(True))
+      .withColumn("null_3", (F.col("null_value") > 0) | F.lit(False))
+      .withColumn("false_1", (F.col("null_value") > 0) & F.lit(False))
+      .withColumn("null_4", (F.col("null_value") > 0) & F.lit(True))
+      .withColumn("true_2", F.lit(True) | (F.col("null_value") > 0))
+      .withColumn("null_4", F.lit(False) | (F.col("null_value") > 0))
+      .withColumn("false_2", F.lit(False) & (F.col("null_value") > 0))
+      .withColumn("null_5", F.lit(True) & (F.col("null_value") > 0))
+  }
+
 }

@@ -1,7 +1,7 @@
 from sklearn.datasets import make_regression
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import accuracy_score
-from sklearn.model_selection import cross_validate, train_test_split
+from sklearn.model_selection import cross_validate, train_test_split, StratifiedKFold
 
 X, y = make_regression(n_samples=1000, random_state=0)
 lr = LinearRegression()
@@ -20,8 +20,13 @@ score = lr.score(X_test, y_test)
 # https://scikit-learn.org/stable/modules/cross_validation.html#cross-validation
 # 한번만 validation 할 경우, train과 test가 우연히 잘 맞아 떨어져서 좋은 점수가 나올 수도 있다.
 # 여러번 검증하기
+# 최종 학습은 무슨 데이터로 학습하는거지?
 
 result = cross_validate(lr, X, y)  # defaults to 5-fold CV
 result['test_score']  # r_squared score is high because dataset is easy
 
-#%%
+#%% StratifiedKFold
+# 특정
+# https://continuous-development.tistory.com/166
+# 카테고리 레이블의 경우, 각 레이블별 골고루 분할해서 X를 나누는 등에 사용함.
+folds = list(StratifiedKFold(5).split(X, y=y > 0))

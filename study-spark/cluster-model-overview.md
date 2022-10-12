@@ -47,3 +47,16 @@
 - resource manager : the term of cluster manager in YARN.
 - standalone, YARN, Mesos, kubernate등은 cluster 방식의 차이
     - cluster의 자원 배분 방식이 다름.
+
+## Yarn
+
+### Node Label
+https://sungwookkang.com/1387
+- 노드에 레이블을 할당하여, 특정 처리가 특정 레이블에서만 되게 하는 등을 할 수 있다.
+  - 가령, cpu처리가 많은 경우, A레이블에서 처리하고, gpu처리가 많으면, B레이블에서 처리하는 식.
+  - emr의 core, task 도 레이블 설정이 되어 있을 듯
+
+https://docs.aws.amazon.com/emr/latest/ManagementGuide/emr-plan-instances-guidelines.html
+- cluster mode에서 돌릴 때, 유효한 내용인 듯. emr 6.x버전부터는 아래 설정 해줘야 한다고 함
+  - yarn.node-labels.enabled: true
+  - yarn.node-labels.am.default-node-label-expression: 'CORE'
