@@ -56,7 +56,16 @@ boosting
 - alpha: L1 Regularization Form에 달리는 weights. 클수록 보수적
 
 ### 학습 과정 파라미터
-- objective: 목적함수. reg:linear(회귀), binary:logistic(이진 논리), multi:softprob(다중 클래스)
+- objective: 목적함수. 
+  - classification
+    - binary:logistic(이진 논리)
+    - multi:softprob(다중 클래스)
+  - regression
+    - reg:linear(회귀),
+    - reg:squarederror
+    - reg:squaredlogerror
+      - 오차의 비율을 loss 함수로 사용하고자 하는 경우
+- 
 - eval_metric: 평가 함수. binary -> "auc"
 - num_round (default 10): 해당 횟수만큼 boosting 반복. epoch과 동일
 
@@ -70,3 +79,15 @@ boosting
 
 ## 참조
 - https://towardsdatascience.com/binary-classification-xgboost-hyperparameter-tuning-scenarios-by-non-exhaustive-grid-search-and-c261f4ce098d
+
+
+
+## 이해
+https://bcho.tistory.com/1354
+- Decision Tree를 조합하는 Ensemble 알고리즘
+
+### Ensemble
+- Bagging
+  - 여러 모델의 합산
+- Boosting
+  - A모델에서 잘못된 예측을 한 x에 가중치를 설정하여, B모델에 넣는 방식

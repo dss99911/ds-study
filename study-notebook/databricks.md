@@ -13,3 +13,10 @@ https://community.cloud.databricks.com/
 ### Data
 사용하는 데이터들을 볼 수 있음
 ![img.png](img/img2.png)
+
+
+기술 스택
+- 전처리: spark DataFrame
+- 모델: spark ML
+- AutoML: pycaret
+- Workflow & model tracking: MLFlow
