@@ -21,7 +21,7 @@ object Lists {
     val names = List("joel", "ed", "chris", "maurice")
     val nums3 = Seq(1,2,3)
     val nums4 = ArrayBuffer(1,2,3)
-    var text = ListBuffer[String]()
+    var texts = ListBuffer[String]()
 
 
     val list = 1 :: 2 :: 3 :: Nil // list: List[Int] = List(1, 2, 3)
@@ -50,8 +50,8 @@ object Lists {
 
     // add one element
     nums4 += 4
-    text += "d"
-    text = text :+ "d" // make new array
+    texts += "d"
+    texts = texts :+ "d" // make new array
 
     // add multiple elements
     nums4 += 5 += 6

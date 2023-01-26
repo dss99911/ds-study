@@ -39,6 +39,17 @@
    "text": "// 호출된 DataSet리스트 보기\n$intp.definedTerms.map(t => (t.toTermName.toString, $intp.typeOfTerm(t.toTermName.toString())))\n        .filter(_._2.toString() == \"()org.apache.spark.sql.Dataset\")",
    "id": "",
    "config": {}
+  },
+  {
+   "settings": {
+    "params": {},
+    "forms": {}
+   },
+   "apps": [],
+   "status": "READY",
+   "text": "// config에 그냥 set하면 적용 안되는 것 같고, spark를 다시 생성하면 적용됨.\n// \nval spark = SparkSession.builder.appName(name)\n        .enableHiveSupport()\n        .config(\"\", \"\")\n        .getOrCreate()\n\n\n\ndef get_spark(name=\"acs_features\", configs={}) -> SparkSession:\n    builder = SparkSession.builder.appName(name) \\\n        .enableHiveSupport()\\\n        .config(\"hive.metastore.client.factory.class\", \"com.amazonaws.glue.catalog.metastore.AWSGlueDataCatalogHiveClientFactory\")\\\n        .config(\"spark.sql.broadcastTimeout\", 3000000) \\\n        .config(\"spark.sql.caseSensitive\", True)\\\n        .config(\"spark.sql.legacy.parquet.datetimeRebaseModeInWrite\", \"CORRECTED\")\\\n        .config(\"spark.sql.execution.arrow.pyspark.enabled\", True)\n\n    for key, value in configs.items():\n        builder = builder.config(key, value)\n\n    spark = builder.getOrCreate()\n    return spark\n",
+   "id": "",
+   "config": {}
   }
  ],
  "name": "Zeppelin Notebook",

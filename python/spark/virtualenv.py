@@ -14,3 +14,12 @@
 sc.list_packages()
 sc.install_pypi_package("pandas==0.25.1") #Install pandas version 0.25.1
 sc.install_pypi_package("matplotlib", "https://pypi.org/simple") #Install matplotlib from given PyPI repository
+
+
+# 아래 값을 설정하면, "spark.pyspark.python": "python" 을 안해도됨
+# "PYSPARK_PYTHON": "/usr/bin/python3",
+# "PYSPARK_DRIVER_PYTHON": "/usr/bin/python3"
+
+# 처음 install_pypi_package를 할 때는 설치된 것이 바로 import안되고, 재시작 해야 함. 그 이후부터 는 바로 됨
+
+# working directory의 .local폴더에 library가 설치됨.

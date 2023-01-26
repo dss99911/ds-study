@@ -10,7 +10,6 @@ from pyspark.sql.functions import *
 
 def get_numeric_corr(df: DataFrame, cols_feature, col_label: str):
     corrs = list(map(lambda c: corr(col_label, c).alias(f"{c}_corr"),cols_feature))
-    df.schema.names
     return df.select(*corrs)
 
 def get_categorical_corr(df: DataFrame, cols_feature, col_label: str):

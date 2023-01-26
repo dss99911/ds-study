@@ -32,12 +32,12 @@ class Persist {
   // so, If you want to clear directly after it's finished to use. then call 'unpersist()\'
   uppercaseText.unpersist()
 
-  StorageLevel.MEMORY_ONLY // 메모리 공간을 벗어나면, 일부는 캐싱이 안되고, 필요할 때, 캐싱 안된 부분만 추가 처리함
-  StorageLevel.MEMORY_AND_DISK // 메모리 공간을 벗어난 크기이면, 디스크에 저장
-  StorageLevel.MEMORY_ONLY_SER // Serialize해서 메모리 공간을 절약 해줌, 하지만 Deserialize를 다시 해야 하기 때문에, 처리량은 늘어남
-  StorageLevel.DISK_ONLY2 // replicate each partition to two cluster nodes.
-  StorageLevel.DISK_ONLY3 // replicate each partition to three cluster nodes.
-  StorageLevel.MEMORY_AND_DISK2 // replicate each partition to three cluster nodes.
+//  StorageLevel.MEMORY_ONLY // 메모리 공간을 벗어나면, 일부는 캐싱이 안되고, 필요할 때, 캐싱 안된 부분만 추가 처리함
+//  StorageLevel.MEMORY_AND_DISK // 메모리 공간을 벗어난 크기이면, 디스크에 저장
+//  StorageLevel.MEMORY_ONLY_SER // Serialize해서 메모리 공간을 절약 해줌, 하지만 Deserialize를 다시 해야 하기 때문에, 처리량은 늘어남
+//  StorageLevel.DISK_ONLY2 // replicate each partition to two cluster nodes.
+//  StorageLevel.DISK_ONLY3 // replicate each partition to three cluster nodes.
+//  StorageLevel.MEMORY_AND_DISK2 // replicate each partition to three cluster nodes.
 
 
   spark.catalog.clearCache()

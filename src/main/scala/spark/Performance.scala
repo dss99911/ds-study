@@ -72,11 +72,20 @@ var builder: SparkSession.Builder = _
   def memoryExecutorCore() = {
     //아래에서 제안한 방식인데, 설정안한 것보다 느리다...
     //https://aws.amazon.com/blogs/big-data/best-practices-for-successfully-managing-memory-for-apache-spark-applications-on-amazon-emr/
+    //https://blogs.perficient.com/2020/08/25/key-components-calculations-for-spark-memory-management/
+    //  - hadoop daemon use 1 core 1 gb
+    //  - memory overhead 10%, memory 90%
+    // http://jason-heo.github.io/bigdata/2020/10/24/understanding-spark-memoryoverhead-conf.html
+    //  - memory: on-heap memory
+    //  - overhead memory : off-heap memory
+    //    - min = 384mb
+    //  - GC가 자주 발생하는 경우, memory올리기
+    //  - 메모리 부족으로 kill되는 경우, overhead 올리기
     //m5.2xlarge 8 core 32gb
-    val CORE_COUNT_PER_INSTANCE = 8
-    val RAM_PER_INSTANCE = 32768
-    val INSTANCE_COUNT = 50 //except for master node
-    val executorCoreCount = 1
+    val CORE_COUNT_PER_INSTANCE = 16
+    val RAM_PER_INSTANCE = 65536
+    val INSTANCE_COUNT = 20 //except for master node
+    val executorCoreCount = 15
     val executorPerInstance = ((CORE_COUNT_PER_INSTANCE - 1) / executorCoreCount).toInt
     val executorCount = executorPerInstance * INSTANCE_COUNT
     val totalExecutorMemory =  (RAM_PER_INSTANCE / executorPerInstance).toInt
@@ -86,10 +95,10 @@ var builder: SparkSession.Builder = _
     builder
       .config("spark.executor.cores", executorCoreCount)
       .config("spark.driver.cores", executorCoreCount)
-      .config("spark.executor.memory", executorMemory + "m")
+      .config("spark.executor.memory", executorMemory + "m") // executor의 memory
       .config("spark.driver.memory", executorMemory + "m")
-      .config("spark.yarn.executor.memoryOverhead", memoryOverhead + "m")
-      .config("spark.executor.instances", executorCount)
+      .config("spark.executor.memoryOverhead", memoryOverhead + "m")
+      .config("spark.executor.instances", executorCount) // executor의 수, 하나의 instance에 executor가 여러개 있을 수도 있음
       .config("spark.default.parallelism", parallelism)
       .config("spark.sql.shuffle.partitions", parallelism)
   }

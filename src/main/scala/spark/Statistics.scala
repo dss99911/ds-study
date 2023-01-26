@@ -153,10 +153,11 @@ class Statistics {
 |        Men|1.60|1.54|2.86|4.71|
 +-----------+----+----+----+----+
      */
+
     val df = Read.getJsonDataFrame(spark)
       .groupBy("User")
       .pivot("Device")
-      .agg(mean("x").as("x_mean"), mean("y"), mean("z"))
+      .agg(mean("x").as("x_mean"), mean("y"), mean("z")) // if agg col is just one, the alias is not added to pivot col
       .show()
 
     /**

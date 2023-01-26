@@ -90,8 +90,21 @@ class Partition {
 
     // 편향으로 인해, 시간이 오래걸린다면, 파티션을 더 많이 분할해서, 쉬는 core가 없게 한다.
 
-    spark.read.parquet("source_path")
+    val df = spark.read.parquet("source_path")
       .repartition(100, $"col_name")
+
+    // partitionBy를 하면, 각 task가 task안에 있는 row들을 partition별로 저장하게 되어, 대략 task수 * task안의 partition수 만큼의 파일이 생성된다.
+    // 데이터가 작으면, 작은 파일이 너무 많이 생성되는 것.
+    // https://www.linkedin.com/pulse/apache-spark-small-file-problem-simple-advanced-solutions-garg
+
+    // partition이 한개이면, 3개 파일이 생성
+    df.repartition(3).write.partitionBy("e")
+
+    // partition이 5개 미만이면, spark_partition_id 수가 정확히 일치하지 않는 현상이 있으면,
+    //  예: repartition(2), repartition(4)=> spark_partition_id이 1개.
+    //     repartition(3)-> spark_partition_id이 3개
+    df.repartition(3)
+
   }
 
   //The repartition algorithm does a full shuffle of the data and creates equal sized partitions of data.

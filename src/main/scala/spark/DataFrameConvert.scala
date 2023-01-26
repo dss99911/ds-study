@@ -1,6 +1,6 @@
 package spark
 
-import org.apache.spark.sql.functions.{expr, lit, sha2, when}
+import org.apache.spark.sql.functions.{expr, lit, sha2, when, col}
 import org.apache.spark.sql.{DataFrame, SparkSession}
 
 class DataFrameConvert {
@@ -47,16 +47,16 @@ class DataFrameConvert {
     // &: 하나라도 false이면 false. 하나가 true이면, 다음 값을 따라감. 순서 상관 없음.
     //   - null & false => false
     //   - null & true => null
-      .withColumn("null_1", F.col("null_value") + 1)
-      .withColumn("null_2", F.col("null_value") > 0)
-      .withColumn("true_1", (F.col("null_value") > 0) | F.lit(True))
-      .withColumn("null_3", (F.col("null_value") > 0) | F.lit(False))
-      .withColumn("false_1", (F.col("null_value") > 0) & F.lit(False))
-      .withColumn("null_4", (F.col("null_value") > 0) & F.lit(True))
-      .withColumn("true_2", F.lit(True) | (F.col("null_value") > 0))
-      .withColumn("null_4", F.lit(False) | (F.col("null_value") > 0))
-      .withColumn("false_2", F.lit(False) & (F.col("null_value") > 0))
-      .withColumn("null_5", F.lit(True) & (F.col("null_value") > 0))
+      df.withColumn("null_1", col("null_value") + 1)
+      .withColumn("null_2", col("null_value") > 0)
+      .withColumn("true_1", (col("null_value") > 0) || lit(true))
+      .withColumn("null_3", (col("null_value") > 0) || lit(false))
+      .withColumn("false_1", (col("null_value") > 0) && lit(false))
+      .withColumn("null_4", (col("null_value") > 0) && lit(true))
+      .withColumn("true_2", lit(true) || (col("null_value") > 0))
+      .withColumn("null_4", lit(false) || (col("null_value") > 0))
+      .withColumn("false_2", lit(false) && (col("null_value") > 0))
+      .withColumn("null_5", lit(true) && (col("null_value") > 0))
   }
 
 }

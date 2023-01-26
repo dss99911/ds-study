@@ -11,7 +11,7 @@ df = pd.DataFrame({
     'd': [date(2000, 1, 1), date(2000, 2, 1), date(2000, 3, 1)],
     'e': [datetime(2000, 1, 1, 12, 0), datetime(2000, 1, 2, 12, 0), datetime(2000, 1, 3, 12, 0)]
 })
-
+s = pd.Series([1,2,3])
 dates = pd.date_range("20130101", periods=6)
 r = np.random.randn(6, 4)
 df_number = pd.DataFrame(np.random.randn(6, 4), index=dates, columns=list("ABCD"))
@@ -38,6 +38,12 @@ df_reindex = df_number.reindex(index=dates[0:2], columns=list(df_number.columns)
 
 #find in index
 index_exists = 'g' in df.index
+
+#filtering by index
+df.loc[df.index]
+df.loc[(df['a'] == 1).index]
+s.loc[df['a'] == 1] # series can filter by series[bool]
+
 # %%
 # Location Setting
 df["f"] = ["one", "one", "two"] # set a column

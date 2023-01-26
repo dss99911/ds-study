@@ -3,6 +3,8 @@ import java.io.{FileNotFoundException, IOException}
 import scala.util.{Failure, Success, Try}
 
 object Exception {
+  throw new IllegalArgumentException
+
   try {
     //
   } catch {
@@ -10,7 +12,6 @@ object Exception {
     case ioe: IOException => println(ioe)
     case _: Throwable => println("dd")
   } finally {
-
   }
 
   def toInt(s: String): Try[Int] = Try {

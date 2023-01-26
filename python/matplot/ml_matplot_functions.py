@@ -18,13 +18,18 @@ def show_target_distribution(y, lim=None):
 
 def show_prediction_scatter(y_test, y_pred, lim=None):
     f, ax = plt.subplots(1, 1)
+    max_value = max(y_test.max(), y_pred.max())
+    min_value = min(y_test.min(), y_pred.min())
+
+    ax.plot([min_value, max_value], [min_value, max_value], "--k")
+
     ax.scatter(y_test, y_pred, s=1)
     ax.set_ylabel("Target predicted")
     ax.set_xlabel("True Target")
     ax.set_title("Prediction Scatter")
     if lim:
-        ax.set_xlim(lim)
-        ax.set_ylim(lim)
+        ax.set_xlim([min_value, max_value])
+        ax.set_ylim(min_value, max_value)
     # Transform targets and use same linear model
     plt.show()
 

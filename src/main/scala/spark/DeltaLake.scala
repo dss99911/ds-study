@@ -49,6 +49,7 @@ import org.apache.spark.sql.functions.{desc, expr}
  *
  * 이슈
  * - spark submit할 때 --packages io.delta:delta-core_2.12:0.8.0 를 호출 해줘야함.
+ * - spark 버전따라, delta 사용 버전도 다름 https://docs.delta.io/latest/releases.html
  */
 class DeltaLake {
   val spark = SparkSession.builder.appName("BaseTransactionizer")

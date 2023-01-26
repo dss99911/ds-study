@@ -8,6 +8,8 @@ df.groupby('a').agg(
     expr("percentile(b, array(0.5))")[0].alias("median")
 ).show()
 
+df.agg({'flag': 'sum', 'message': 'count'})
+
 agg_by_dict(df.groupby("c"), {
     "a": ["count", "sum", "min", "max"],
     "b": count_distinct,
