@@ -13,7 +13,7 @@ dtype_priority = [
 dtype_priority_index_map = {dtype[0]: index for index, dtype in enumerate(dtype_priority)}
 
 
-def process_undefined_pandas_udf_return(df: DataFrame, pandas_udf_func, cols=None, included_cols=None):
+def process_dynamic_pandas_udf_return(df: DataFrame, pandas_udf_func, cols=None, included_cols=None):
     """
     this function use checkpoint. need to set checkpoint dir
     :param pandas_udf_func:
