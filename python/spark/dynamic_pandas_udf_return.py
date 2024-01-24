@@ -1,4 +1,9 @@
-from ds_common_utils.pyspark.functions import *
+from functools import wraps
+
+import pandas as pd
+from pyspark.sql import DataFrame
+from pyspark.sql.types import *
+import pyspark.sql.functions as F
 
 dtype_priority = [
     ('bool', BooleanType()),
@@ -74,8 +79,6 @@ def parse_json_result_to_features(df_json_result, feature_schema: StructType, in
 
 def rectify_features(features):
     features = rectify_timestamp(features)
-    features = rectify_bool(features)
-    features = rectify_whole_number(features)
     return features
 
 
@@ -87,59 +90,6 @@ def rectify_timestamp(features):
             return col_name
 
     return features.select(*[convert_col(col_name, dtype) for col_name, dtype in features.dtypes])
-
-
-def rectify_bool(features):
-    """
-    if null exists, dtype on pandas is object
-    """
-    return rectify_if_all_matched(
-        features,
-        match_func=lambda col_name: F.col(col_name).isin('true', 'false'),
-        convert_func=lambda col_name: F.col(col_name).cast(BooleanType()),
-        checking_dtypes=['string']
-    )
-
-
-def rectify_whole_number(features):
-    """
-    if null value exists on pandas, it's double type.
-    """
-    return rectify_if_all_matched(
-        features,
-        match_func=lambda col_name: F.col(col_name) == F.col(col_name).cast(LongType()),
-        convert_func=lambda col_name: F.col(col_name).cast(LongType()),
-        checking_dtypes=['double']
-    )
-
-
-def rectify_if_all_matched(features, match_func, convert_func, checking_dtypes=None):
-    checking_columns = [
-        col_name for col_name, dtype in features.dtypes
-        if checking_dtypes is None or dtype in checking_dtypes
-    ]
-    if len(checking_columns) == 0:
-        return features
-
-    matched: pd.Series = (
-        features.agg(
-            *[
-                (F.count(F.when(~match_func(col_name), 1)) == 0).alias(col_name)
-                for col_name in checking_columns
-            ]
-        )
-        .toPandas()
-        .T
-        .iloc[:, 0]
-        .astype("bool")
-    )
-    matched_columns = matched[matched].index.to_list()
-
-    if len(matched_columns) == 0:
-        return features
-
-    converted_cols = [convert_func(c) if c in matched_columns else F.col(c) for c in features.columns]
-    return features.select(*converted_cols)
 
 
 def convert_type(pandas_dtypes):
@@ -163,7 +113,6 @@ def convert_features_to_json(
     dtype_json = features.dtypes.apply(lambda x: str(x)).to_json()
     dtype_json = pd.Series([dtype_json] * len(features_json.index), index=features_json.index).rename("dtypes")
     result = pd.concat([features_json, dtype_json], axis=1)
-    print(len(result), "is completed")
     return result
 
 
@@ -174,3 +123,12 @@ def pandas_udf_wrapper(f):
         return convert_features_to_json(features)
 
     return wrapper
+
+
+def make_list(value):
+    if value is None:
+        return []
+
+    if type(value) is not list:
+        value = [value]
+    return value
