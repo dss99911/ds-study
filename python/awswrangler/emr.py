@@ -101,3 +101,4 @@ def emr_instance_running(name):
 # python library등을 emr에서 사용하려면, py-files 등을 사용하면, 번거로움이 많음
 # docker에 python library를 설치해서 돌림.
 # cluster를 생성할 때, docker 사용을 enabled시켜줘야 함
+# cluster mode로만 해야지 되었던 것 같음. client mode에선 사용 못함

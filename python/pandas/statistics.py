@@ -66,10 +66,9 @@ corr_by_zipcode = grouped.apply(lambda x: x.corrwith(x['TaxAssessedValue']))
 #%% pivot
 # margins=True : 열과 행에 합계를 추가함
 df_loan = pd.read_csv("data/lc_loans.csv")
-crosstab = df_loan.pivot_table(index='grade', columns='status',
+crosstab = df_loan.pivot_table(index='grade', values=['Current'], columns='status',
                                 aggfunc=lambda x: len(x), margins=True)
 
-print(crosstab)
 
 #%% dummis
 # 특정 컬럼의 값별로 컬럼을 분리해서, 값이 있는지 유무를 0,1로 나타냄

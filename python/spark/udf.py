@@ -1,7 +1,7 @@
 # %%
 from pyspark.sql.functions import udf
 from pyspark.sql.functions import col, asc, desc
-from pyspark.sql.types import FloatType, StructType, StringType, StructField, DoubleType, ArrayType
+from pyspark.sql.types import FloatType, StructType, StringType, StructField, DoubleType, ArrayType, IntegerType
 
 from spark.read import create_by_row
 
@@ -88,7 +88,8 @@ def udf_with_schema():
     spark = SparkSession.builder.appName("acs_tx_extractor").getOrCreate()
     spark.udf.register('getSentenceDiffRatioUDF', getSentenceDiffRatio, diffRatioSchema)
 
-#%% pandas udf : pandas의 기능을 쓰고 싶을 때 쓰는듯.
+#%% pandas udf : pandas의 기능을 쓰고 싶을 때 쓰는듯. 성능이 더 빠름
+# https://spark.apache.org/docs/3.1.2/api/python/reference/api/pyspark.sql.functions.pandas_udf.html
 # https://pizzathief.oopy.io/spark3-pandas-udf
 # https://spark.apache.org/docs/latest/api/python/user_guide/sql/arrow_pandas.html
 from pyspark.sql.functions import pandas_udf
@@ -111,5 +112,9 @@ def process_pandas_udf(spark):
 @pandas_udf("double")  # return type col type
 def mean_udf(v: pd.Series) -> float:
     return v.mean()
+
+@pandas_udf(IntegerType())
+def slen(s: pd.Series) -> pd.Series:
+    return s.str.len()
 
 print(df.groupby("id").agg(mean_udf(df['v'])).collect())

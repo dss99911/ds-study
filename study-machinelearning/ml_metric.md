@@ -70,6 +70,10 @@ https://blog.naver.com/PostView.nhn?blogId=wideeyed&logNo=221531940245
 - threshold가 0이면, 전부 양성 예측하여, TPR은 좋아지고, FPR은 나빠짐
 - threshold가 1이면, 전부 음성 예측하여, TPR은 나빠지고, FPR은 좋아짐
 
+### AUROC
+- AUC곡선의 밑의 넓이
+- 무작위일 경우, 0.5. 0.7 미만의 경우 차선(Sub-optimal)으로 고려할 수 있는 정도이며, 0.7~0.8은 좋은(Good) 정도, 0.8 이상은 훌륭한(Excellent) 정도로 봅니다
+
 ### 대출 성능 지표
 - 대출은 시간이 흐름에 따라, 데이터의 편향이 지속적으로 발생하게 됨(연체로 예측된 경우 대출을 안주기 때문에, TN, FN 의 데이터만 지속적으로 쌓이고, 점차 범위가 TN으로 좁아짐)
   - 따라서, recall이나 precision은 정답을 알 수 없기때문에, 의미가 없는 수치
@@ -78,3 +82,15 @@ https://blog.naver.com/PostView.nhn?blogId=wideeyed&logNo=221531940245
   - TP, FP에 대한 데이터가 부족한데, 승인율을 올리는 것은 FP중에 negative가 있을 가능성을 고려하여, 위험을 감수하고, 매출을 올리기 위한 시도
   - threshold를 낮춰서 승인율을 올렸을 때, 파악되지 않은 성향의 대출이 나가게 되고, 여기에 대해서는, 실제 피해를 겪어보면서, 지속적으로 학습해서 보완할 수 밖에 없음
 
+
+
+### Gain Chart
+- cutoff 에 따라 10개의 decile로 나눈다.
+- 100명 중 80명이 상환을 했다면,
+- random으로 대출 승인시 50% 확률이라면,, 10% cutoff는 8명 승인 되고,
+- model에 따라 승인시, 10% cutoff에 더 많은 사람이 승인 받을 수 있음을 보여줌.
+- 그래서, cutoff에 따른 상환율을 그래프로 쉽게 보여 줌.
+- y축은 누적 상환수, x축은 0~1 사이의 각 cut off.
+- (x, y)는 특정 cutoff 에 대한 상환 수를 보여줌.
+- x: decile, y: cumulative numer of positive observations upto declie
+- gain: y/ total number of positive observations : 1 decile에서 100% 가 나옴

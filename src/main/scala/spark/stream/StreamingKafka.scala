@@ -18,6 +18,9 @@ import za.co.absa.abris.config.AbrisConfig
  * https://spark.apache.org/docs/latest/structured-streaming-kafka-integration.html
  *
  * --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.1.2,
+ *
+ * error handling patterns
+ * https://www.confluent.io/blog/error-handling-patterns-in-kafka/
  */
 class StreamingKafka {
   def readFromKafka(spark: SparkSession): DataFrame = {

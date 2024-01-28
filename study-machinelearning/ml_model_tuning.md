@@ -7,6 +7,8 @@
    1. cross validation으로 학습 평가
    2. random split시 데이터가 과적합하게 된다면, 직접 분할하여 평가하기
    3. test set: 학습데이터와 비슷하지 않은 데이터(최근 데이터나, 별도 카테고리 데이터)로 검증
+      - oot(out-of-time): 최근 데이터 사용(학습시는 성능이 좋았으나, 실제 배포 후에 성능이 낮아지는 경우 등을 위한 metric)
+        - https://medium.datadriveninvestor.com/importance-of-oot-testing-in-data-science-e7e8386fb3be
 3. parameter 선정
    1. 풀고자 하는 문제에 적합한 파리미터를 선정한다.
    2. 예측하려는 데이터가 학습한 데이터와 전혀 다를 수 있는 경우, 보수적으로 과적합을 줄이는게 좋다.

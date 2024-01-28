@@ -1,6 +1,7 @@
 from spark.util.util import *
 import spark.read as r
 
+# null imputation on pivot and aggregation is on null_imputation_on_aggregation.png.
 df = r.create()
 
 df.groupby('a').agg(

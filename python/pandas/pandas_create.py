@@ -34,6 +34,27 @@ df_create_dataframe_by_row_list = pd.DataFrame([
     {'a': 4, 'b': None, 'c': None},
 ])
 
+# similar with pyspark
+pd.DataFrame(np.array([
+    (1, "appLe", 1),
+    (1, "apple", 1),
+    (1, "ap_ple", 2),
+    (2, "banana", 3),
+    (2, "banana", 4),
+    (3, "Coconut", 5),
+]), columns=['id', 'fruit', 'value'])
+
+# set type
+pd.DataFrame(np.array([
+    (1, "appLe", 1.0),
+    (1, "apple", 1.0),
+    (1, "ap_ple", 2.0),
+    (2, "banana", 3.0),
+    (2, "banana", 4.0),
+    (3, "Coconut", 5.0)],
+    dtype=[("id", "int"), ("fruit", "object"), ("value", "float")]
+))
+
 date_time_index = pd.date_range("20130101", periods=6)
 np_dataframe_random = np.random.randn(6, 4) # 6rows, 4 columns
 df_create_dataframe_index_column = pd.DataFrame(np_dataframe_random, index=date_time_index, columns=list("ABCD"))

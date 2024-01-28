@@ -14,6 +14,12 @@ df = pd.DataFrame(
         "D": np.random.randn(9),
     }
 )
+#%%
+
+
+crosstab2 = df.pivot_table(index='C', values=['A'], aggfunc={"A": ["count", "sum"]})
+
+crosstab3 = df.groupby('C').agg({"A": ["count", "sum"]})
 
 #%%
 
